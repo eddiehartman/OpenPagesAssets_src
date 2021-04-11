@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="b8ecfb0e-fc4b-4bcb-bebb-faea910e7311" created="Tue Aug 18 13:43:43 CEST 2020" createdBy="eddie" main="OPMailProvider" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="b8ecfb0e-fc4b-4bcb-bebb-faea910e7311" created="Tue Aug 18 13:43:43 CEST 2020" createdBy="eddie" main="OPMailProvider" modified="Tue Aug 18 13:44:06 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="OPMailProvider">
-        <ModTime>1613493642398</ModTime>
+        <ModTime>1597751044920</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="26" UUID="9c7918f7-525c-49be-9324-bbb07179b936" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPagesGRCObjectQuery" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="25" UUID="9c7918f7-525c-49be-9324-bbb07179b936" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPagesGRCObjectQuery" modified="Wed Jun 17 20:38:23 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Container name="References"/>
     
 
@@ -10,10 +10,9 @@
 
 
 
-
 <Connector name="OpenPagesGRCObjectQuery">
         <InheritFrom>system:/Connectors/ibmdi.ScriptConnector</InheritFrom>
-        <ModTime>1613493656156</ModTime>
+        <ModTime>1592419103193</ModTime>
         <ConnectorMode>Lookup</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>

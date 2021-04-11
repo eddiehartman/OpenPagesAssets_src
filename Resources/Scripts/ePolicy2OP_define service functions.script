@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="405" UUID="cc2c1334-a20f-4535-ba0b-de021014c4e4" created="Mon Oct 12 16:40:29 CEST 2020" createdBy="eddie" main="ePolicy2OP_define service functions" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="393" UUID="cc2c1334-a20f-4535-ba0b-de021014c4e4" created="Mon Oct 12 16:40:29 CEST 2020" createdBy="eddie" main="ePolicy2OP_define service functions" modified="Wed Dec 23 14:01:53 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_define service functions">
-        <ModTime>1613493649709</ModTime>
+        <ModTime>1608728512858</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Functions used by this AL
 // Gather metrics from the passed AL, returning an object with the following properties:
@@ -16,9 +16,9 @@ function gatherMetrics(al, errors, warnings, counters, alTimers) {
 	counters = counters || {};
 	alTimers = alTimers || {};
 	
-	var step = al.getCurrentStep();
+	var state = al.getCurrentStep();
 	// Only check the work entry if the AL is actually cycling
-	if (step >= 8) {
+	if (state >= 8) {
 		try {
 			// Get the current Work Entry
 			var entry = al.getResult();
@@ -49,7 +49,7 @@ function gatherMetrics(al, errors, warnings, counters, alTimers) {
 					warnings[accountName].push(alMetrics.warnings[i]);
 				}
 		
-				var alCounters = alMetrics.counters || {};
+				var alCounters = alMetrics.counters;
 				
 				alCounters.Status = alCounters.Status || {};
 				alCounters.Status[accountName] = (step == 16) ? (alCounters.Status[accountName] != "In Progress" ? "Completed" : "In Progress") : "In Progress";
@@ -113,16 +113,8 @@ function responseError(code, msg, errorMsg, message, entry) {
 	if (typeof responseObj == "undefined") {
 		responseObj = {};
 	}
-	
-	if (code == "400") {
-		msg = "Bad Request";
-	} else
-	if (code = "500") {
-		msg = "Service Error";
-	}
 
 	log("ERROR", errorMsg);
-	code = String(code);
 	if (!code.startsWith("2")) { 
 		responseObj.code = code;
 		responseObj.msg = msg;
@@ -135,7 +127,7 @@ function responseError(code, msg, errorMsg, message, entry) {
 	entry["http.responseMsg"] = responseObj.msg;
 	entry["http.message"] = entry["http.message"] || responseObj.message;
 	entry["http.errorMsg"] = responseObj.errorMsg;
-	log("DEBUG", "Setting response to: " + code + " - " + errorMsg);
+	log("DEBUG", "Setting response to: " + errorMsg);
     entry["http.Content-Type"] = "application/json";
 }
 
@@ -232,7 +224,7 @@ function makeResponse(useEntry, requestID, operation, accounts, counters, errors
 	if (accountsInError.length > 0) {
 		responseError("400", 
 //						"Partial Failure",
-						"Bad Request",
+						"Failed",
 						operationName(operation) + " of the following accounts failed: " 
 							+ accountsInError.join(", "),
 						"See Account details for more information");
@@ -256,11 +248,7 @@ function makeResponse(useEntry, requestID, operation, accounts, counters, errors
 	if (inError()) {
 		var code = useEntry.getString("http.responseCode");
 		if (code && code.startsWith("2")) {
-			if (!_errors[0].contains("Connection refused")) {
-				code = "400";
-			} else {
-				code = "500";
-			}
+			code = 400;
 		}
 		response(code, 
 				useEntry.getString("responseMsg") || "Bad Request",
@@ -602,8 +590,7 @@ function sendEmail(toUser, requestID, workEntry, operation, accounts, counters, 
 		} else {
 			mail.send({
 				to: toUser,
-//				from: "SDI@IBM.COM",
-				from: "blade@us.ibm.com",
+				from: "SDI@IBM.COM",
 				subject: "ePolicy " + opNoun + " result notification - " 
 							+ requestID + " " + progressText,
 				body: body,
@@ -681,7 +668,7 @@ function sendNotificationEmail(args) {
 		}
 		
 		nextStatus = java.lang.System.currentTimeMillis() + (statusInterval * 60 * 1000);
-		log("INFO", "@DEBUG@ - Next email dispatched at " + system.formatDate(new java.util.Date(nextStatus), "HH:mm:ss.SSS"));
+		log("DEBUG", "Next email dispatched at " + system.formatDate(new java.util.Date(nextStatus), "HH:mm:ss.SSS"));
 	}
 	
 	return nextStatus;

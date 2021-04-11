@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="952" UUID="5e0f536f-7033-4b65-b1b4-7815c5472387" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPages Connector" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="950" UUID="5e0f536f-7033-4b65-b1b4-7815c5472387" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPages Connector" modified="Fri Dec 11 16:32:57 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Container name="References"/>
     
 
@@ -128,16 +128,15 @@
 
 
 
-
-
 <Connector name="OpenPages Connector">
         <InheritFrom>system:/Connectors/ibmdi.ScriptConnector</InheritFrom>
-        <ModTime>1613493656302</ModTime>
-        <ConnectorMode>Update</ConnectorMode>
+        <ModTime>1607700776752</ModTime>
+        <ConnectorMode>Lookup</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>
             <UserComment>fixing</UserComment>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1607700776752</ModTime>
             <parameter name="$form$"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="261" UUID="a8ad3eb7-a05b-4a69-b5c2-397f536ac120" created="Sun Jun 01 21:17:26 CEST 2014" createdBy="Administrator" main="Form" modified="Sat Nov 14 16:43:20 CET 2020" modifiedBy="eddie" version="7.1.1">
     <Form name="Form">
         <ModTime>1605368530174</ModTime>

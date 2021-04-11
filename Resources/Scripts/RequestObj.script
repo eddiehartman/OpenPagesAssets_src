@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="264" UUID="8dc5787b-8dd9-4557-be27-f06ed4314951" created="Fri Aug 07 11:50:23 CEST 2020" createdBy="eddie" main="RequestObj" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
-    <Script name="RequestObj">
-        <ModTime>1613493655634</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="261" UUID="8dc5787b-8dd9-4557-be27-f06ed4314951" created="Fri Aug 07 11:50:23 CEST 2020" createdBy="eddie" main=".RequestObj.script" modified="Fri Dec 11 12:53:42 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name=".RequestObj.script">
+        <ModTime>1606211301119</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var RequestObj = function(requestEntryOrID) {
 	//this.vrs = "20200806 1755"; // initial version
@@ -50,7 +50,7 @@
 	}
 
 	this.operation = function() {
-		if (typeof this.requestDetails == "undefined" || !this.requestDetails.operation) {
+		if (!this.requestDetails || !this.requestDetails.operation) {
 			return "Invalid Request - processing failed";
 		}
 		return this.requestDetails.operation;
@@ -123,7 +123,7 @@
 		
 			this.saveRequest(this.requestDetails.body);
 		} catch (ex) {
-			var errmsg = "Error processing Request " + this.requestID + " - " + ex;
+			var errmsg = "Error process Request " + this.requestID + " - " + ex;
 			this.log("ERROR", errmsg);
 			throw errmsg;
 		}
@@ -154,7 +154,7 @@
 		} else {
 			var vPath = this.requestDBPath(this.operation(), "new");
 			
-			this.log("tng Request("+ this.requestID + ") to " + vPath);
+			this.log("Saving Request("+ this.requestID + ") to " + vPath);
 			
 			var file = system.openFileForOutput(vPath);;
 			file.write(requestJson);

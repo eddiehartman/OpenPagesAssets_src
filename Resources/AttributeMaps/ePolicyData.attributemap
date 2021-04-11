@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="11" UUID="bdf04795-4ecc-47d6-8d08-1e6edecbc6d1" created="Tue Jun 02 20:17:28 CEST 2020" createdBy="eddie" main="ePolicyData" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="10" UUID="bdf04795-4ecc-47d6-8d08-1e6edecbc6d1" created="Tue Jun 02 20:17:28 CEST 2020" createdBy="eddie" main="ePolicyData" modified="Wed Jun 17 20:38:22 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <ALMap name="ePolicyData">
-        <ModTime>1613493654857</ModTime>
+        <ModTime>1592419102637</ModTime>
         <AttributeMap name="Input">
             <InheritFrom>[parent]</InheritFrom>
             <AttributeMapItem>

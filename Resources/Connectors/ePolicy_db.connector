@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="18" UUID="677401a6-16af-4518-b083-bb63b265fb6e" created="Wed May 06 17:27:35 IST 2020" createdBy="AnilPandey" main="ePolicy_db" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="PolicyDB" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="17" UUID="677401a6-16af-4518-b083-bb63b265fb6e" created="Wed May 06 17:27:35 IST 2020" createdBy="AnilPandey" main="ePolicy_db" modified="Sat Aug 29 21:06:14 CEST 2020" modifiedBy="eddie" project="PolicyDB" version="7.1.1">
     <Connector name="ePolicy_db">
         <InheritFrom>system:/Connectors/ibmdi.JDBC</InheritFrom>
-        <ModTime>1613493655228</ModTime>
+        <ModTime>1598727971787</ModTime>
         <ConnectorMode>Iterator</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>
             <UserComment>fixing</UserComment>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1598727971787</ModTime>
             <parameter name="custom.database">POLICYL</parameter>
             <parameter name="custom.form">1</parameter>
             <parameter name="custom.hostname">mopbzp174025.fr.dst.ibm.com</parameter>
             <parameter name="custom.port">50000</parameter>
             <parameter name="jdbcDriver">com.ibm.db2.jcc.DB2Driver</parameter>
             <parameter name="jdbcLogin">* missing setting *</parameter>
-            <parameter encrypted="true" name="jdbcPassword">YRCCDCl2xUsIRNheNBzVJ87FQ5lkjYxkat92KJjOmIKz+oqzq3GPvNDf+xivQfG6/BCCS1w4EONNQUp6jj8Qu7G82YTraExLFT8hLAQCaFRmSLbEQJpxYwu/YGabFQ0omXhIl3i1oDVh7QRe9kgk2tq4P9z5wKbdb7A4kbykvxE=</parameter>
+            <parameter encrypted="true" name="jdbcPassword">YFxr2+YjXch4TYOHwiIty8F31UCJgaUFsmY06iSSLdVO1pVn3Fp8hrUyiTzD9p+X7L5BBtm+9+m+7wGEkFY+PBuPJwGku5K0IK2sOGcYlpqf/aSeY7zu4St4UoL/lsXw/gMyXJarjUv02eoBW7LpecCei1psoNH2lbuuh8Q56X4=</parameter>
             <parameter name="jdbcSchema">EPOLICY</parameter>
             <parameter name="jdbcSource">* missing setting *</parameter>
             <parameter name="jdbcTable">evidence</parameter>
@@ -187,6 +188,7 @@
         <Operations/>
         <PoolDefinition>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1597233205823</ModTime>
             <Enabled>false</Enabled>
             <MinPoolSize>5</MinPoolSize>
             <MaxPoolSize>10</MaxPoolSize>

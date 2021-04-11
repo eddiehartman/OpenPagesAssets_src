@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="184" UUID="478f562e-c093-4f50-8272-d44916c33f7c" created="Wed Jul 01 10:48:32 CEST 2020" createdBy="eddie" main="ClauseControlObj" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="183" UUID="478f562e-c093-4f50-8272-d44916c33f7c" created="Wed Jul 01 10:48:32 CEST 2020" createdBy="eddie" main="ClauseControlObj" modified="Fri Dec 04 11:48:16 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ClauseControlObj">
-        <ModTime>1613493655504</ModTime>
+        <ModTime>1607078896157</ModTime>
         <parameter name="enabled">true</parameter>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var ClauseControlObj = function(args) {

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="55" UUID="f5f3a951-6f25-441e-8bab-7be14c1bd1e7" created="Wed Sep 23 14:25:36 CEST 2020" createdBy="eddie" main="ePolicy2OP_Map and Add Policy" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="54" UUID="f5f3a951-6f25-441e-8bab-7be14c1bd1e7" created="Wed Sep 23 14:25:36 CEST 2020" createdBy="eddie" main="ePolicy2OP_Map and Add Policy" modified="Tue Dec 22 11:14:37 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Map and Add Policy">
-        <ModTime>1613493655720</ModTime>
+        <ModTime>1608632076602</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Map CSD to OpenPages Policy
 policyMap = new Mapper("POC_MVP/map_csd_to_policy.map");

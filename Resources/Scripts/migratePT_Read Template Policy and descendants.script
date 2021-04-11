@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="73" UUID="efd378e7-40e2-4988-89d0-b2b3f528d9ce" created="Wed Nov 18 17:33:36 CET 2020" createdBy="eddie" main="migratePT_Read Template Policy and descendants" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="67" UUID="efd378e7-40e2-4988-89d0-b2b3f528d9ce" created="Wed Nov 18 17:33:36 CET 2020" createdBy="eddie" main="migratePT_Read Template Policy and descendants" modified="Fri Dec 04 15:15:24 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="migratePT_Read Template Policy and descendants">
-        <ModTime>1613493642058</ModTime>
+        <ModTime>1607091323765</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[policyName = templatePolicy.getString("Name");
 
@@ -11,7 +11,6 @@ tpType = tp.getString("$grcObjectType");
 if (migrate) {
 	log("Adding Policy Template corresponding to " + tp.name);
 	var entry = toOP.writeableEntry(tp, tpType);
-	entry.name = tp.name;
 	newTP = toOP.add(entry, {
 								parentType: parentType,
 								parentId: parent.getString("Resource ID"),
@@ -28,12 +27,12 @@ var templateDocs = useOP.findChildren("GTSLibPolicy",
 							"SOXDocument");
 
 for (var doc in templateDocs) {
-	if (false && migrate) {
+	if (migrate) {
 		// First we have to get the actual Word doc
 		var fullDoc = useOP.findOne("Resource ID", doc.getString("Resource ID"));
 		var linkToContent = "";
 		
-		var entry = toOP.writeableEntry(fullDoc, "SOXDocument");
+		var entry = toOP.writeableEntry(doc, "SOXDocument");
 		newDoc = toOP.add(entry, {
 									parentType: tpType,
 									parentId: newTPid,
@@ -54,7 +53,7 @@ for (var tc in templateClauses) {
 	if (migrate) {
 		tcType = tc.getString("$grcObjectType");
 	
-		log("   Adding Policy Template Clause corresponding to " + tc.name);
+		log("   Adding Policy Template corresponding to " + tc.name);
 		var entry = toOP.writeableEntry(tc, tcType);
 		entry.Name = tc.Name;
 		newTC = toOP.add(entry, {
@@ -64,7 +63,7 @@ for (var tc in templateClauses) {
 								});
 									
 		newTCid = newTC.getString("Resource ID");							
-		log("   Added Policy Template Clause " + newTC.name + " (" + newTCid + ")");
+		log("   Added Policy Template " + newTC.name + " (" + newTCid + ")");
 	} else {
 		//Store the Template Clause	
 		var description = tc.getString("description") || "*no_template_clause_description_found*";

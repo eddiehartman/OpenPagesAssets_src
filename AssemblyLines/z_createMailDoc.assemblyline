@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="4" UUID="20e97fca-6bb4-4853-8209-6c7a518d9223" created="Fri Oct 09 13:51:28 CEST 2020" createdBy="eddie" main="z_createMailDoc" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="20e97fca-6bb4-4853-8209-6c7a518d9223" created="Fri Oct 09 13:51:28 CEST 2020" createdBy="eddie" main="z_createMailDoc" modified="Fri Oct 09 14:04:21 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <AssemblyLine name="z_createMailDoc">
-        <ModTime>1613493649490</ModTime>
+        <ModTime>1602245060096</ModTime>
         <Settings>
             <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
             <parameter name="automapattributes">false</parameter>
@@ -24,6 +24,7 @@ WordDoc]]></parameter>
         <LogConfig/>
         <ContainerEF name="EntryFeedContainer"/>
         <ContainerDF name="DataFlowContainer">
+            <ModTime>1602245060096</ModTime>
             <Script name="set up status">
                 <ModTime>1602245060096</ModTime>
                 <parameter name="script"><![CDATA[status = {

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="126" UUID="bfb43c67-a0d0-464d-86b2-288b6508937c" created="Thu Oct 01 13:31:55 CEST 2020" createdBy="eddie" main="ePolicy2OP_define functions" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="81" UUID="bfb43c67-a0d0-464d-86b2-288b6508937c" created="Thu Oct 01 13:31:55 CEST 2020" createdBy="eddie" main="ePolicy2OP_define functions" modified="Wed Dec 09 15:37:34 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_define functions">
-        <ModTime>1613493642338</ModTime>
+        <ModTime>1607524653771</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[policyStatii = [{
 	name: "Retired"
@@ -61,7 +61,7 @@ function listOfActions(startingStatus, targetStatus) {
 	return actions;
 }
 
-var statusReportMap = null;
+var statusReportMap = new Mapper("POC_MVP/map_statusreportpolicy.map");
 
 // Read the version number from the CSD doc using the original method
 function readVersion(versionSubversion, bytesarr) {
@@ -104,23 +104,40 @@ function readVersion(versionSubversion, bytesarr) {
 // and parsing using regex to find 'n.n[.n]'
 function findVersion(versionSubversion, bytesarr) {
 	try {
-		var foundVersion = [];
 		var fis = new java.io.ByteArrayInputStream(bytesarr);
-		var document = new org.apache.poi.xwpf.usermodel.XWPFDocument(org.apache.poi.openxml4j.opc.OPCPackage.open(fis));
+		var document = new org.apache.poi.xwpf.usermodel.XWPFDocument(org.apache.poi.openxml4j.opc.OPCPackage.open(fis));					// ***********************
+
+		var bodyElements = document.bodyElements();
+		
+		for (var i = 0; i < bodyElements.length; i++) {
+			var element = bodyElements[i];
+			if (element instanceof org.apache.poi.xwpf.usermodel.XWPFTable) {
+				var body = element.getBody();
+				var tables = body.getTables();
+				for (var table in tables) {
+					var rows = table.getRows();
+				}
+			}
+		}
 
 		var tables = document.getTables();
 		var paras = [];
-		var foundIt = false;
 		
-		for (var tableCnt = tables.size()-1; tableCnt >= 0 && !foundIt; tableCnt--) {
-			var table = tables.get(tableCnt);
-			var tableStr = table.getText();
-			var found = tableStr.match("\\s*([\\dxX]{1,2}\\.[\\dxX]{1,3}(\\.[\\dxX]{1,3})?)");
-			if (found != null) {
-				log("DEBUG", "  ----->  found version: " + found[1] + " in '" + tableStr + "'");
-				versionSubversion.policy.value = found[1];
-				break;
-			}
+		for (var table in tables) {
+			var paraStr = table.getText();
+			paras.push(paraStr);
+	
+			if (paraStr.toLowerCase().contains(versionSubversion.policy.match)) {
+				var lines = system.splitString(paraStr, "\n");
+				for (var line in lines) {
+					for (type in versionSubversion) {
+						var p = line.toLowerCase().indexOf(versionSubversion[type].match);
+						if (p >= 0) {
+							versionSubversion[type].value = getVersion(line.substring(p));
+						}	
+					}	
+				}
+			}	
 		}
 	} catch (ex) {
 		msg = "Unable to find version in CSD Document: " + csdDoc.Name + ". ";
@@ -133,13 +150,26 @@ function findVersion(versionSubversion, bytesarr) {
 }
 
 // Grabs the version number at the end of the passed string
-function getVersionFromName(str) {
+function getVersion(str) {
 	str = str || "";
-	var vers = str.match();
-	if (vers == null) {
-		return "?"
+	var p = str.toLowerCase().lastIndexOf("v");
+	if (p >= 0 && p <= str.length-4) {
+		var dots = 0;
+		
+		// Move to whitespace or digit (or X)
+		while (p++ < str.length) {
+			var thisChar = str.charAt(p);
+			if ((thisChar >= "0" && thisChar <= "9")
+				|| thisChar.toLowerCase() == "x"
+				|| (thisChar == " " || thisChar == "\t" || thisChar == "_" || thisChar == "-")) {
+				break;
+			}
+		}
+		
+		// Grab the rest of the string as the version
+		return str.substring(p).trim().replace("Version", "").replace("version", "").replace("V", "").replace("v", "");
 	} else {
-		return vers[1];
+		return null;
 	}
 }
 
@@ -181,9 +211,6 @@ function saveCreationDetails(account, type, entries, addToArray) {
 	
 	if (type == "Policy") {
 		// This next should be like this: CSD-{ePolicy_Account_Name}-v{epolicy_policy_version}
-		if (!statusReportMap) {
-			statusReportMap = new Mapper("POC_MVP/map_statusreportpolicy.map");
-		}
 		var mappedEntry = statusReportMap.map(entries);
 		var csdAndPolicyLine = mappedEntry.getString("status_line");
 		//var policyName = mappedEntry.getString("policy_name")

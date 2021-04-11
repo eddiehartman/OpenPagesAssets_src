@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="28" UUID="93354fee-06c1-4270-b644-c59166ecada0" created="Wed Sep 23 14:25:53 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate CSD Docs" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="25" UUID="93354fee-06c1-4270-b644-c59166ecada0" created="Wed Sep 23 14:25:53 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate CSD Docs" modified="Wed Dec 23 09:13:05 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Migrate CSD Docs">
-        <ModTime>1613493649397</ModTime>
+        <ModTime>1608711184874</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Now to find CSD Document for this CSD
 
@@ -20,7 +20,7 @@ for (csdDoc in csdDocumentList) {
 	 	showDoc = system.newEntry();
 	 	showDoc.merge(csdDoc);
 	 	showDoc.removeAttribute("Content");
-	 	log("WARN", "<<<<< CSD document extension not set: " + showDoc.Name + " - " + showDoc.Abstract);
+	 	log("WARN", "<<<<< CSD document extension not set: " + showDoc.toJSON());
 	 	csdDocEntry.extension = "";
 	 } else {
 		 csdDocEntry.extension = ext.toLowerCase();

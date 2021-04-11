@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="28" UUID="7e22ba8d-1d5a-475b-ad5a-de80ec1ad773" created="Tue Oct 06 16:01:59 CEST 2020" createdBy="eddie" main="z_LogCSDstatii" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="27" UUID="7e22ba8d-1d5a-475b-ad5a-de80ec1ad773" created="Tue Oct 06 16:01:59 CEST 2020" createdBy="eddie" main="z_LogCSDstatii" modified="Tue Dec 08 18:11:40 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <AssemblyLine name="z_LogCSDstatii">
-        <ModTime>1613493656014</ModTime>
+        <ModTime>1607447403036</ModTime>
         <Settings>
             <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
             <parameter name="automapattributes">false</parameter>
@@ -24,6 +24,7 @@ ePolicyObj]]></parameter>
         <LogConfig/>
         <ContainerEF name="EntryFeedContainer"/>
         <ContainerDF name="DataFlowContainer">
+            <ModTime>1607447403036</ModTime>
             <Script name="ePolicy2OP_define functions">
                 <InheritFrom>/Scripts/ePolicy2OP_define functions</InheritFrom>
                 <ModTime>1601993605548</ModTime>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="193" UUID="02553e44-fd3f-4bed-9240-f9777b3e0ff6" created="Wed Aug 19 12:22:55 CEST 2020" createdBy="eddie" main="z_test" modified="Wed Dec 02 17:08:02 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_test">
+        <ModTime>1606925282390</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[OpenPagesObj
+Script_Lib
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="test" state="Enabled"/>
+                <Component name="Java code" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1606925282390</ModTime>
+            <Script name="test">
+                <ModTime>1606925282390</ModTime>
+                <parameter name="script"><![CDATA[folder = "/media/psf/Home/Downloads";
+filenames = [
+	"(更新版)Customer_Security_Document_V1.3__CSD_Japan_Japan.docx",
+	"Customer Security Document_V2.1.1__CSD_HBT_2017-06-21-12.56.41.765328.docx",
+	"Customer Security Document__CSD_CBANA_2014-10-09-18.28.05.614806.docx"
+]
+
+headerStyles = {
+	TOC1: true,
+	Header1: true,
+	11: true
+}
+
+for (i in filenames) {
+	filename = filenames[i];
+	log("\n--------------------- " + filename);
+	filepath = folder + "/" + filename;
+	
+	var fis = new java.io.FileInputStream(filepath);
+	var doc = new org.apache.poi.xwpf.usermodel.XWPFDocument(org.apache.poi.openxml4j.opc.OPCPackage.open(fis));
+	var filepath = folder + "/" + filename;
+		
+	var foundIt = false;
+	var tables = doc.getTables();
+	for (var i = tables.length-1; i >= 0 && !foundIt; i--) {
+		table = tables[i];
+		if (!table) {
+			continue;
+		}
+		var rows = table.getRows();
+		if (rows.length < 2) {
+			continue;
+		}
+		for (var j = 0; j < 5 && j < rows.length && !foundIt; j++) {
+			var cells = rows[j].getTableCells();
+			if (cells.length < 2) {
+				continue;
+			}
+			var txt =  cells[1].getText();
+			//log("Checking " + txt);
+			var val = txt.match(/([\d.a-zA-Z]+[.][\d.a-zA-Z]+)/);
+			if (val != null) {
+				log("Found it: " + val[1]);
+				//foundIt = true;
+				//break;
+			}
+		}
+	}	
+
+
+	fis.close();
+}]]></parameter>
+            </Script>
+            <Script name="Java code">
+                <ModTime>1606829825297</ModTime>
+                <parameter name="enabled">false</parameter>
+                <parameter name="script"><![CDATA[/*
+import java.io.*; 
+import java.util.ArrayList; 
+import java.util.StringTokenizer; 
+import java.util.regex.Matcher; 
+import java.util.regex.Pattern; 
+import org.apache.poi.POIOLE2TextExtractor; 
+import org.apache.poi.extractor.ExtractorFactory; 
+import org.apache.poi.hpsf.*; 
+import org.apache.poi.hwpf.HWPFDocument; 
+import org.apache.poi.hwpf.extractor.WordExtractor; 
+import org.apache.poi.hwpf.usermodel.Paragraph; 
+import org.apache.poi.hwpf.usermodel.Range; 
+import org.apache.poi.hwpf.usermodel.Table; 
+import org.apache.poi.hwpf.usermodel.TableCell; 
+import org.apache.poi.hwpf.usermodel.TableRow; 
+import org.apache.poi.poifs.filesystem.POIFSFileSystem; 
+
+import excel.Workbook; 
+  
+public class readwordIMP 
+{ 
+        public readwordIMP() 
+        { 
+                 Table table = null; 
+                 TableRow  row = null; 
+                 String filesname = "D:\\Akhil\\TEMP\\maths\\limits and contin\\Limits - 1 - Assignment Info\\IITPU1_M_11_1_M.doc"; 
+
+                 ArrayList<String> al=new ArrayList<String>(); 
+                try 
+                { 
+                  POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filesname));                 
+                  HWPFDocument doc = new HWPFDocument(fs);         
+                  String character; 
+                  Range range = doc.getRange(); 
+                  
+                  Paragraph tablePar; 
+                  tablePar = range.getParagraph(0); 
+                
+               if (isInTable()) { 
+                     table = range.getTable(tablePar); 
+                  
+                    for (int rowIdx=4; rowIdx<table.numRows(); rowIdx++) 
+                    { 
+                    row = table.getRow(rowIdx);     
+                        System.out.println("row "+(rowIdx+1)+"qwwq"+row.numCells()); 
+                        
+ ****               Paragraph   tab=row.getParagraph(0); 
+                      Table t=row.getTable(tab); 
+                      System.out.println("number of rows "+t.NumRows());           ************** 
+
+
+                  //      for (int colIdx=0; colIdx<row.numCells(); colIdx++) 
+                    //    { 
+                      //       TableCell cell = row.getCell(colIdx); 
+                        //     character=cell.getParagraph(0).text(); 
+
+                              
+          
+                          //   character=character.substring(0, character.length()-1);                     
+
+                            // al.add(character); 
+                            
+                        //} 
+                      }         
+                } 
+                
+          } catch(Exception e) { 
+                    e.printStackTrace(); 
+                } 
+        } 
+        private Paragraph Paragraph(int i) { 
+                // TODO Auto-generated method stub 
+                return null; 
+        } 
+        private boolean isInTable() { 
+                // TODO Auto-generated method stub 
+                return true; 
+        } 
+        public static void main( String[] args ) 
+        { 
+                readwordIMP t=new readwordIMP(); 
+    } 
+}
+ * 
+ */]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

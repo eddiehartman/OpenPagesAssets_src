@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="157" UUID="c35420a2-7da5-4651-b292-3607c0375ee4" created="Tue Jun 02 17:24:59 CEST 2020" createdBy="eddie" main="WordDoc" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="156" UUID="c35420a2-7da5-4651-b292-3607c0375ee4" created="Tue Jun 02 17:24:59 CEST 2020" createdBy="eddie" main="WordDoc" modified="Fri Oct 09 15:34:19 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="WordDoc">
-        <ModTime>1613493642171</ModTime>
+        <ModTime>1602249884939</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var WordDoc = function (filenameTemplate)
 {

@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="531bb8fd-2ce1-4c4c-b2cd-98a32c19c373" created="Fri Sep 18 11:35:47 CEST 2020" createdBy="eddie" main="ePolicyDB" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="531bb8fd-2ce1-4c4c-b2cd-98a32c19c373" created="Fri Sep 18 11:35:47 CEST 2020" createdBy="eddie" main="ePolicyDB" modified="Fri Sep 18 11:36:01 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Container name="ePolicyDB">
+        <ModTime>1600421758933</ModTime>
         <Container name="Data"/>
         <Properties name="Config">
+            <ModTime>1600421758933</ModTime>
             <Stores>
-                <PropertyStore name="ePolicyDB">
+                <PropertyStore name="Default">
                     <ModTime>1600421758933</ModTime>
                     <Parser/>
                     <RawConnector>
                         <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                        <ModTime>1600421758933</ModTime>
                         <parameter name="collection">POC_MVP/ePolicyDB.properties</parameter>
                         <parameter name="collectionType">Default</parameter>
                     </RawConnector>

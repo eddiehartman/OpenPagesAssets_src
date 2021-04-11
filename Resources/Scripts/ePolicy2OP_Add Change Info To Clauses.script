@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="79" UUID="137ec49d-50c0-475c-981f-2f0c480a44e2" created="Tue Oct 06 14:16:54 CEST 2020" createdBy="eddie" main="ePolicy2OP_Add Change Info To Clauses" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="78" UUID="137ec49d-50c0-475c-981f-2f0c480a44e2" created="Tue Oct 06 14:16:54 CEST 2020" createdBy="eddie" main="ePolicy2OP_Add Change Info To Clauses" modified="Wed Dec 16 13:14:22 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Add Change Info To Clauses">
-        <ModTime>1613493649192</ModTime>
+        <ModTime>1608120861865</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Now to process clause controls and update OpenPages as needed
 

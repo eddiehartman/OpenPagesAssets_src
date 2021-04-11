@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="24" UUID="a094212d-68f0-4a95-88fa-582e61f2aaf0" created="Fri Apr 17 10:53:01 CEST 2020" createdBy="Administrator" main="OP_SOXAccount" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="23" UUID="a094212d-68f0-4a95-88fa-582e61f2aaf0" created="Fri Apr 17 10:53:01 CEST 2020" createdBy="Administrator" main="OP_SOXAccount" modified="Wed Sep 02 16:24:26 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <ALMap name="OP_SOXAccount">
-        <ModTime>1613493655843</ModTime>
+        <ModTime>1599056666507</ModTime>
         <AttributeMap name="Input">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1599056666507</ModTime>
             <AttributeMapItem>
                 <Name>Account Alias</Name>
                 <Type>advanced</Type>

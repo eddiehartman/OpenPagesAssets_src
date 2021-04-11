@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="7" UUID="298e525e-20d9-4349-a1c9-9fdac4d91331" created="Tue Jun 02 14:26:28 CEST 2020" createdBy="eddie" main="fileTypes" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="6" UUID="298e525e-20d9-4349-a1c9-9fdac4d91331" created="Tue Jun 02 14:26:28 CEST 2020" createdBy="eddie" main="fileTypes" modified="Tue Aug 04 17:23:56 IST 2020" modifiedBy="AnilPandey" project="POC_MVP" version="7.1.1">
     <Script name="fileTypes">
-        <ModTime>1613493641925</ModTime>
+        <ModTime>1596542035703</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[{
     "fileTypes": {

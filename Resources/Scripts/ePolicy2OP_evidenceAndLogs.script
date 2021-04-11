@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="143" UUID="2cd71b2e-c91a-46ac-82f3-faeb9f7fac8d" created="Mon Aug 17 15:52:05 CEST 2020" createdBy="eddie" main="ePolicy2OP_evidenceAndLogs" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="142" UUID="2cd71b2e-c91a-46ac-82f3-faeb9f7fac8d" created="Mon Aug 17 15:52:05 CEST 2020" createdBy="eddie" main="ePolicy2OP_evidenceAndLogs" modified="Mon Dec 21 11:50:51 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_evidenceAndLogs">
-        <ModTime>1613493655940</ModTime>
+        <ModTime>1608547850643</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[function addEvidenceAndLogs(args) {
 	// Now to find Evidences for this CSD

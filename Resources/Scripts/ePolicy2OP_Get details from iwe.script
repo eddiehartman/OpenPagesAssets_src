@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="12" UUID="89b5166f-9443-4e9d-be7c-6fb0b0fa91f8" created="Wed Sep 23 14:24:19 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get details from iwe" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="11" UUID="89b5166f-9443-4e9d-be7c-6fb0b0fa91f8" created="Wed Sep 23 14:24:19 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get details from iwe" modified="Tue Dec 22 12:00:16 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Get details from iwe">
-        <ModTime>1613493655876</ModTime>
+        <ModTime>1608634814762</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Get passed setting from the Initial Work Entry
 if (typeof work != "undefined" 

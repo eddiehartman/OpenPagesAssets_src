@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="30" UUID="b8f2bdc4-edb1-44ed-9ffd-a59fd1149e57" created="Mon Sep 28 16:06:06 CEST 2020" createdBy="eddie" main="ePolicy2OP_Create Migration Log" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
-    <Script name="ePolicy2OP_Create Migration Log">
-        <ModTime>1613493649011</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="29" UUID="b8f2bdc4-edb1-44ed-9ffd-a59fd1149e57" created="Mon Sep 28 16:06:06 CEST 2020" createdBy="eddie" main=".ePolicy2OP_Create Migration Log.script" modified="Mon Nov 30 20:30:28 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name=".ePolicy2OP_Create Migration Log.script">
+        <ModTime>1602157982174</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Now to create the Migration Log for Clause Controls
 

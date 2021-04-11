@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="94" UUID="58fafe41-3659-43a5-8d99-65eb9f109133" created="Mon Nov 09 12:05:10 CET 2020" createdBy="eddie" main="z_CheckCCMigration" modified="Mon Nov 09 16:20:20 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_CheckCCMigration">
+        <ModTime>1604935220162</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[ClauseControlObj
+DeviationsMap
+Mapper
+OpenPagesObj
+Script_Lib
+Timer
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Setup" state="Enabled"/>
+                <Component name="Check CC Updates" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1604935220162</ModTime>
+            <Script name="Setup">
+                <ModTime>1604933867037</ModTime>
+                <parameter name="script"><![CDATA[policyName = "POL-1133-Acc-341-AG"; // 1089, 1091, 1093
+
+log("\n\n\n----------- Using Policy: " + policyName + "\n\n\n.");
+
+timer = new Timer();
+
+ePolicy = {
+    userName: "db2inst1",
+    password: "Epolicy2ibm@123",
+    hostname: "mopbzp174025.fr.dst.ibm.com",
+    port: "50000",
+    database: "POLICYL"
+  }
+
+mappingTable = {};
+
+op = new OpenPagesObj();
+
+db = new ePolicyObj({
+	    userName: "db2inst1",
+	    password: "Epolicy2ibm@123",
+	    hostName: "mopbzp174025.fr.dst.ibm.com",
+	    port: "50000",
+	    database: "POLICYL"
+	  });
+
+var CSDjson = '{"TEMPLATE_ID":1288,"TEMPLATE_TYPE_ID":2,"ACCOUNT_ID":1248,"TEMPLATE_TYPE_NAME":"Base Policy","NEXT_REVIEW_DATE":"2018-07-11","ACCOUNT_NUMBER_TYPE_NAME":null,"STATUS":"Production","EMAIL":"jrvalero@us.ibm.com","DELETED_TS":null,"LOCKED_FLAG":"N","FULL_NAME":"United States of America","NAME":"Customer Security Document","POLICY_TYPE_ID":24,"ID":5685,"REVISION":1,"CURRENT_APPROVAL_DATE":"2017-01-11","FILE_NAME":"","IMPORTED_FLAG":"N","TEMPLATE_POLICYTYPE_NAME":"CSD","LOCATION_ID":245,"LOCKED_BY":null,"REVISION_COUNT":1,"STATUS_ID":7,"ENVIRONMENT":"","TEMPLATE_POLICYTYPE_ID":24,"UPDATED_TS":"2014-10-09 18:28:05.614806","POLICY_TYPE_NAME":"CSD","LOCKED_TS":null,"TEMPLATE_VERSION":"1.2                      ","FORMAT":"DOCX","POLICY_ID":3003,"ACCOUNT_NUMBER":"","SHORTNAME":"CBANA","HISTORY_FLAG":"Y"}';
+var CSD = work.fromJSON(CSDjson);
+CSD.csd_status = CSD.status;
+
+log("Lookup Policy " + policyName + "...");
+var newPolicy = op.findOne("Name", policyName, "Policy");
+if (newPolicy == null) {
+	log("ERROR", "Unable to find Policy: " + policyName);
+	throw "Unable to find Policy: " + policyName
+}
+
+var id = newPolicy.getString("Resource ID");
+
+log("\n\n\n======================-----> Found " + policyName + " (" + id 
+		+ ") - Status: " 
+		+ newPolicy.getString("OPSS-Pol:Status")
+		+ "\n\n\n.");
+
+cc = new ClauseControlObj({
+	openPagesObj: op,
+	debug: false,
+	validate: true
+});
+
+devMapObj = new DeviationMap({id: id, op: op, db: db});
+
+
+function fixClient(txt, token) {
+	var tokenLen = token.length;
+	var p = 1;
+	do {
+		p = txt.indexOf(token);
+		if (p >= 0) {
+			txt = txt.substring(0, p) + "Copacabana" + txt.substring(p+tokenLen);
+		}
+	} while (p >= 0);
+	return txt;	
+}]]></parameter>
+            </Script>
+            <Script name="Check CC Updates">
+                <ModTime>1604935220162</ModTime>
+                <parameter name="script"><![CDATA[ccTypes = {RR: true, RV: true};
+
+token = "[%customer%]";
+
+bad = [];
+for (ccType in ccTypes) {
+	log("--- Checking " + ccType);
+	
+	actCCs = devMapObj.opMap[ccType];
+	epCCs = devMapObj.epMap[ccType];
+
+	arr = actCCs.keySet().toArray();
+	java.util.Arrays.sort(arr);
+	cnt = 0;
+	for (ref in arr) {
+		actualCC = actCCs.get(ref);
+		epolicyCC = epCCs.get(ref);
+		templateCC = cc.findClauseControl(ref);
+		
+		if (cnt++ % 25 == 0) {
+			log("..." + cnt);
+		}
+		
+		// Now to compare the values
+		found = [];
+		if (ccType == "RR") {
+			for (var i = 2; i < 5; i++) {
+				if (typeof epolicyCC == "undefined" || epolicyCC == null) continue;
+				
+				epValue = epolicyCC["col" + i].trim().replaceAll("\n","|").replaceAll("  ", " ");
+				actValue = fixClient(actualCC["col" + i].trim().replaceAll("\n","|").replaceAll("  ", " "), token);
+				if (epValue != actValue && epValue != "TBD" && epValue) {
+					found.push("RR " + ref + " col"+ i + " not correctly set to ePolicy value"
+								+ "\n epValue: " + epValue
+								+ "\n  actual: " + actValue);
+				}
+			}
+		} else {
+			for (var i = 2; i < 5; i++) {
+				if (i == 3) {
+					shouldBeValue = fixClient(templateCC.getString("GTS-ClauseCtl:Col" + i).trim().replaceAll("\n","|").replaceAll("  ", " "), token);
+					err = " does not have template value";
+				} else {
+					if (typeof epolicyCC == "undefined" || epolicyCC == null) continue;
+					shouldBeValue = epolicyCC["col" + i].trim().replaceAll("\n","|").replaceAll("  ", " ");;
+					err = " does not have ePolicy value";
+				}
+				actValue = fixClient(actualCC["col" + i].trim().replaceAll("\n","|").replaceAll("  ", " "), token);
+				if (shouldBeValue != actValue && shouldBeValue != "TBD" && shouldBeValue) {
+					found.push("RV " + ref + " col" + i + " " + err
+								+ "\n correct: " + shouldBeValue
+								+ "\n  actual: " + actValue);
+				}
+			}
+		}
+		if (found.length > 0) {
+			bad = bad.concat(found);
+		}
+	}
+	
+	log("Handled " + cnt + " CCs");
+}
+
+if (bad.length == 0) {
+	log("No problems found! :)");
+	return;
+}
+
+log("Found " + bad.length + " problems:\n" + bad.join("\n   "));]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

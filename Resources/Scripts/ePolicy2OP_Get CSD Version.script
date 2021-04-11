@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="62" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get CSD Version" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="52" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get CSD Version" modified="Thu Dec 10 22:56:11 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Get CSD Version">
-        <ModTime>1613493642122</ModTime>
+        <ModTime>1607637370216</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Find policy Version and Sub- Version
 versionSubversion = {
 	template: {
-		value: "?.?",
+		value: "0.0",
 		match: "template version:"
 	},
 	policy: {
-		value: "?.?",
+		value: "0.0",
 		match: "document identification:"
 	}
 }
@@ -22,21 +22,20 @@ for (csdDoc in csdDocumentList) {
 	// Initial version numbers to unknown values
 	
 	versionSubversion = readVersion(versionSubversion, bytesarr);
-	var foundValue = versionSubversion.policy.value;
-	var firstDigit = foundValue.substring(0,1);
-	if (!(firstDigit >= "0" && firstDigit <= "9")
-		&& !firstDigit.equalsIgnoreCase("x")) {
+	if (versionSubversion.policy.value.toLowerCase().startsWith("x") 
+		|| versionSubversion.policy.value.startsWith("9")
+		|| versionSubversion.policy.value.startsWith("0")
+		|| versionSubversion.template.value.startsWith("x")
+		|| versionSubversion.template.value.startsWith("9")
+		|| versionSubversion.template.value.startsWith("0")) {
 		versionSubversion = findVersion(versionSubversion, bytesarr);
 	}
 }
 
-//versionSubversion.policy.value = String(latestVersion(getVersion(CSD.getString("Name")), versionSubversion.policy.value) || "0.0")
-//									.replace("Version", "").replace("version", "").replace("V", "").replace("v", "");
-if (versionSubversion.policy.value == "?") {
-	versionSubversion.policy.value = getVersionFromName(CSD.getString("Name"));
-}
+versionSubversion.policy.value = String(latestVersion(getVersion(CSD.getString("Name")), versionSubversion.policy.value) || "0.0")
+									.replace("Version", "").replace("version", "").replace("V", "").replace("v", "");
 
-versionSubversion.template.value = CSD.getString("TEMPLATE_VERSION") || "?.?";
+versionSubversion.template.value = CSD.getString("TEMPLATE_VERSION") || "0.0";
 
 // Accumulate any errors regarding missing info
 versionErrors = [];
@@ -44,13 +43,13 @@ versionErrors = [];
 // Verify that policy and/or template versions have been found
 for (verType in versionSubversion) {
 	if (versionSubversion[verType].value == "0.0") {
-		versionErrors.push("No " + verType + " version number read from the CSD or its attached documents.");
+		//versionErrors.push("No " + verType + " version number read from the CSD or its attached documents.");
 	}
 }
 
 // Log this if it is the case as an error
 if (versionErrors.length > 0) {
-	log("WARN", "Error getting version info for CSD: " + CSD.Name + " (" + CSD.id + ")"
+	log("ERROR", "Error getting version info for CSD: " + CSD.Name + " (" + CSD.id + ")"
 					+ "|" + versionErrors.join("|"));
 	return;
 }

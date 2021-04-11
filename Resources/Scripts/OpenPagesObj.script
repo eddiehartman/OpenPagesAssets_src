@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="748" UUID="6c83ac8f-1996-446f-a3e7-7d82eaeda084" created="Thu Jun 04 13:53:22 CEST 2020" createdBy="eddie" main="OpenPagesObj" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="743" UUID="6c83ac8f-1996-446f-a3e7-7d82eaeda084" created="Thu Jun 04 13:53:22 CEST 2020" createdBy="eddie" main="OpenPagesObj" modified="Wed Dec 16 15:18:23 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="OpenPagesObj">
-        <ModTime>1613493654278</ModTime>
+        <ModTime>1608128303131</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var OpenPagesObj = function(opconnector) {
 	//this.vrs = "20200603 1354"; // Initial version
@@ -596,13 +596,6 @@
 							|| entry.getObject("parentId");
 		if (typeof parentID == "string") {
 			parentID = parentID.trim();
-		}
-		
-		if ("SOXDocument".equalsIgnoreCase(objectType)) {
-			if (entry.content == null || typeof entry.getObject("content") != "[B") {
-				log("WARN", "\n\n!!!!!!! Cannot add SOXDocument - content is not valid Byte Array\n\n" + entry + "\n\n!!!!!!!");
-				return entry;
-			}
 		}
 		
 		this.saveParams();

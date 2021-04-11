@@ -1,38 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="4" UUID="1808c952-af43-4b3c-b730-8b27bab561e2" created="Wed Sep 23 11:30:52 CEST 2020" createdBy="eddie" main="CSVReader" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="1808c952-af43-4b3c-b730-8b27bab561e2" created="Wed Sep 23 11:30:52 CEST 2020" createdBy="eddie" main="CSVReader" modified="Wed Sep 23 11:39:13 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Connector name="CSVReader">
         <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
-        <ModTime>1613493641987</ModTime>
+        <ModTime>1600853952677</ModTime>
         <ConnectorMode>Iterator</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </Configuration>
         <Parser>
             <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+            <ModTime>1600853952677</ModTime>
             <parameter name="csvColumnSeparator">,</parameter>
         </Parser>
         <AttributeMap name="Input">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </AttributeMap>
         <AttributeMap name="Output">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </AttributeMap>
         <DeltaSettings>
+            <ModTime>1600853452612</ModTime>
             <WhenToCommit>After every database operation</WhenToCommit>
             <RowLocking>SERIALIZABLE</RowLocking>
             <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
         </DeltaSettings>
         <Schema name="Input">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </Schema>
         <Schema name="Output">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </Schema>
         <LinkCriteria>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </LinkCriteria>
         <Hooks>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853440984</ModTime>
         </Hooks>
         <CheckpointConfig/>
         <SandboxConfig/>
@@ -43,6 +52,7 @@
         <Operations/>
         <PoolDefinition>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1600853452769</ModTime>
             <Enabled>false</Enabled>
             <MinPoolSize>0</MinPoolSize>
             <MaxPoolSize>0</MaxPoolSize>

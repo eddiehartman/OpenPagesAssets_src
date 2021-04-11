@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="5" UUID="34a83376-cc9b-45da-b0d2-b4b35ad8cac1" created="Wed Sep 23 14:30:14 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate Technical Specifications" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="4" UUID="34a83376-cc9b-45da-b0d2-b4b35ad8cac1" created="Wed Sep 23 14:30:14 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate Technical Specifications" modified="Wed Nov 11 12:06:21 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Migrate Technical Specifications">
-        <ModTime>1613493654684</ModTime>
+        <ModTime>1605092780596</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Now get Technical Specifications
 

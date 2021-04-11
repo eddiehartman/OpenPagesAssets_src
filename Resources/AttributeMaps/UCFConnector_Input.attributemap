@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="2c5b5a81-a306-40a4-b7db-038ccd7a6caf" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="UCFConnector_Input" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="2c5b5a81-a306-40a4-b7db-038ccd7a6caf" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="UCFConnector_Input" modified="Wed Jun 17 20:38:22 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <ALMap name="UCFConnector_Input">
-        <ModTime>1613493641845</ModTime>
+        <ModTime>1592419102928</ModTime>
         <AttributeMap name="Input">
             <InheritFrom>[parent]</InheritFrom>
             <AttributeMapItem>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="226" UUID="c35420a2-7da5-4651-b292-3607c0375ee4" created="Tue Jun 02 17:24:59 CEST 2020" createdBy="eddie" main="Mapper" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="225" UUID="c35420a2-7da5-4651-b292-3607c0375ee4" created="Tue Jun 02 17:24:59 CEST 2020" createdBy="eddie" main="Mapper" modified="Wed Sep 02 20:12:54 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="Mapper">
-        <ModTime>1613493656062</ModTime>
+        <ModTime>1599070374421</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var Mapper = function (filePath)
 {

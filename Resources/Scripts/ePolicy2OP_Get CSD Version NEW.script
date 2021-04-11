@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="44" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get CSD Version NEW" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
-    <Script name="ePolicy2OP_Get CSD Version NEW">
-        <ModTime>1613493641139</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="43" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main=".ePolicy2OP_Get CSD Version.script" modified="Tue Dec 08 15:59:38 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name=".ePolicy2OP_Get CSD Version.script">
+        <ModTime>1606771997452</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Find policy Version and Sub- Version
 

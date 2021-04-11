@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="67" UUID="9ebb9502-3217-45e3-b205-fa149975b77c" created="Wed Jun 03 20:07:57 CEST 2020" createdBy="eddie" main="ePolicyObj" modified="Tue Feb 16 17:40:48 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="66" UUID="9ebb9502-3217-45e3-b205-fa149975b77c" created="Wed Jun 03 20:07:57 CEST 2020" createdBy="eddie" main="ePolicyObj" modified="Fri Dec 11 13:03:28 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicyObj">
-        <ModTime>1613493648920</ModTime>
+        <ModTime>1607688207340</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[var ePolicyObj = function(args) {
 	//this.vrs = "20200603 2008"; // Initial version

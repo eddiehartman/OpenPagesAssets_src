@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="21" UUID="91f49950-aec7-4337-8be8-ffca206eff3c" created="Tue May 05 14:14:30 IST 2020" createdBy="DishaSingh" main="Export Risks" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="17" UUID="91f49950-aec7-4337-8be8-ffca206eff3c" created="Tue May 05 14:14:30 IST 2020" createdBy="DishaSingh" main="Export Risks" modified="Wed Jun 17 20:38:23 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Scheduler name="Export Risks">
-        <ModTime>1613493654387</ModTime>
-        <parameter name="StartTimes">@SUBSTITUTE{property.POC_MVP:schedule}</parameter>
+        <ModTime>1592419103031</ModTime>
+        <parameter name="StartTimes">* * * 0 1 0</parameter>
         <parameter name="assemblyLine">Risk_2_csv</parameter>
         <parameter name="enabled">true</parameter>
     </Scheduler>

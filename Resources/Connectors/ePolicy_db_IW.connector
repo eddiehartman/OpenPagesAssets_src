@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="9" UUID="677401a6-16af-4518-b083-bb63b265fb6e" created="Wed May 06 17:27:35 IST 2020" createdBy="AnilPandey" main="ePolicy_db_IW" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="PolicyDB" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="8" UUID="677401a6-16af-4518-b083-bb63b265fb6e" created="Wed May 06 17:27:35 IST 2020" createdBy="AnilPandey" main="ePolicy_db_IW" modified="Fri Sep 04 20:54:01 CEST 2020" modifiedBy="eddie" project="PolicyDB" version="7.1.1">
     <Connector name="ePolicy_db_IW">
         <InheritFrom>system:/Connectors/ibmdi.JDBC</InheritFrom>
-        <ModTime>1613493649115</ModTime>
+        <ModTime>1599245371092</ModTime>
         <ConnectorMode>Iterator</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1599245343199</ModTime>
             <parameter name="custom.database">POLICYL</parameter>
             <parameter name="custom.form">1</parameter>
             <parameter name="custom.hostname">mopbzp174025.fr.dst.ibm.com</parameter>
@@ -34,6 +35,7 @@
         </DeltaSettings>
         <Schema name="Input">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1599245371092</ModTime>
             <SchemaItem>
                 <Name>COMMENT</Name>
             </SchemaItem>
@@ -152,6 +154,7 @@
         </Schema>
         <Schema name="Output">
             <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1599245371092</ModTime>
             <SchemaItem>
                 <Name>COMMENT</Name>
             </SchemaItem>

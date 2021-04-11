@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="66" UUID="895a380c-cf8d-46b1-9f96-b568566fb3c3" created="Mon Oct 05 13:47:39 CEST 2020" createdBy="eddie" main="ePolicy2OP_Correct Clause Controls" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="62" UUID="895a380c-cf8d-46b1-9f96-b568566fb3c3" created="Mon Oct 05 13:47:39 CEST 2020" createdBy="eddie" main="ePolicy2OP_Correct Clause Controls" modified="Thu Dec 17 16:11:53 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Correct Clause Controls">
-        <ModTime>1613493654521</ModTime>
+        <ModTime>1608217912556</ModTime>
         <parameter name="enabled">true</parameter>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Now to process clause controls and update OpenPages as needed
@@ -9,16 +9,11 @@ if (debug || !doMigration || skipToEnd || typeof updates == "undefined" || updat
 	return; // do nothing
 }
 
-targetStatus = mapStatus(CSD.csd_status, "Mapping CSD to Policy");
-
-/* The code below is disabled since the spec has changed
-
 // Do not do this step if the target status is Draft
+targetStatus = mapStatus(CSD.csd_status, "Mapping CSD to Policy");
 if ("Draft".equalsIgnoreCase(targetStatus)) {
 	return;
 }
-
-*/
 
 timer.start("Clause Control Correction");
 log("Correcting Clause Controls as required...");

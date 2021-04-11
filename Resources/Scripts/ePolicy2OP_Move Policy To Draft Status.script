@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="35" UUID="d9fde3b0-87bf-40c4-af67-12024365c1f9" created="Mon Sep 28 16:00:28 CEST 2020" createdBy="eddie" main="ePolicy2OP_Move Policy To Draft Status" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="34" UUID="d9fde3b0-87bf-40c4-af67-12024365c1f9" created="Mon Sep 28 16:00:28 CEST 2020" createdBy="eddie" main="ePolicy2OP_Move Policy To Draft Status" modified="Thu Dec 10 20:48:36 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="ePolicy2OP_Move Policy To Draft Status">
-        <ModTime>1613493654705</ModTime>
+        <ModTime>1607629715558</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// First check what the end status of the Policy will be. If it's not Retired, then start progressing through statii
 // starting with Draft status, causing the Generate Policy Workflow Action to create ClauseControls

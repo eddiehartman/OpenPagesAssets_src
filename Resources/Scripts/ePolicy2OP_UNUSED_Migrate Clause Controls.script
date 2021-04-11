@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="8206fde7-41b2-487e-bf95-ec9f506d1922" created="Wed Sep 23 14:26:27 CEST 2020" createdBy="eddie" main="ePolicy2OP_UNUSED_Migrate Clause Controls" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
-    <Script name="ePolicy2OP_UNUSED_Migrate Clause Controls">
-        <ModTime>1613493655130</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="8206fde7-41b2-487e-bf95-ec9f506d1922" created="Wed Sep 23 14:26:27 CEST 2020" createdBy="eddie" main="Migrate Clause Controls" modified="Wed Sep 23 14:26:27 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="Migrate Clause Controls">
+        <ModTime>1600863259948</ModTime>
         <parameter name="enabled">false</parameter>
         <parameter name="script"><![CDATA[// Load mapping files for Procedure and ClauseControls
 procedureMap = new Mapper("POC_MVP/map_procedure.map");

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="37" UUID="44069ff5-00e7-4e89-83ed-9cc3e3004a43" created="Wed Oct 14 12:53:10 CEST 2020" createdBy="eddie" main="MailObj" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="36" UUID="44069ff5-00e7-4e89-83ed-9cc3e3004a43" created="Wed Oct 14 12:53:10 CEST 2020" createdBy="eddie" main="MailObj" modified="Wed Dec 16 10:45:32 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="MailObj">
-        <ModTime>1613493654888</ModTime>
+        <ModTime>1608111910937</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// MailObj is used to send emails
 //

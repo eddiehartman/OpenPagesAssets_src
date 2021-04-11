@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="325" UUID="cc2c1334-a20f-4535-ba0b-de021014c4e4" created="Mon Oct 12 16:40:29 CEST 2020" createdBy="eddie" main="ePolicy2OP_define service functions SAVE" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
-    <Script name="ePolicy2OP_define service functions SAVE">
-        <ModTime>1613493642444</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="324" UUID="cc2c1334-a20f-4535-ba0b-de021014c4e4" created="Mon Oct 12 16:40:29 CEST 2020" createdBy="eddie" main="ePolicy2OP_define service functions" modified="Thu Nov 26 15:04:50 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_define service functions">
+        <ModTime>1606399490284</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// Functions used by this AL
 // Gather metrics from the passed AL, returning an object with the following properties:

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="3cd67997-b7b9-431e-9da7-72210bf8b867" created="Sun Jul 12 16:33:43 CEST 2020" createdBy="Eddie" main="TestDataConnector" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="3cd67997-b7b9-431e-9da7-72210bf8b867" created="Sun Jul 12 16:33:43 CEST 2020" createdBy="Eddie" main="TestDataConnector" modified="Sun Jul 12 16:33:43 CEST 2020" modifiedBy="Eddie" project="POC_MVP" version="7.1.1">
     <Connector name="TestDataConnector">
         <InheritFrom>system:/Connectors/ibmdi.FormEntryConnector</InheritFrom>
-        <ModTime>1613493655911</ModTime>
+        <ModTime>1594564423952</ModTime>
         <ConnectorMode>Iterator</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>

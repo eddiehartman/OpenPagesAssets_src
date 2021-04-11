@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="31" UUID="85491e98-1387-485f-a56a-f6551e18a9f2" created="Fri Apr 17 10:52:50 CEST 2020" createdBy="Administrator" main="OP_SOXRisk" modified="Tue Feb 16 17:40:46 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="30" UUID="85491e98-1387-485f-a56a-f6551e18a9f2" created="Fri Apr 17 10:52:50 CEST 2020" createdBy="Administrator" main="OP_SOXRisk" modified="Wed Jun 17 20:38:22 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <ALMap name="OP_SOXRisk">
-        <ModTime>1613493646680</ModTime>
+        <ModTime>1592419102775</ModTime>
         <AttributeMap name="Input">
             <InheritFrom>[parent]</InheritFrom>
             <AttributeMapItem>

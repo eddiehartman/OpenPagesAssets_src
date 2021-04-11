@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1008" UUID="7af64e89-95fd-404f-bc07-1920d12e860e" created="Wed Sep 23 14:20:42 CEST 2020" createdBy="eddie" main="DeviationsMap" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1007" UUID="7af64e89-95fd-404f-bc07-1920d12e860e" created="Wed Sep 23 14:20:42 CEST 2020" createdBy="eddie" main="DeviationsMap" modified="Thu Dec 17 20:34:34 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Script name="DeviationsMap">
-        <ModTime>1613493654941</ModTime>
+        <ModTime>1608233671449</ModTime>
         <parameter name="includeFiles"/>
         <parameter name="script"><![CDATA[// DeviationMap is used to read in Clause Controls and compare with those in OpenPages, generating a HashMap with details
 // about differences.

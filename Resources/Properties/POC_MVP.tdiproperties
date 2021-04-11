@@ -1,27 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="284" UUID="328d9cf3-1f8d-4ae1-8b4b-240ded52929b" created="Mon Mar 30 14:14:39 IST 2020" createdBy="DishaSingh" main="POC_MVP" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="271" UUID="328d9cf3-1f8d-4ae1-8b4b-240ded52929b" created="Mon Mar 30 14:14:39 IST 2020" createdBy="DishaSingh" main="POC_MVP" modified="Wed Dec 23 15:09:01 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Container name="POC_MVP">
+        <ModTime>1608732541561</ModTime>
         <Container name="Data">
+            <ModTime>1608732541561</ModTime>
             <ParameterList name="geo">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">geo</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">UAT</parameter>
                 <parameter name="value">UAT</parameter>
             </ParameterList>
             <ParameterList name="gsa.folder.path">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">gsa.folder.path</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">/gsa/pokgsa-p7/04/sarmecm_uat/Openpages/</parameter>
                 <parameter name="value">/gsa/pokgsa-p7/04/sarmecm_uat/Openpages/</parameter>
             </ParameterList>
             <ParameterList name="gsa.hostname">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">gsa.hostname</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">pokgsa.ibm.com</parameter>
                 <parameter name="value">pokgsa.ibm.com</parameter>
             </ParameterList>
             <ParameterList name="gsa.username">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">gsa.username</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">itrmop</parameter>
                 <parameter name="value">itrmop</parameter>
             </ParameterList>
@@ -54,38 +60,44 @@
                 <parameter name="Protect">true</parameter>
                 <parameter name="serverName">op.password</parameter>
                 <parameter name="serverProtect">true</parameter>
-                <parameter name="serverValue">{encr}bCSnHnx5EddkfwmtiBldPL9hWs/6Mt9+0eB00ixZAkucJiipRK5C87eiIF6ijvRaZvVV+h30OiQh7wvEIVAU4fff4mGa6kG4fO0TCR2EOMRssXfQLMv7eHUBR5DA/CKgghNr4O3NONMC1pnSqwUmI4bwFqNXCckVbpViB3fU13A=</parameter>
-                <parameter name="value">{encr}ajC233W0MRRGhnBHxGs6UcFwYeb7tUJy3hZfC6EiwY8X8GlFeu/htzuLttHESmFeiPHIGrr04y4P/Fa1eFrHjI2PydgWeKWO3QWCnxEXfmVzJ8m9FupC0MnCCIWdBGajLr7z4fVFh79KYG08AAdtzsjmLbhZfNVLEh9D9aTjzQQ=</parameter>
+                <parameter name="serverValue">!nOVEMBER@2017@123</parameter>
+                <parameter name="value">!nOVEMBER@2017@123</parameter>
             </ParameterList>
             <ParameterList name="op.uri.root">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">op.uri.root</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">/grc/api</parameter>
                 <parameter name="value">/grc/api</parameter>
             </ParameterList>
             <ParameterList name="op.url">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">op.url</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">https://gtsus-uat01.op.ibmcloud.com</parameter>
                 <parameter name="value">https://gtsus-uat01.op.ibmcloud.com</parameter>
             </ParameterList>
             <ParameterList name="op.username">
                 <parameter name="Property">true</parameter>
+                <parameter name="Protect">false</parameter>
                 <parameter name="serverName">op.username</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">dishas8@in.ibm.com</parameter>
                 <parameter name="value">dishas8@in.ibm.com</parameter>
             </ParameterList>
             <ParameterList name="policy.template">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">policy.template</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">POLT-215</parameter>
                 <parameter name="value">POLT-215</parameter>
             </ParameterList>
             <ParameterList name="schedule">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">schedule</parameter>
-                <parameter name="serverValue">* * * 21 0 0</parameter>
-                <parameter name="value">* * * 21 0 0</parameter>
+                <parameter name="serverProtect">false</parameter>
+                <parameter name="serverValue">* * * 0 0 0</parameter>
+                <parameter name="value">* * * 0 0 0</parameter>
             </ParameterList>
             <ParameterList name="service.port">
                 <parameter name="Property">true</parameter>
@@ -96,18 +108,21 @@
             <ParameterList name="smtp.hostname">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">smtp.hostname</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">smtp.gmail.com</parameter>
                 <parameter name="value">smtp.gmail.com</parameter>
             </ParameterList>
             <ParameterList name="smtp.password">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">smtp.password</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">fadiheowgawprnac</parameter>
                 <parameter name="value">fadiheowgawprnac</parameter>
             </ParameterList>
             <ParameterList name="smtp.port">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">smtp.port</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">465</parameter>
                 <parameter name="value">465</parameter>
             </ParameterList>
@@ -120,6 +135,7 @@
             <ParameterList name="smtp.username">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">smtp.username</parameter>
+                <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">eddiehartman@gmail.com</parameter>
                 <parameter name="value">eddiehartman@gmail.com</parameter>
             </ParameterList>
