@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="262" UUID="02553e44-fd3f-4bed-9240-f9777b3e0ff6" created="Wed Aug 19 12:22:55 CEST 2020" createdBy="eddie" main="z_StartTransition" modified="Tue Feb 16 17:41:02 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_StartTransition">
+        <ModTime>1613493662572</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[Mapper
+OpenPagesObj
+Script_Lib
+ePolicyObj
+ExcelObj
+]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Start transition" state="Enabled"/>
+                <Component name="OpenPages Connector" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <Script name="Start transition">
+                <ModTime>1603204424972</ModTime>
+                <parameter name="script"><![CDATA[objectType = "GTSDeviation";
+objectName = "DEV-383-CL-95-POL-74-Acc-166-AG";
+
+objectType = "Policy";
+objectName = "POL-977-Acc-341-AG";
+
+op = new OpenPagesObj(this.op || null);
+
+policyEntry = op.find("Name", objectName, objectType)[0];
+
+op.startTransition({
+	resourceId: policyEntry.getString("Resource ID"), 
+	objectType: objectType,
+	workflowName: "Policy Workflow", 
+	transitionName: "Generate Policy", 
+	statusField: "OPSS-Pol:Status",
+	resultingStatus: "Draft"	
+});]]></parameter>
+            </Script>
+            <Connector name="OpenPages Connector">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1603198382597</ModTime>
+                <ConnectorMode>AddOnly</ConnectorMode>
+                <ConnectorState>Passive</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings/>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <Hook name="after_initialize">
+                        <InheritFrom>[no inheritance]</InheritFrom>
+                        <Name>after_initialize</Name>
+                        <Script>op = thisConnector.connector;</Script>
+                        <Enabled>true</Enabled>
+                    </Hook>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

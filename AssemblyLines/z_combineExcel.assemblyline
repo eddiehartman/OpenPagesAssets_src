@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="9" UUID="5e2506e3-0c4d-44f9-a892-ae44ae4772bd" created="Mon Aug 24 10:01:50 CEST 2020" createdBy="eddie" main="z_combineExcel" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_combineExcel">
+        <ModTime>1613493649221</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[ExcelObj
+Mapper
+Script_Lib
+]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Do it" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <Script name="Do it">
+                <ModTime>1598256870193</ModTime>
+                <parameter name="script"><![CDATA[ex = new ExcelSheet("POC_MVP/test.xlsx");
+
+useDir = "/media/psf/Home/Downloads";
+dir = new java.io.File(useDir);
+list = dir.list();
+
+for (filename in list) {
+	if (filename.endsWith("xls")) {
+		log("Handling " + filename);
+		byteArray = loadFileToByteArray(useDir + "/" + filename);
+		
+		ex.addRows(byteArray);
+	}
+}]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

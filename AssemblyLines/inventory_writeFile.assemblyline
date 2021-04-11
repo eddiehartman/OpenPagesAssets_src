@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="86602a90-3fa4-4e7b-a700-d308fb940512" created="Thu Jun 25 13:19:09 CEST 2020" createdBy="eddie" main="inventory_writeFile" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="inventory_writeFile">
+        <ModTime>1613493641960</ModTime>
+        <Settings/>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates/>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer"/>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

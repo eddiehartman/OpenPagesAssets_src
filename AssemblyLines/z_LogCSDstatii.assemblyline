@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="28" UUID="7e22ba8d-1d5a-475b-ad5a-de80ec1ad773" created="Tue Oct 06 16:01:59 CEST 2020" createdBy="eddie" main="z_LogCSDstatii" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_LogCSDstatii">
+        <ModTime>1613493656014</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[Mapper
+Script_Lib
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="ePolicy2OP_define functions" state="Enabled"/>
+                <Component name="do it" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <Script name="ePolicy2OP_define functions">
+                <InheritFrom>/Scripts/ePolicy2OP_define functions</InheritFrom>
+                <ModTime>1601993605548</ModTime>
+            </Script>
+            <Script name="do it">
+                <ModTime>1607447403036</ModTime>
+                <parameter name="script"><![CDATA[db = new ePolicyObj({
+	    userName: "db2inst1",
+	    password: "Epolicy2ibm@123",
+	    hostName: "mopbzp174025.fr.dst.ibm.com",
+	    port: "50000",
+	    database: "POLICYL"
+	  });
+
+var accountName = "WHU";
+res = db.find("EPOLICY.ACCOUNT", "NAME", accountName);
+
+if (res.length == 0) {
+	var errmsg = "Unable to find Account in ePolicy db: " + accountName;
+	log("ERROR",errmsg);
+	errors[accountName] = errmsg;
+	resetErrors(); // just accumulate this error for the account
+	continue;
+}
+
+ePolicyAccount = res[0];
+log("Found account: " + accountName + " - ID: " + ePolicyAccount.ID
+	+ '\n' + ePolicyAccount.toJSON());
+
+
+statii = {};
+
+log("Reading CSDs...");
+
+CSDList = db.query("policy", ePolicyAccount);
+for (CSD in CSDList) {
+	status = CSD.getString("Status");
+	log(".. " + status);
+	statii[status] = mapStatus(status);
+}
+
+log("\n\n\n\n.");
+for (status in statii) {
+	log("---------- " + status + ": " + statii[status]);
+}]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

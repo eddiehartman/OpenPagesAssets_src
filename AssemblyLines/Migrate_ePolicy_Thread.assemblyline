@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1937" UUID="56eae6cc-1562-44cf-baea-b5ffa6b1e330" created="Wed May 27 16:17:07 IST 2020" createdBy="DishaSingh" main="Migrate_ePolicy_Thread" modified="Tue Feb 16 17:41:02 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Container name="References"/>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<AssemblyLine name="Migrate_ePolicy_Thread">
+        <ModTime>1613493662902</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[ClauseControlObj
+DeviationsMap
+ExcelObj
+Mapper
+OpenPagesObj
+RequestObj
+SCP
+Script_Lib
+Timer
+WordDoc
+ccUpdateObj
+ePolicyObj
+]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks>
+            <Hook name="epilog2">
+                <InheritFrom>[no inheritance]</InheritFrom>
+                <Name>epilog2</Name>
+                <Script><![CDATA[if (typeof alName != "undefined" && typeof timer != "undefined") {
+	timer.stop(alName);
+}
+
+// Log objects created
+log("");
+log("Total objects created: ");
+log(makeJson(_counters));
+
+// Show timing metrics
+var serviceTimers = timer.timers();
+var timingMap = new java.util.HashMap();
+for (var itemName in serviceTimers) {
+	timingMap.put(itemName, serviceTimers[itemName]);
+}
+var timingArray = timingMap.keySet().toArray();
+java.util.Arrays.sort(timingArray);
+
+var i = 0;
+for (var itemName in timingArray) {
+	var timing = timingMap[itemName];
+	var seconds = Math.round(timing/1000);
+	var minutes = Math.floor(seconds / 60);
+	var secondsAfter = seconds % 60;
+	log("    " + LJ(itemName, 65, i) 
+				+ RJ(minutes, 11, i) + " min"
+				+ RJ(secondsAfter, 3) + " sec");
+	i++;
+}
+
+csdPrefix = "";
+if (typeof CSD != "undefined" && CSD != null) {
+	csdPrefix = "CSD " + CSD.Name + " - ";
+}
+
+for (i in _errors) {
+	_errors[i] = csdPrefix + _errors[i];
+}
+
+_counters.Status = _counters.Status || {};
+_counters.Status[accountName] = "Completed";
+
+work._metrics = {
+	accountName: accountName,
+	timer: timer,
+	counters: _counters,
+	errors: _errors,
+	warnings: _warnings
+}]]></Script>
+                <Enabled>true</Enabled>
+            </Hook>
+            <Hook name="onfailure">
+                <InheritFrom>[no inheritance]</InheritFrom>
+                <Name>onfailure</Name>
+                <Script><![CDATA[log("*** AL ERROR HOOK ***")
+log("ERROR", "AL Error: " + error.message + " - " + error.exception);]]></Script>
+                <Enabled>true</Enabled>
+            </Hook>
+            <Hook name="prolog0">
+                <InheritFrom>[no inheritance]</InheritFrom>
+                <Name>prolog0</Name>
+                <Script><![CDATA[//vrs = "20200617 2112"; // Reading controls BEFORE mapping/adding Policy to OP
+//vrs = "20200618 1909"; // Fixed problems we found prior-to cadence
+//vrs = "20200703 1250"; // Now migrating Clauses (Procedures) and Control Clauses
+//vrs = "20200705 18:30"; // Everything done except Technical Specifications
+//vrs = "20200712 2140"; // Creating Excel sheets with multiple validation and history log entries
+//vrs = "20200731 2335"; // Renaming Policy with version.sub-version appended to the name
+//vrs = "20200802 1544"; // Corrected renaming functionality
+//vrs = "20200804 1623"; // Fixed vlEntry - change to hlEntry for History Log migration
+//vrs = "20200805 2243"; // Added timings and fixed TecSpec doc writing to make Name unique
+//vrs = "20200806 1612"; // Fixed Policy name update with version and sub-version
+//vrs = "20200810 1127"; // Removed renaming of Policy with vers/sub-vers
+//vrs = "20200819 1350"; // Making this a threaded AL
+//vrs = "20200826 1438"; // Add skippingClauseControls flag
+//vrs = "20200829 2237"; // Ensure ePolicy details in request are used
+//vrs = "20200903 1639"; // Policy now created parented to Policy Template, then renamed and given SOXAccount as parent as well
+//vrs = "20200928 1557"; // Updating Policy with correct DPE value
+//vrs = "20201005 1441"; // Adding transition through Workflow Actions to the right Status
+//vrs = "20201008 2147"; // Updating Clauses with details of changes made to Clause Controls
+//vrs = "20201009 1649"; // Added validation of mappingTable to-Refs
+//vrs = "20201009 2205"; // Reorganized AL
+//vrs = "20201019 1901"; // Added handling for Retired Status
+//vrs = "20201105 1119"; // Fixed handling of Clause Controls with feedback from Blade
+//vrs = "20201201 1424"; // No longer pushing Policy through statii (just Draft) and no mapping of ePolicy Control Clause columnar values
+//vrs = "20201201 1735"; // Updating Policy to mapped status from ePolicy
+//vrs = "20201201 1735"; // No longer updating Change History for CCs either now :/
+//vrs = "20201210 2245"; // Corrected validation error
+//vrs = "20201217 1612"; // Removed erraneous trim() of values to update Clause Controls with
+//vrs = "20201221 1216"; // Checking that CSD is passed in correctly to Thread
+//vrs = "20201223 0929"; // Fixed CSD.getString() error
+//vrs = "20210111 1958"; // Corrected handling of SOXDocuments
+//vrs = "20210112 2034"; // Re-enabled logging (WARN) when unable to determine version of a CSD
+//vrs = "20210113 1512"; // Fixed issue with csdPrefix
+vrs = "20210116 1723"; // Improved discovery of CSD version in attached doc
+
+// Defining some local functions for this AL
+// Initialize 'created' object
+_counters = {};
+_errors = [];
+_warnings = [];
+
+alName = task.getShortName();
+task.setParam("alName", alName);
+
+log("Migrate_ePolicy_Thread v" + vrs);
+
+// Display Order for Clauses (Procedures)
+displayOrder = {};
+displayOrder["introduction"] = 1;
+displayOrder["scope"] = 2;
+displayOrder["processes used in this document"] = 3;
+displayOrder["document structure"] = 4;
+displayOrder["information security policies (clause 5)"] = 5;
+displayOrder["organization of information security (clause 6)"] = 6;
+displayOrder["human Resource Security (clause 7)"] = 7;
+displayOrder["asset management (clause 8)" ] = 8;
+displayOrder["access control (clause 9)"] = 9;
+displayOrder["cryptography (clause 10)"] = 10;
+displayOrder["physical and environmental security (clause 11)"] = 11;
+displayOrder["operations security (clause 12)"] = 12;
+displayOrder["communications security (clause 13)"] = 13;
+displayOrder["systems acquisition, development and maintenance (clause 14)"] = 14;
+displayOrder["supplier relationships (clause 15)"] = 15;
+displayOrder["Summary of objectives for Clause 15"] = 15;
+displayOrder["management of information security incidents and improvements (clause 16)"] = 16;
+displayOrder["information security aspects of business continuity management (clause 17)"] = 17;
+displayOrder["compliance (clause 18)"] = 18;
+displayOrder["appendices"] = 19;
+displayOrder["technical specifications"] = 20;
+displayOrder["csd document control"] = 21;
+displayOrder["csd approved deviations"] = 22;
+displayOrder["pci-dss responsibility matrix and other pci information"] = 23;
+displayOrder["glossary"] = 24;
+
+orderIndex = 100;
+function getDisplayOrder(description) {
+	for (var desc in displayOrder) {
+		if (desc.toLowerCase().startsWith(description.toLowerCase())) {
+			return displayOrder[desc];
+		}
+	}
+	return orderIndex++;
+}
+
+timer = new Timer();
+timer.start("initialization");
+//java.lang.System.getProperties().put("_timer", timer);
+
+newPolicyName = "* not created *";]]></Script>
+                <Enabled>true</Enabled>
+            </Hook>
+        </Hooks>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Get details from iwe" state="Enabled"/>
+                <Component name="define addEvidenceAndLogs function" state="Enabled"/>
+                <Component name="define additional functions" state="Enabled"/>
+                <Component name="Setup" state="Enabled"/>
+                <Component name="Validate MappingTable Refs" state="Enabled"/>
+                <Component name="Get CSD Version" state="Enabled"/>
+                <Component name="Read and Set Reg Ctrl and Addtnl Ctl for new Policy" state="Enabled"/>
+                <Component name="Map and Add Policy" state="Enabled"/>
+                <Component name="Move Policy To Draft Status" state="Enabled"/>
+                <Component name="Skip to end *****" state="Enabled"/>
+                <Component name="Update Status to mapped value from ePolicy" state="Enabled"/>
+                <Component name="Create Migration Log" state="Enabled"/>
+                <Component name="Correct Clause Controls" state="Enabled"/>
+                <Component name="Add Change Info To Clauses" state="Enabled"/>
+                <Component name="Migrate CSD Docs" state="Enabled"/>
+                <Component name="Migrate Evidence and Logs for Policy" state="Enabled"/>
+                <Component name="Migrate Technical Specifications" state="Enabled"/>
+                <Component name="Move Policy to Migrated" state="Enabled"/>
+                <Component name="Advance Policy Through Statii" state="Enabled"/>
+                <Component name="End of processing" state="Enabled"/>
+                <Component name="Passive OpenPages Connector - Enable for Debugging Connector" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <Script name="Get details from iwe">
+                <InheritFrom>/Scripts/ePolicy2OP_Get details from iwe</InheritFrom>
+                <ModTime>1608635285534</ModTime>
+            </Script>
+            <Script name="define addEvidenceAndLogs function">
+                <InheritFrom>/Scripts/ePolicy2OP_evidenceAndLogs</InheritFrom>
+                <ModTime>1597672915225</ModTime>
+            </Script>
+            <Script name="define additional functions">
+                <InheritFrom>/Scripts/ePolicy2OP_define functions</InheritFrom>
+                <ModTime>1601563711875</ModTime>
+            </Script>
+            <Script name="Setup">
+                <InheritFrom>/Scripts/ePolicy2OP_Setup</InheritFrom>
+                <ModTime>1600864431673</ModTime>
+            </Script>
+            <Script name="Validate MappingTable Refs">
+                <InheritFrom>/Scripts/ePolicy2OP_Validate MappingTable Refs</InheritFrom>
+                <ModTime>1602254919239</ModTime>
+            </Script>
+            <Script name="Get CSD Version">
+                <InheritFrom>/Scripts/ePolicy2OP_Get CSD Version</InheritFrom>
+                <ModTime>1600864126509</ModTime>
+            </Script>
+            <Script name="Read and Set Reg Ctrl and Addtnl Ctl for new Policy">
+                <InheritFrom>/Scripts/ePolicy2OP_Read and Set Reg Ctrl and Addtnl Ctl for new Policy</InheritFrom>
+                <ModTime>1600864140748</ModTime>
+            </Script>
+            <Script name="Map and Add Policy">
+                <InheritFrom>/Scripts/ePolicy2OP_Map and Add Policy</InheritFrom>
+                <ModTime>1600864148288</ModTime>
+            </Script>
+            <Script name="Move Policy To Draft Status">
+                <InheritFrom>/Scripts/ePolicy2OP_Move Policy To Draft Status</InheritFrom>
+                <ModTime>1604232992353</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Skip to end *****">
+                <ModTime>1608140615819</ModTime>
+                <parameter name="enabled">false</parameter>
+                <parameter name="script">system.exitFlow();</parameter>
+            </Script>
+            <Script name="Update Status to mapped value from ePolicy">
+                <ModTime>1607693652349</ModTime>
+                <parameter name="enabled">true</parameter>
+                <parameter name="script"><![CDATA[if (debug || !doMigration) {
+	return; // do nothing
+}
+
+entry = system.newEntry();
+entry["Resource ID"] = newPolicy["Resource ID"];
+entry.Name = newPolicy.Name;
+entry["OPSS-Pol:Status"] = targetStatus;
+
+op.update(entry, {objectType: "Policy"});
+
+newPolicy["OPSS-Pol:Status"] = targetStatus;]]></parameter>
+            </Script>
+            <Script name="Create Migration Log">
+                <InheritFrom>/Scripts/ePolicy2OP_Create Migration Log</InheritFrom>
+                <ModTime>1604232992353</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Correct Clause Controls">
+                <InheritFrom>/Scripts/ePolicy2OP_Correct Clause Controls</InheritFrom>
+                <ModTime>1607522367537</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Add Change Info To Clauses">
+                <InheritFrom>/Scripts/ePolicy2OP_Add Change Info To Clauses</InheritFrom>
+                <ModTime>1607522370945</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Migrate CSD Docs">
+                <InheritFrom>/Scripts/ePolicy2OP_Migrate CSD Docs</InheritFrom>
+                <ModTime>1604232992353</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Migrate Evidence and Logs for Policy">
+                <InheritFrom>/Scripts/ePolicy2OP_Migrate Evidence and Logs for Policy</InheritFrom>
+                <ModTime>1604232992353</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Migrate Technical Specifications">
+                <InheritFrom>/Scripts/ePolicy2OP_Migrate Technical Specifications</InheritFrom>
+                <ModTime>1604232992353</ModTime>
+                <parameter name="enabled">true</parameter>
+            </Script>
+            <Script name="Move Policy to Migrated">
+                <ModTime>1607427870246</ModTime>
+                <parameter name="script"><![CDATA[// Transition the New Policy to Migrated stage (status)
+
+if (debug || !doMigration) {
+	return; // do nothing
+}
+
+log("Transitioning Policy to Migrated stage");
+// By using resultingStatus == "" it signals to the code to Fire And Forget this transition
+var resultingStatus = op.performTransition({
+			resourceId: newPolicy.getString("Resource ID"), 
+			objectType: "Policy",
+			workflowName: "Policy Workflow", 
+			transitionName: "Designate as Migrated", 
+			statusField: "OPSS-Pol:Status",
+//			resultingStatus: "Migrated",
+			resultingStatus: "",
+			debug: debug || !doMigration
+	});
+
+// Since we are not waiting for the transition to complete, ignore the current status	
+if (false && resultingStatus != "Migrated") {
+	log("ERROR", "Timeout during Policy Workflow > Designate as Migrated");
+	system.exitFlow();
+}]]></parameter>
+            </Script>
+            <Script name="Advance Policy Through Statii">
+                <InheritFrom>/Scripts/ePolicy2OP_Advance Policy Through Statii</InheritFrom>
+                <ModTime>1606824394415</ModTime>
+                <parameter name="enabled">false</parameter>
+            </Script>
+            <Script name="End of processing">
+                <ModTime>1608060616897</ModTime>
+                <parameter name="script"><![CDATA[log("\n\n-----");
+log("Migration complete for " + newPolicyName);]]></parameter>
+            </Script>
+            <Connector name="Passive OpenPages Connector - Enable for Debugging Connector">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1608062153937</ModTime>
+                <ConnectorMode>Iterator</ConnectorMode>
+                <ConnectorState>Passive</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings>
+                    <WhenToCommit>After every database operation</WhenToCommit>
+                    <RowLocking>SERIALIZABLE</RowLocking>
+                    <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                </DeltaSettings>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <Hook name="after_initialize">
+                        <InheritFrom>[no inheritance]</InheritFrom>
+                        <Name>after_initialize</Name>
+                        <Script>ctr = thisConnector.connector;</Script>
+                        <Enabled>true</Enabled>
+                    </Hook>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

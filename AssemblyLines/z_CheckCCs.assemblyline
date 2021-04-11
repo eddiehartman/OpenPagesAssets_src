@@ -1,0 +1,1556 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="95" UUID="7968f748-bd33-4e7a-9336-ecb41132e0b0" created="Tue Nov 10 14:19:09 CET 2020" createdBy="eddie" main="z_CheckCCs" modified="Tue Feb 16 17:41:10 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_CheckCCs">
+        <ModTime>1613493670329</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[ClauseControlObj
+OpenPagesObj
+Script_Lib]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks>
+            <Hook name="prolog0">
+                <Name>prolog0</Name>
+                <Enabled>true</Enabled>
+            </Hook>
+        </Hooks>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="From OP" state="Enabled"/>
+                <Component name="To OP" state="Enabled"/>
+                <Component name="Init" state="Enabled"/>
+                <Component name="z_Setup Id and context" state="Enabled"/>
+                <Component name="Check Clause Controls" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <Connector name="From OP">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1605022913177</ModTime>
+                <ConnectorMode>Lookup</ConnectorMode>
+                <ConnectorState>Passive</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings/>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <Hook name="after_initialize">
+                        <InheritFrom>[no inheritance]</InheritFrom>
+                        <Name>after_initialize</Name>
+                        <Script>fromOPctr = thisConnector.connector;</Script>
+                        <Enabled>true</Enabled>
+                    </Hook>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+            <Connector name="To OP">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1605101534087</ModTime>
+                <ConnectorMode>Lookup</ConnectorMode>
+                <ConnectorState>Passive</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <parameter encrypted="true" name="password">rRt32YA8ZryYsFOKkqfon7/dwOucFZxi0fo24li+lTb9eQo8C9ZXGewfQovrZ5Uaz0Nerak6S3pjWkTcwnOaWk/JLZ83Si3kRmqhansu2YGy5YIhVYSPHbY0VBfLYb0Wu6xgx/tl2zxlFJO2fIPvHQ5IDXXSk1LLTyIZIq6OvWU=</parameter>
+                    <parameter name="url">http://gts21.fyre.ibm.com:10108</parameter>
+                    <parameter name="username">eddie.hartman@no.ibm.com</parameter>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings/>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <SchemaItem>
+                        <Name>$grcObjectType</Name>
+                        <NativeSyntax>Number</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>$grcObjectTypeName</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Domain:Domain</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Policies:AppPolicies</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Regulations:AppRegs</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Regulations:IsRegulated</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Regulations:Other Regulations</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Regulations:Regulations Comments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppCITRO</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppDPE</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppGeoGM</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppMarketGM</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppPE</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AppSrLegalCounsel</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AssDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:AssessedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CIRATSSIMID</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITRO</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITROAppComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITRODate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITROName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITRORiskRejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CITRORiskRejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMAppBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMLetterRejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMLetterRejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMRiskRejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMRiskRejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CMT</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CRF</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CRF Validation Result</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CRFComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CRFValidatedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CRFValidationDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CitroAppBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CitroAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CitroComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ClaimCode</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ClientDepRedRsk</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CltCommunicationComplete</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CltCommunicationDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CltResponse</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CltResponseComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CltResponseDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Comments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CurrentStatusDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:CustDueDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DPEAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DPEComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DPEName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DataAttract</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Date Closed</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DateLetterSent</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:DevicesImpacted</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:EarlyNotification</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Examples of potential Vulnerabilities</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ExtRMCaptured</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ExtRMComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ExtRMReference</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Final Risk Assessment</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRAAppBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRAAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRAApprover</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRAComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRARejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GRARejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GeoGMComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GeoGMDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:GeoGMName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Heatmap</Name>
+                        <NativeSyntax>?undefined gts-risk:heatmap?</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:InCauseDet</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalAppBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalReview</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalReviewComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalReviewDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalRiskRejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LegalRiskRejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterAttached</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterDocumentedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterDocumentedDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterNotSentReason</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterRecName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterRecTitle</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LetterSent</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LoProcessDiffEval</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:LoProcessDiffEvalOther</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:MainThreatEvent</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:MitigatingControls</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:MrktGMAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:MrktGMComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:MrktGMName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:NegativeConfirmation</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:NegativeConfirmationSent</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:NegativeConfirmationSentDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:NoOfDevicesImpacted</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Non Compliance Issue Number</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:NonCompCond</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Other Platforms</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:OtherProcess</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:OtherRecipient</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PEAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PEComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PEName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Perform CRF Validation</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Platform</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PotImpactRiskExp</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PotRiskCause</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PotRiskCausedBy</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PotRiskToIBM</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:PotRiskToIBMAction</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ProceedToMonitoring</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Process</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Process Sub Domain</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ProcessSubDomain</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ProgressBar</Name>
+                        <NativeSyntax>?undefined gts-risk:progressbar?</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RegImpacted</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RegImpactedCountry</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Risk Expiration Date</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Risk Identified</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Risk Identifier Comments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskAppBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskApprovalHistory</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskRejectDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskRejectedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskType</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskValidationComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskValidationDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RiskViewReport</Name>
+                        <NativeSyntax>?undefined gts-risk:riskviewreport?</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RootCause</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskActionPlanEliminate</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskActionPlanReduce</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskApprover</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskApproverComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskDetailedDesc</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskIdentifier</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskIssueTrackingSystem</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskOwner</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskOwnerComments</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskShortDesc</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskValidatedBy</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:RskValidator</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:SMEList</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:SrLegalCounselAppComment</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:SrLegalCounselAppDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:SrLegalCounselName</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:ThreatSource</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:VulnerabilityDesc</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Risk:Workflow Comment</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstImpactLevel</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstImpactLevelComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstOverallProb</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstProbTEAdvImpacts</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstProbTEAdvImpactsComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstProbTEOccurance</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstProbTEOccuranceComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:EstRiskRating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinImpactLevel</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinImpactLevelComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinOverallProb</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinProbTEAdvImpacts</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinProbTEAdvImpactsComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinProbTEOccuranceComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FinRiskRating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:FintProbTEOccurance</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InImpactLevel</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InImpactLevelComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InOverallProb</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InProbTEAdvImpacts</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InProbTEAdvImpactsComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InProbTEOccurance</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InProbTEOccuranceComments</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:InRiskRating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:Initial Risk Response</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:ORiskRating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:OveralImpact</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:Overall Heatmap</Name>
+                        <NativeSyntax>?undefined gts-riskrating:overall heatmap?</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:OverallProb</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:Reset Risk Response</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:RskResponse</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-RiskRating:RskResponseDetails</Name>
+                        <NativeSyntax>Medium size String (limited to 32000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Shared:AccountID</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Shared:Active</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Shared:DuplicateRecord</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Shared:Migrated</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Shared:RiskID</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:LCName</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:LCPhase</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:LCStage</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:LCStatus</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:LCTransition</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase History</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Assess</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Closed</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Communicate</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Document</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Implement</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Monitor</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_NegativeConfirmation</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_New</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_CompletedLate_Validate</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Completed_Late_Implement</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Assess</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Closed</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Communicate</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Document</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Implement</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Monitor</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_NegativeConfirmation</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_New</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_Days_Validate</Name>
+                        <NativeSyntax>Integer</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Assess</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Closed</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Communicate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Current Phase</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Document</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Implement</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Monitor</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_NegativeConfirmation</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_New</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_DueDate_Validate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Assess</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Closed</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Communicate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Current Phase</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Document</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Implement</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Monitor</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_NegativeConfirmation</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_New</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_EndDate_Validate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Assess</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Closed</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Communicate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Current Phase</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Document</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Implement</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Monitor</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_NegativeConfirmation</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_New</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-SOXRisk:Phase_StartDate_Validate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCAssignee</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCComment</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCCustStageDueDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCDueDate</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCInReview</Name>
+                        <NativeSyntax>Boolean (true or false)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCReadOnly</Name>
+                        <NativeSyntax>Boolean (true or false)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPLC-Std:LCUpdateAssignee</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Accp:Acceptance</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Accp:Reason for Acceptance</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Accp:Within Tolerance</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Inherent Impact</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Inherent Likelihood</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Inherent Risk Rating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Residual Impact</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Residual Likelihood</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Qual:Audit Residual Risk Rating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:Audit Inherent Frequency</Name>
+                        <NativeSyntax>Floating point decimal</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:Audit Inherent Severity</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:Audit Residual Frequency</Name>
+                        <NativeSyntax>Floating point decimal</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:Audit Residual Severity</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:AuditInherentRiskExposure</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Aud-Quant:AuditResidualRiskExposure</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Fin:Financial Statement Assertions</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Fin:General Guidance</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Fin:In Scope</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Inherent Impact</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Inherent Likelihood</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Inherent Risk Rating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Residual Impact</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Residual Likelihood</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Qual:Residual Risk Rating</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Inherent Frequency</Name>
+                        <NativeSyntax>Floating point decimal</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Inherent Risk Exposure</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Inherent Severity</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Residual Frequency</Name>
+                        <NativeSyntax>Floating point decimal</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Residual Risk Exposure</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk-Quant:Residual Severity</Name>
+                        <NativeSyntax>Number (value in default currency)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Approve Reject</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Assessment Method</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Baseline Risk Statement</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Control Objective</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Functional Risk Area</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Implemented Risk Statement</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 1 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 2 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 3 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 4 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 5 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 6 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 7 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Level 8 Category</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Rejection Comment</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Risk Statement</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Status</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Risk:Submit</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Rsk:Additional Description</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Rsk:Domain</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Rsk:Owner</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Shared-Basel:Risk Category</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Shared-Basel:Risk Example</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Shared-Basel:Risk Subcategory</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Shared-Lib:Library ID</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>TEST_HUJ:Test Link</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <Hook name="after_initialize">
+                        <InheritFrom>[no inheritance]</InheritFrom>
+                        <Name>after_initialize</Name>
+                        <Script>toOPctr = thisConnector.connector;</Script>
+                        <Enabled>true</Enabled>
+                    </Hook>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+            <Script name="Init">
+                <ModTime>1605124454985</ModTime>
+                <parameter name="script"><![CDATA[fromOP = new OpenPagesObj(fromOPctr);
+toOP = new OpenPagesObj(toOPctr);
+
+// Read in Clauses and Clause Controls from the source OpenPages
+//cc = new ClauseControlObj({openPagesObj: fromOP, validate: true});
+
+mandatoryClauses = [
+					"Introduction", 
+					"Scope", 
+					"Processes used in this document",
+					"Document structure",
+					"Appendices"
+					//"Technical Specifications"
+					];]]></parameter>
+            </Script>
+            <Script name="z_Setup Id and context">
+                <InheritFrom>[no inheritance]</InheritFrom>
+                <ModTime>1605182996120</ModTime>
+                <parameter name="script"><![CDATA[policyName = "POL-1144-Acc-341-AG"; // 1089, 1091, 1093
+opUserEmail = ["eddiehartman@gmail.com"/*,"blade@us.ibm.com"*/];
+accounts = ["Copacabana"];
+accountName = accounts[0];
+operation = "migrate";
+
+debug = false;
+doMigration = true;
+skipToEnd = false;
+timer = new Timer();
+
+migrationStart = new Date();
+ePolicy = {
+    userName: "db2inst1",
+    password: "Epolicy2ibm@123",
+    hostname: "mopbzp174025.fr.dst.ibm.com",
+    port: "50000",
+    database: "POLICYL"
+  }
+
+log("\n\n\n----------- Using Policy: " + policyName + "\n\n\n.");
+
+mappingTable = {};
+
+if (typeof opCtr == "undefined") {
+	opCtr = null;	
+}
+op = new OpenPagesObj(opCtr);
+/*
+db = new ePolicyObj({
+	    userName: "db2inst1",
+	    password: "Epolicy2ibm@123",
+	    hostName: "mopbzp174025.fr.dst.ibm.com",
+	    port: "50000",
+	    database: "POLICYL"
+	  });
+*/
+var CSDjson = '{"TEMPLATE_ID":1288,"TEMPLATE_TYPE_ID":2,"ACCOUNT_ID":1248,"TEMPLATE_TYPE_NAME":"Base Policy","NEXT_REVIEW_DATE":"2018-07-11","ACCOUNT_NUMBER_TYPE_NAME":null,"STATUS":"Production","EMAIL":"jrvalero@us.ibm.com","DELETED_TS":null,"LOCKED_FLAG":"N","FULL_NAME":"United States of America","NAME":"Customer Security Document","POLICY_TYPE_ID":24,"ID":5685,"REVISION":1,"CURRENT_APPROVAL_DATE":"2017-01-11","FILE_NAME":"","IMPORTED_FLAG":"N","TEMPLATE_POLICYTYPE_NAME":"CSD","LOCATION_ID":245,"LOCKED_BY":null,"REVISION_COUNT":1,"STATUS_ID":7,"ENVIRONMENT":"","TEMPLATE_POLICYTYPE_ID":24,"UPDATED_TS":"2014-10-09 18:28:05.614806","POLICY_TYPE_NAME":"CSD","LOCKED_TS":null,"TEMPLATE_VERSION":"1.2                      ","FORMAT":"DOCX","POLICY_ID":3003,"ACCOUNT_NUMBER":"","SHORTNAME":"CBANA","HISTORY_FLAG":"Y"}';
+var CSD = work.fromJSON(CSDjson);
+CSD.csd_status = CSD.status;
+
+log("Lookup Policy " + policyName + "...");
+var newPolicy = fromOP.findOne("Name", policyName, "Policy");
+if (newPolicy == null) {
+	log("ERROR", "Unable to find Policy: " + policyName);
+	throw "Unable to find Policy: " + policyName
+}
+
+var id = newPolicy.getString("Resource ID");
+
+log("\n\n\n======================-----> Found " + policyName + " (" + id 
+		+ ") - Status: " 
+		+ newPolicy.getString("OPSS-Pol:Status")
+		+ "\n\n\n.");
+
+cc = new ClauseControlObj({
+	openPagesObj: op,
+	debug: false
+});
+
+ccUpdate = new ccUpdateObj();
+
+// Defining some local functions for this AL
+// Initialize 'created' object
+_counters = {};
+_errors = [];
+_warnings = [];]]></parameter>
+            </Script>
+            <Script name="Check Clause Controls">
+                <ModTime>1605183063493</ModTime>
+                <parameter name="script"><![CDATA[// First find Clauses under the Policy Template
+var clauses = fromOP.findChildren("Policy",
+									templatePolicy.getString("Resource ID"),
+									"GTSLibClause");
+for (var tc in templateClauses) {
+	log("Template Clause: " + tc.description);
+	
+	//Store the Template Clause	
+	var description = tc.getString("description") || "*no_template_clause_description_found*";
+	var p = description.indexOf(" ");
+	var procedureIndex = -1;
+	if (p > 0 && p < 4) {
+		var indexStr = description.substring(0,p).trim();
+		if (system.isValidInt(indexStr)) {
+			procedureIndex = system.toInt(indexStr);
+			description = description.substring(p+1).trim().toLowerCase();
+		}
+	}
+	if (procedureIndex == -1) {
+		if (description.substring(1,2) == ".") {
+			procedureIndex = description.substring(0, 1);
+			description = description.substring(2).trim().toLowerCase();
+		} else {
+			description = description.trim().toLowerCase();
+		}
+	}
+
+	var tcObj = {
+		parentType: "GTSLibPolicy",
+		parentId: templatePolicy.getString("Resource ID"),
+		type: "GTSLibClause",
+		id: tc.getString("Resource ID"),
+		entry: tc,
+		children: new java.util.HashMap()
+	}
+	
+	var tcChildren = tcObj.children;
+	clauseMap.put(description, tcObj);
+
+	// Now locate Control Topics under the Template Clause
+	var controlTopics = fromOP.findChildren("GTSLibClause",
+									tc.getString("Resource ID"),
+									"GTSCtlTopic");
+			
+	for (var ct in controlTopics) {
+		log("  Control Topic: " + ct.NAME);
+		
+		// Now stoe the Control Topic in the Template Clause object children HashMap
+		var ctObj = {
+			parentType: "GTSLibClause",
+			parentId: tc.getString("Resource ID"),
+			type: "GTSCtlTopic",
+			id: ct.getString("Resource ID"),
+			entry: ct,
+			children: new java.util.HashMap()
+		}
+		
+		var ctChildren = ctObj.children;
+		var name = ct.getString("Name");
+		tcChildren.put(name, ctObj);
+		
+		// Finally, find all Clause Controls under this Control Topic
+		var templateClauseControls = fromOP.findChildren("GTSCtlTopic",
+													ct.getString("Resource ID"),
+													"GTSLibClauseCtl");
+		for (var tcc in templateClauseControls) {
+			log("    Template Clause Controls: " + tcc["GTS-ClauseCtl:Col1"]);
+
+			//log("Writing to destination OpenPages Clause Control...")
+
+			var tccId = tcc.getString("description");
+			tcc.controlTopic = ct;
+			tcc.templateClause = tc;
+			tcc.templatePolicy = templatePolicy;
+			
+			var oldCC = ccMap.get(tccId);
+			if (oldCC != null) {
+				duplicates.push(tccId);
+			}
+			
+			var ccObj = {
+				parentType: "GTSCtlTopic",
+				parentId: ct.getString("Resource ID"),
+				type: "GTSLibClauseCtl",
+				id: tcc.getString("Resource ID"),
+				entry: tcc
+			}
+			
+			tcChildren.put(tccId, ccObj);
+		}
+	}
+}]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

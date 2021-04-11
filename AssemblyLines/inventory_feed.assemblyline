@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="13" UUID="3625d6be-f142-49a3-b648-53da6d4cba5d" created="Sat Jun 20 22:00:32 CEST 2020" createdBy="eddie" main="inventory_feed" modified="Tue Feb 16 17:40:56 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="inventory_feed">
+        <ModTime>1613493656373</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs">ScriptLib</parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="OpenPages Connector" state="Simulated"/>
+                <Component name="Read CSV" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer">
+            <Connector name="Read CSV">
+                <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                <ModTime>1592684734995</ModTime>
+                <ConnectorMode>Iterator</ConnectorMode>
+                <ConnectorState>Enabled</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <parameter name="filePath">POC_MVP/inventory_test.csv</parameter>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+                    <parameter name="csvColumnSeparator">,</parameter>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <AttributeMapItem>
+                        <Name>$grcObjecType</Name>
+                        <Type>simple</Type>
+                        <Simple>$grcObjecType</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>Description</Name>
+                        <Type>simple</Type>
+                        <Simple>Description</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory-ActionPlan:Invisibility Root Cause</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory-ActionPlan:Invisibility Root Cause</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:CAR Checklist Created</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:CAR Checklist Created</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:CAR Checklist Created_index</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:CAR Checklist Created_index</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Detection Date</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Detection Date</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Hostname</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Hostname</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:IP Address</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:IP Address</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Invisibility Reason</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Invisibility Reason</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Invisibility Reason_index</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Invisibility Reason_index</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Operating System</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Operating System</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Platform</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Platform</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Release</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Release</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Remediation Action</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Remediation Action</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Remediation Action_index</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Remediation Action_index</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Serial Number</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Serial Number</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:System Model</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:System Model</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Vendor</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Vendor</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>GTS-Inventory:Version</Name>
+                        <Type>simple</Type>
+                        <Simple>GTS-Inventory:Version</Simple>
+                    </AttributeMapItem>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings>
+                    <WhenToCommit>After every database operation</WhenToCommit>
+                    <RowLocking>SERIALIZABLE</RowLocking>
+                    <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                </DeltaSettings>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <SchemaItem>
+                        <Name>$grcObject</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>$grcObjectJSON</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Created By</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Creation Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Description</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Invisibility Root Cause</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CAR Checklist Created</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CAR Checklist Created_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Detection Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Hostname</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:IP Address</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Invisibility Reason</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Invisibility Reason_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Operating System</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Platform</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Release</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Remediation Action</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Remediation Action_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Serial Number</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:System Model</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Vendor</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Version</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modification Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modified By</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Location</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Orphan</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Resource ID</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <SchemaItem>
+                        <Name>$grcObject</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>$grcObjectJSON</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Created By</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Creation Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Description</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Invisibility Root Cause</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CAR Checklist Created</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CAR Checklist Created_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Detection Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Hostname</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:IP Address</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Invisibility Reason</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Invisibility Reason_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Operating System</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Platform</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Release</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Remediation Action</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Remediation Action_index</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Serial Number</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Serial Number,Location,GTS-Inventory:System Model,GTS-Inventory:Invisibility Reason_index,GTS-Inventory:CAR Checklist Created,GTS-Inventory:Platform,GTS-Inventory-ActionPlan:Invisibility Root Cause,$grcObjectJSON,GTS-Inventory:Vendor,GTS-Inventory:Operating System,GTS-Inventory:Remediation Action_index,GTS-Inventory:Release,Last Modified By,Creation Date,GTS-Inventory:Detection Date,Last Modification Date,GTS-Inventory:CAR Checklist Created_index,GTS-Inventory:Hostname,Resource ID,$grcObject,Orphan,GTS-Inventory:IP Address,GTS-Inventory:Version,GTS-Inventory:Invisibility Reason,Description,Created By,GTS-Inventory:Remediation Action</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:System Model</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Vendor</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Version</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modification Date</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modified By</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Location</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Orphan</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Resource ID</Name>
+                        <Syntax>java.lang.String</Syntax>
+                    </SchemaItem>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+                <LookupLimit>1</LookupLimit>
+            </Connector>
+        </ContainerEF>
+        <ContainerDF name="DataFlowContainer">
+            <Connector name="OpenPages Connector">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1593009906904</ModTime>
+                <ConnectorMode>Update</ConnectorMode>
+                <ConnectorState>Enabled</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <parameter name="object">Assertion</parameter>
+                    <parameter encrypted="true" name="password"/>
+                    <parameter name="url">http://gts11.fyre.ibm.com:10108</parameter>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <AttributeMapItem>
+                        <Name>*</Name>
+                        <Type>simple</Type>
+                        <Simple>*</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>primaryParentId</Name>
+                        <Type>advanced</Type>
+                        <Enabled>true</Enabled>
+                        <Add>true</Add>
+                        <Modify>true</Modify>
+                        <Script>7465</Script>
+                        <Simple>primaryParentId</Simple>
+                    </AttributeMapItem>
+                    <AttributeMapItem>
+                        <Name>primaryParentType</Name>
+                        <Type>advanced</Type>
+                        <Script>"SOXAccount"</Script>
+                        <Simple>primaryParentType</Simple>
+                    </AttributeMapItem>
+                </AttributeMap>
+                <DeltaSettings>
+                    <WhenToCommit>After every database operation</WhenToCommit>
+                    <RowLocking>SERIALIZABLE</RowLocking>
+                    <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                </DeltaSettings>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <SchemaItem>
+                        <Name>$grcObject</Name>
+                        <NativeSyntax>JavaScript Object</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>$grcObjectJSON</Name>
+                        <NativeSyntax>JSON</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>$grcObjectType</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Comment</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Created By</Name>
+                        <NativeSyntax>Integer (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Creation Date</Name>
+                        <NativeSyntax>Date (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Description</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Action Plan</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Invisibility Root Cause</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:NCI</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Owner</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Start Date</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory-ActionPlan:Target Date</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Add to GACDW</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Assignee</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CAR Checklist Created</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CPU Detail</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:CPU Type</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Detection Date</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Hostname</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:IP Address</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Invisibility Reason</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Kernel Type</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Last Communication Date</Name>
+                        <NativeSyntax>Date</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Memory</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:NCI</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Operating System</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Other Invisibility Reason</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Other Remediation Action</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Platform</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Release</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Remediation Action</Name>
+                        <NativeSyntax>String</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Serial Number</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:System Model</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Vendor</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>GTS-Inventory:Version</Name>
+                        <NativeSyntax>String (limited to 4000 characters)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modification Date</Name>
+                        <NativeSyntax>Date (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Last Modified By</Name>
+                        <NativeSyntax>Integer (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Location</Name>
+                        <NativeSyntax>String (limited to 4000 characters) (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Name</Name>
+                        <NativeSyntax>String (limited to 4000 characters) (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>OPSS-Assert:Assertions</Name>
+                        <NativeSyntax>String (multi-valued)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Orphan</Name>
+                        <NativeSyntax>String (limited to 4000 characters) (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>Resource ID</Name>
+                        <NativeSyntax>Integer (Id) (read only)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>parentFolderId</Name>
+                        <NativeSyntax>Integer (Id)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>primaryParentId</Name>
+                        <NativeSyntax>Integer (Id)</NativeSyntax>
+                    </SchemaItem>
+                    <SchemaItem>
+                        <Name>typeDefinitionId</Name>
+                        <NativeSyntax>Integer (Id)</NativeSyntax>
+                    </SchemaItem>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <LinkCriteriaItem>
+                        <Key>172d3638ca6</Key>
+                        <Attribute>GTS-Inventory:Hostname</Attribute>
+                        <Operator>equals</Operator>
+                        <Value>$GTS-Inventory:Hostname</Value>
+                    </LinkCriteriaItem>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>
