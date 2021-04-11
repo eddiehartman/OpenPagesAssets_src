@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="94e6c842-be5a-4cc1-a5bc-2a1596c150da" created="Sun Apr 11 10:39:21 CEST 2021" createdBy="eddie" modified="Sun Apr 11 10:39:21 CEST 2021" modifiedBy="eddie" project="OpenPagesAssets" version="7.1.1">
+    <Container>
+        <Container name="Data"/>
+        <Properties name="Config">
+            <Stores>
+                <PropertyStore name="OpenPagesAssets">
+                    <Parser/>
+                    <RawConnector>
+                        <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                        <parameter name="collection">@SUBSTITUTE{config.$directory}/OpenPagesAssets.properties</parameter>
+                        <parameter name="collectionType">OpenPagesAssets</parameter>
+                    </RawConnector>
+                    <Key>key</Key>
+                    <Value>value</Value>
+                    <ReadOnly>false</ReadOnly>
+                    <InitialLoad>true</InitialLoad>
+                    <CacheTimeout>0</CacheTimeout>
+                </PropertyStore>
+            </Stores>
+        </Properties>
+    </Container>
+</MetamergeConfig>
