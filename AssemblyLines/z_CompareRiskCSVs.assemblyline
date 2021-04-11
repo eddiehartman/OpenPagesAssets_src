@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="31" UUID="2b5d86c9-3a7b-466d-8167-33435c12e09d" created="Wed Sep 23 11:11:26 CEST 2020" createdBy="eddie" main="z_CompareRiskCSVs" modified="Wed Sep 23 12:02:12 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_CompareRiskCSVs">
+        <ModTime>1600855332212</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs">Script_Lib</parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Compare" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1600855332212</ModTime>
+            <Script name="Compare">
+                <ModTime>1600855332212</ModTime>
+                <parameter name="script"><![CDATA[files = [{
+		name: "UsingOP",
+		//path: "temp/risk_20200923_AG using op.csv",
+		path: "temp/risk_20200923_AG_internal_mapping.csv",
+		entries: []
+	},
+	{
+		name: "Looping",
+		path: "temp/risk_20200923_AG with Loop.csv",
+		entries: []
+	}
+]
+
+for (i in files) {
+	fileObj = files[i];
+	reader = system.getConnector("CSVReader");
+	reader.setParam("filePath", fileObj.path);
+	reader.initialize(null);
+	reader.selectEntries();
+	while ((entry = reader.getNextEntry()) != null) {
+		fileObj.entries.push(entry);
+	}
+	reader.terminate();
+}
+
+file1 = files[0].entries;
+file2 = files[1].entries;
+
+for (var i = 0; i < file1.length; i++) {
+	e1 = file1[i];
+	e2 = file2[i];
+	if (e1.toJSON() != e2.toJSON()) {
+		diffs = [];
+		for (att1 in e1) {
+			att2 = e2[att1.getName()];
+			if (att1.toString() != att2.toString()) {
+				diffs.push("OP - " + att1.getName() + " - "
+							+ att1.toString()
+							+ "   !=   "
+							+ att2.toString())
+			}
+		}
+		log("Row " + i + " -------------------\n     " + diffs.join("\n     "));
+	}
+}]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

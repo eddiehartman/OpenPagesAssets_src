@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="67" UUID="efd378e7-40e2-4988-89d0-b2b3f528d9ce" created="Wed Nov 18 17:33:36 CET 2020" createdBy="eddie" main="migratePT_Read Template Policy and descendants" modified="Fri Dec 04 15:15:24 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="migratePT_Read Template Policy and descendants">
+        <ModTime>1607091323765</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[policyName = templatePolicy.getString("Name");
+
+tp = templatePolicy;
+tpType = tp.getString("$grcObjectType");
+
+// Add Policy Template
+if (migrate) {
+	log("Adding Policy Template corresponding to " + tp.name);
+	var entry = toOP.writeableEntry(tp, tpType);
+	newTP = toOP.add(entry, {
+								parentType: parentType,
+								parentId: parent.getString("Resource ID"),
+								objectType: tpType
+							});
+								
+	newTPid = newTP.getString("Resource ID");							
+	log("\n*****\n\nAdded Policy Template " + newTP.name + " (" + newTPid + ")\n\n*****");
+}
+
+// Find SOXDocuments attached to this template
+var templateDocs = useOP.findChildren("GTSLibPolicy",
+									templatePolicy.getString("Resource ID"),
+							"SOXDocument");
+
+for (var doc in templateDocs) {
+	if (migrate) {
+		// First we have to get the actual Word doc
+		var fullDoc = useOP.findOne("Resource ID", doc.getString("Resource ID"));
+		var linkToContent = "";
+		
+		var entry = toOP.writeableEntry(doc, "SOXDocument");
+		newDoc = toOP.add(entry, {
+									parentType: tpType,
+									parentId: newTPid,
+									objectType: "SOXDocument"
+								});
+		log("Added Policy Template doc: " + newDoc.name + " (" + newDoc.getString("Resource ID") + ")");
+	}
+}
+
+// Find Clauses under the Policy Template
+var templateClauses = useOP.findChildren("GTSLibPolicy",
+									templatePolicy.getString("Resource ID"),
+							"GTSLibClause");
+
+for (var tc in templateClauses) {
+	log("   Template Clause: " + tc.description);
+	
+	if (migrate) {
+		tcType = tc.getString("$grcObjectType");
+	
+		log("   Adding Policy Template corresponding to " + tc.name);
+		var entry = toOP.writeableEntry(tc, tcType);
+		entry.Name = tc.Name;
+		newTC = toOP.add(entry, {
+									parentType: tpType,
+									parentId: newTPid,
+									objectType: "GTSLibClause"
+								});
+									
+		newTCid = newTC.getString("Resource ID");							
+		log("   Added Policy Template " + newTC.name + " (" + newTCid + ")");
+	} else {
+		//Store the Template Clause	
+		var description = tc.getString("description") || "*no_template_clause_description_found*";
+		var p = description.indexOf(" ");
+		var procedureIndex = -1;
+		if (p > 0 && p < 4) {
+			var indexStr = description.substring(0,p).trim();
+			if (system.isValidInt(indexStr)) {
+				procedureIndex = system.toInt(indexStr);
+				description = description.substring(p+1).trim().toLowerCase();
+			}
+		}
+		if (procedureIndex == -1) {
+			if (description.substring(1,2) == ".") {
+				procedureIndex = description.substring(0, 1);
+				description = description.substring(2).trim().toLowerCase();
+			} else {
+				description = description.trim().toLowerCase();
+			}
+		}
+		
+		clauseMap.put(description, tc);
+	}
+
+	
+
+	// Now locate Control Topics under the Template Clause
+	var controlTopics = useOP.findChildren("GTSLibClause",
+									tc.getString("Resource ID"),
+									"GTSCtlTopic");
+			
+	for (var ct in controlTopics) {
+		//log("  Control Topic: " + ct.NAME);
+		
+
+		if (migrate) {
+			ctType = ct.getString("$grcObjectType");
+		
+			log("      Adding Template Control Topic corresponding to " + (ct.name || ct.description));
+			entry = toOP.writeableEntry(ct, ctType);
+			newTCT = toOP.add(entry, {
+											parentType: tcType,
+											parentId: newTCid,
+											objectType: ctType
+										});
+										
+			newTCTid = newTCT.getString("Resource ID");							
+			log("      Added Template Control Topic " 
+				+ (newTCT.name || newTCT.description) 
+				+ " (" + newTCTid + ")");
+		}
+
+		// Finally, find all Clause Controls under this Control Topic
+		var templateClauseControls = useOP.findChildren("GTSCtlTopic",
+													ct.getString("Resource ID"),
+													"GTSLibClauseCtl");
+		for (var tcc in templateClauseControls) {
+			//log("    Template Clause Controls: " + tcc["GTS-ClauseCtl:Col1"]);
+
+			//log("Writing to destination OpenPages Clause Control...")
+
+			var tccType = tcc.getString("$grcObjectType");
+			var tccId = tcc.getString("description");
+			tcc.controlTopic = ct;
+			tcc.templateClause = tc;
+			tcc.templatePolicy = templatePolicy;
+			
+			if (migrate) {
+				log("         Adding Clause Control corresponding to " + tcc["GTS-ClauseCtl:Col1"]);
+				entry = toOP.writeableEntry(tcc, tccType);
+				
+				newTCC = toOP.add(entry, {
+											parentType: ctType,
+											parentId: newTCTid,
+											objectType: tccType
+										});
+				newTCCid = newTCC.getString("Resource ID");
+				log("         Added Clause Control for " + newTCC["GTS-ClauseCtl:Col1"] + " (" + newTCCid + ")");
+			}
+		}
+	}
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

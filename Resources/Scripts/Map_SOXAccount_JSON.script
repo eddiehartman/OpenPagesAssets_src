@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="693ee41b-5e46-407c-b1ee-19701efb41f0" created="Tue Sep 22 21:46:46 CEST 2020" createdBy="eddie" main="Map_SOXAccount_JSON" modified="Wed Sep 23 11:46:35 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="Map_SOXAccount_JSON">
+        <ModTime>1600854395155</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[{
+    "Account Alias": "GTS-Account:AccAlias",
+    "Account ID": "Name",
+    "Account Name": "Description",
+    "Account Regulated": "GTS-Account:AccRegulated",
+    "Account Status": "GTS-Account:Status",
+    "BAM ID": "GTS-Account:BAMID",
+    "Client Risk Review Period": "GTS-Account:CltRskReviewPeriod",
+    "Country": "GTS-Account:AccCountry",
+    "Current Contract End Date": "GTS-Account:CContractEndDate",
+    "Geography": "GTS-Account:AccGeo",
+    "Industry": "GTS-Account:AccIndustry",
+    "Market": "GTS-Account:AccMarket",
+    "Restricted": "GTS-Account:Restricted",
+    "Sector": "GTS-Account:AccSector",
+    "Steady State Date": "GTS-Account:SteadyStateDate",
+    "Transformation Date": "GTS-Account:TransformationDate",
+    "Transition Date": "GTS-Account:TransitionDate",
+    "Type": "GTS-Account:Type",
+    "Type of Restriction": "GTS-Account:TypeofRestriction"
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

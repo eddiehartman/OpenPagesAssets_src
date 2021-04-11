@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="20e97fca-6bb4-4853-8209-6c7a518d9223" created="Fri Oct 09 13:51:28 CEST 2020" createdBy="eddie" main="z_createMailDoc" modified="Fri Oct 09 14:04:21 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_createMailDoc">
+        <ModTime>1602245060096</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[Mapper
+OpenPagesObj
+Script_Lib
+WordDoc]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="set up status" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1602245060096</ModTime>
+            <Script name="set up status">
+                <ModTime>1602245060096</ModTime>
+                <parameter name="script"><![CDATA[status = {
+	date: new Date(),
+	epolicy: {
+        userName: "db2inst1",
+        password: "Epolicy2ibm@123",
+        hostname: "mopbzp174025.fr.dst.ibm.com",
+        port: "50000",
+        database: "POLICYL"
+    },
+	  accounts: [
+        "Copacabana"
+    ],
+		opUserEmail : "eddie.hartman@no.ibm.com",
+		mappingTable : {
+        "BR001": "A",
+        "BR002": "TBD"
+    },
+	status: {
+        "errors": [
+            "Migration of all accounts failed"
+        ],
+        "message": "See Account details for more information",
+        "accounts": [
+            {
+                "message": "'thisAction' not found (class com.ibm.di.entry.Attribute)",
+                "error": "'thisAction' not found (class com.ibm.di.entry.Attribute)",
+                "created": "Created Policy: 1",
+                "status": "Failed",
+                "name": "Copacabana"
+            }
+        ],
+        "errorMsg": "Migration of all accounts failed",
+        "code": "400",
+        "created": "Created Policy: 1",
+        "msg": "Bad Request",
+        "status": "Failed"
+    }
+}]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

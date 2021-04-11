@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="319" UUID="07b4cbbe-36ab-4993-9dca-15047cf79416" created="Fri Apr 03 16:47:21 IST 2020" createdBy="DishaSingh" main="Script_Lib" modified="Fri Dec 04 10:29:24 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="Script_Lib">
+        <ModTime>1607074163971</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//vrs = '20200403 1647'; //First version
+//vrs = '20200508 1439'; // Added output to std out
+//vrs = "20200605 1419"; // Added loadFileToByteArray
+//vrs = "20200805 2244"; // Added padding functions
+//vrs = "20200819 2024"; // log() now accumulates errors and includes AL name if set as param 'alName'
+//vrs = "20200824 1937"; // Put else between ERROR and WARN in log(), Fixed reply()
+//vrs = "20200826 1442"; // Add own formatDate()
+//vrs = "20200827 1346"; // Making formatDate return Timezone for java.sql.Timestamp
+//vrs = "20200921 1055"; // Added invalidValue() function
+//vrs = "20201002 1256"; // Moved mapStatus to ePolicy2OP_define functions Script
+//vrs = "20201009 1658"; // Added throwit argument to log() function
+//vrs = "20201023 2224"; // Fixed formatDate to handle non java.sql.Timestamp types
+//vrs = "20201118 1614"; // Added copyOfEntry()
+vrs = "20201124 1257"; // Added encrypt() and decrypt()
+
+var _OS = java.lang.System.getProperty("os.name");
+
+// Globally used log function. It can also collect error messages if _errors or _warnings are defined
+// Note that it also prepends messages with the AL Name, to aid in threaded logging.
+function log(level, message, throwit) {
+	if (typeof level == "undefined") {
+		message = "";
+		level = "INFO";
+	} else
+	if (typeof message == "undefined") {
+		message = level;
+		level = "INFO";
+	}
+	throwit = throwit || false;
+	
+	message = String(message).replace("java.lang.IllegalArgumentException: ", "");
+	
+	var alName = task.getParam("alName");
+	var useALName = (alName == null) ? "" : "<" + alName + "> ";
+	
+	java.lang.System.out.println(level + " : " + useALName + message);
+	task.logmsg(level, useALName + message);
+	
+	if ((level == "ERROR" || level == "FATAL")
+		&& typeof _errors != "undefined" 
+		&& _errors instanceof Array) {
+		_errors.push(message);
+	}else
+	if (level == "WARN"
+		&& typeof _warnings != "undefined" 
+		&& _warnings instanceof Array) {
+		_warnings.push(message);
+	}
+
+	if ((level == "ERROR" || level == "FATAL") && throwit) {
+		system.exitFlow();
+	}
+}
+
+log("[Script_Lib] v" + vrs);
+
+// Check _errors length to see if any errors were logged
+function errorsCollected() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		return _errors.length;
+	}
+}
+
+// Find the first Exception thrown
+function rootException(ex) {
+	if (ex instanceof java.lang.Exception) {
+	}
+
+	while (ex.getCause() != null) {
+   		ex = ex.getCause();
+	}
+
+	return ex;
+}
+
+// Return the first error logged
+function rootCause() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		var err = _errors[0];
+		if (!err) {
+			if (!"OK".equalsIgnoreCase(error.getString("status"))) {
+				err = error.message + " - " + error.exception;
+			} else {
+				err = " -- "
+			}
+		}
+		return err;
+	}
+}
+
+// Return true if an error has been logged
+function inError() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		return _errors.length > 0;
+	}
+}
+
+// If an error has been logged, exit the Flow
+function exitOnErrors() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		if (_errors.length > 0) {
+			system.exitFlow();
+		} else {
+			return;
+		}
+	}
+}
+
+// Remove all logged errors
+function resetErrors() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		_errors = [];
+	}
+}
+
+// Return the array of errors, or empty array
+function allErrors() {
+	if (typeof _errors == "undefined") {
+		throw "No errors collected."
+	} else {
+		return _errors || [];
+	}
+}
+
+
+// Returns a new Entry which is a copy of the one passed
+function copyOfEntry(entry) {
+	var newEntry = system.newEntry();
+	newEntry.merge(entry);
+	return newEntry;
+}
+
+// These global variables are used by the padding functions below
+_gblPadStr = ["", ""];
+for (_i = 0; _i < 50; _i++) {
+	_gblPadStr[0] += "  ";
+	_gblPadStr[1] += " .";
+}
+
+// Array used for Hex conversions
+_hexChars = "0123456789ABCDEF";
+
+//
+// function LJ( str, len )				// left-justifies str in a string with length = len
+// function RJ( str, len )				// right-justifies str in a string with length = len
+// function CJ( str, len )				// center-justifies str in a string with length = len
+
+// Pad out a string to the right - e.g. left-justify str in len spaces
+//
+function LJ(str, len, lineCnt) 
+{
+	lineCnt = lineCnt || 0;
+	var usePad = _gblPadStr[lineCnt++ % 2];	
+	str = String(str); // Cast to JS String object, just in case
+	if (len <= str.length)
+		return str
+	else {
+		var padlen = len - str.length;
+		var padding = usePad.substring(usePad.length-padlen); 
+		return (str + padding);
+	}
+}
+
+
+// Pad out a string to the left with spaces - e.g. right-justify str in len spaces
+//
+function RJ( str, len, lineCnt ) 
+{
+	lineCnt = lineCnt || 0;
+	var usePad = _gblPadStr[lineCnt++ % 2];	
+	var str = String(str); // Cast to JS String object, just in case
+	if (len <= str.length)
+		return str
+	else {
+		var padlen = len - str.length;
+		var padding = usePad.substring(0,padlen); 
+		return (padding + str);
+	}
+}
+
+
+// Pad out a string on both sides to length (parameter = len) - e.g. centers str in len spaces
+//
+function CJ( str, len, lineCnt ) 
+{
+	lineCnt = lineCnt || 0;
+	var usePad = _gblPadStr[lineCnt++ % 2];	
+	var str = String(str); // Cast to JS String object, just in case
+	if ( len <= str.length )
+		return str
+	else
+	{
+		var _rightPad = Math.floor((len-str.length) / 2);
+		var _leftPad = (len-str.length) - _rightPad;
+		return padR( "", _leftPad, usePad ) + str + padR( "", _rightPad );
+	}
+}
+
+// Return true if value passed does not match any in the array (second argument)
+function invalidValue(val, valArray, caseInsensitive) {
+	caseInsensitive = caseInsensitive || false;
+	if (!(valArray instanceof Array)) {
+		valArray = [valArray];
+	}
+	
+	for (var i = 0; i < valArray.length; i++) {
+		if (caseInsensitive) {
+			if (String(val).equalsIgnoreCase(valArray[i])) {
+				return false;
+			}	
+		} else
+		if (val == valArray[i]) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+// Own toJson() function
+function makeJson(obj, lvl) {
+	lvl = lvl || 0;
+	var lines = [];
+	var pad = "                                  ".substring(0, lvl*4);
+	if (typeof obj != "object" || obj == null) {
+		log(pad + obj);
+	} else {
+		for (var propName in obj) {
+			var subobj = obj[propName];
+			if (subobj instanceof Array) {
+				log(pad + "  " + propName + ": [");
+				for (var i = 0; i < subobj.length; i++) {
+					lines.push(makeJson(subobj[i], lvl+1));
+				}
+				log(pad + "]");
+			} else
+			if (typeof subobj == "object") {
+				log(pad + "  " + propName + ": {");
+				lines.push(makeJson(subobj, lvl+1));
+				log(pad + "  }")
+			} else {
+				log(pad + "  " + propName + ": " + subobj);
+			}
+		}
+	}
+	return lines.join("\n");
+}
+
+// Own formateDate() that can handle java.sql.Timestamp specifically, as it has nanoseconds
+function formatDate(dt, mask) {
+	mask = String(mask || "yyyy-MM-dd-HH.mm.ss.SSSSSS").trim();
+	
+	if (dt instanceof com.ibm.di.entry.Attribute) {
+		dt = dt.getValue(0);
+	}
+	
+	var dateStr = system.formatDate(dt, mask)
+	if (!dt instanceof java.sql.Timestamp) {
+		return dateStr;
+	}
+	
+	// For java.sql.Timestamp, include nanoseconds
+	var numOfS = 0;
+	if (mask.contains("S")) {
+		var p = mask.indexOf("S");
+		var lastP = mask.lastIndexOf("S");
+		numOfS = (lastP - p) + 1;
+		var lastDot = mask.lastIndexOf(".");
+		if (lastDot = p-1) {
+			p = lastDot;
+		}
+		mask = mask.substring(0, p)
+				+ " " + mask.substring(p+numOfS+1).trim();
+		dateStr = system.formatDate(dt, mask);
+	}
+	
+	var withTZ;
+	var withoutTZ;
+	var TZ;
+
+	if (mask.endsWith("z")) {
+		var p = mask.indexOf(" z");
+		withTZ = dateStr;
+		withoutTZ = system.formatDate(dt, mask.substring(0, p).trim());
+	} else {
+		withTZ = dateStr;
+		withoutTZ = dateStr;
+	}
+
+	var rest = "";
+	
+	if (dt instanceof java.sql.Timestamp) {
+		var nanos = dt.getNanos();
+		rest = String(nanos/1000);
+		rest = (rest + "00000000000000000").substring(0, numOfS);
+		if (rest) {
+			rest = "." + rest;
+		}
+	}		
+	return String(withoutTZ.trim() + rest + " " + withTZ.substring(withoutTZ.length).trim()).trim();
+}
+
+// Split filename into name and extension
+function getFilenameParts(name) {
+	var parts = {
+		filename: name,
+		extension: "txt"
+	}
+
+	var p = name.lastIndexOf(".");
+
+	if (p > 0 && p >= (name.length-5)) {
+		parts.extension = name.substring(p+1);
+		parts.filename = name.substring(0, p);
+	} 
+
+	return parts;
+}
+
+// Read file into an Entry object
+function fileToEntry(filePath)
+{
+	var entry = system.newEntry();
+	var file = system.openFileForInput(filePath);
+	var line;
+	while((line = file.readLine()) != null)
+	{
+		line = line.trim();
+		if(line == "")
+		{
+			continue;
+		}
+		entry[line] = true;
+	}
+	file.close();
+	return entry;
+}
+
+function fileToAttribute(filePath, attributeName)
+{
+	var attribute = system.newAttribute(attributeName);
+	var file = system.openFileForInput(filePath);
+	var line;
+	while((line = file.readLine()) != null)
+	{
+		line = line.trim();
+		if(line == "")
+		{
+			continue;
+		}
+		attribute.addValue(line);
+	}
+	file.close();
+	return attribute;
+}
+
+function encrypt(txt) {
+	var encrypted = null;
+	try {
+		//  getRsaEncrypted( plainText,  ksPath,  ksPassword,  certificateAlias)
+		encrypted = system.getRsaEncrypted(txt, 'testserver.jks', 'server', 'server')
+	} catch (ex) {
+		log("ERROR", "Error encrypting string - " + ex);
+	}
+	return encrypted;
+}
+
+function decrypt(hash) {
+	var decrypted = null;
+	try {
+		// getRsaDecrypted( plainText,  ksPath,  ksPassword,  certificateAlias, certificatePassword)
+		decrypted = system.getRsaDecrypted(hash, 'testserver.jks', 'server', 'server', 'server')
+	} catch (ex) {
+		log("ERROR", "Error decrypting hash - " + ex);
+	}
+	return decrypted;
+}
+
+function stackTrace(ex) {
+	var sw
+	var pw
+	if (ex == null) {
+		return ""
+	}
+	try {
+		sw = java.io.StringWriter();
+		pw = java.io.PrintWriter(sw);
+		ex.printStackTrace(pw);
+		pw.close();
+	} catch (ex2) {
+		var sw = ex
+	}
+	return sw.toString();
+}
+
+function loadFileToByteArray(filepath) {
+	var file = new java.io.File(filepath);
+	var fis = new java.io.FileInputStream(file);
+	var bytes = java.util.Arrays.copyOf("".getBytes(), file.length());
+	fis.read(bytes); //read file into bytes[]
+	fis.close();
+	return bytes;
+}
+
+function loadFileToString(filepath) {
+	var sb = new java.lang.StringBuilder();
+	var file = system.openFileForInput(filepath);
+	var line;
+	while ((line = file.readLine()) != null) {
+		sb.append(line + "\n");
+	}
+	return sb.toString();
+}
+
+function loadFileToArray(filepath, delimiter) {
+	delimiter = delimiter || "\n";
+	
+	var sb = new java.lang.StringBuilder();
+	var file = system.openFileForInput(filepath);
+	var line;
+	while ((line = file.readLine()) != null) {
+		sb.append(line + "\n");
+	}
+	var str = sb.toString();
+	return system.splitString(str, delimiter)
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

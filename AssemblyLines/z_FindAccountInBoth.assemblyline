@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="18" UUID="c1cb6522-8865-414b-8e2a-f7beb52cccde" created="Mon Oct 19 17:15:03 CEST 2020" createdBy="eddie" main="z_FindAccountInBoth" modified="Tue Dec 08 18:10:45 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_FindAccountInBoth">
+        <ModTime>1607447442806</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[Mapper
+OpenPagesObj
+Script_Lib
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Set up" state="Enabled"/>
+                <Component name="Find accounts in both" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1607447442806</ModTime>
+            <Script name="Set up">
+                <ModTime>1603120826219</ModTime>
+                <parameter name="script"><![CDATA[ePolicy = {
+	    userName: "db2inst1",
+	    password: "Epolicy2ibm@123",
+	    hostname: "mopbzp174025.fr.dst.ibm.com",
+	    port: "50000",
+	    database: "POLICYL"
+	  };
+
+db = new ePolicyObj({
+		hostName: ePolicy.hostName || ePolicy.hostname,
+		userName: ePolicy.userName || ePolicy.username, 
+		password: ePolicy.password, 
+		port: ePolicy.port, 
+		database: ePolicy.database	
+	});
+
+if (typeof ctr != "undefined") {
+	op = new OpenPagesObj(ctr);
+} else {
+	op = new OpenPagesObj();
+}]]></parameter>
+            </Script>
+            <Script name="Find accounts in both">
+                <ModTime>1607447442806</ModTime>
+                <parameter name="script"><![CDATA[epAccountList = db.select("select * from EPOLICY.ACCOUNT");
+
+tries = 0;
+cnt = 0;
+for (epAccount in epAccountList) {
+	if (tries++ % 50 == 0) {
+		log("..." + tries);
+	}
+	
+	name = epAccount.getString("Name");
+	abbv = epAccount.getString("ShortName");
+	
+	res = op.findAccount(name, { objectType: "SOXAccount" });
+	if (res.length == 0) {
+		res = op.findAccount(abbv, { objectType: "SOXAccount" });
+	}
+	
+	if (res.length == 0) {
+		continue;
+	}
+	
+	log(++cnt + ": " + name);
+}
+
+log("..." + tries);]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

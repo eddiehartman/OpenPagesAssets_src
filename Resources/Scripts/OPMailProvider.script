@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="b8ecfb0e-fc4b-4bcb-bebb-faea910e7311" created="Tue Aug 18 13:43:43 CEST 2020" createdBy="eddie" main="OPMailProvider" modified="Tue Aug 18 13:44:06 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="OPMailProvider">
+        <ModTime>1597751044920</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+var OPMailProvider = function () {
+    return {
+        mailSubject : "(Do Not Reply) OpenPages Connector error ",
+        notificationsSent : null,
+        mailFrom : null,
+        hostname : null,
+        smtpHost : null,
+        smtpPort : 25,
+        mailTo : null,
+        client : null,
+        initialize : function (args) {
+            this.client = args.client;
+            this.hostname = java.net.InetAddress.getLocalHost().getHostName();
+            // Process the SMTP/mail properties
+            this.mailFrom = "TDI-Administrator-on-" + this.hostname + "@" + this.hostname;
+            this.notificationsSent = new java.util.HashSet();
+            this.smtpHost = this.smtpHost || "";
+            this.smtpPort = this.smtpPort || 25;
+            this.mailTo = this.mailTo || "";
+            // Disable mail notifications if important mailing properties were not
+            // specified
+            if (this.smtpHost === "" || this.mailTo === "") {
+                this.smtpHost = "";
+            }
+            if (this.smtpHost && this.smtpHost !== "" && this.mailTo && this.mailTo !== "") {
+                system.setJavaProperty("mail.smtp.host", this.smtpHost);
+                system.setJavaProperty("mail.smtp.port", this.smtpPort);
+                // TEST:
+                // sendEmailNotification("This is a test email from the OP
+                // Connector.");
+            }
+            return this;
+        },
+        sendEmailNotification : function (error) {
+            var didSend = false;
+            var alreadySent = this.notificationsSent.contains(error);
+            if (this.smtpHost !== "" && ! alreadySent) {
+                didSend = system.sendMail(this.mailFrom, this.mailTo, this.mailSubject,
+                    "Additional instances of this error will not be reported via email for the " +
+                    "current scheduled run.\n\nReported Issue:\n\n" + error, null);
+                // remember this error to avoid mailing duplicates for this assembly
+                // line run
+                this.notificationsSent.add(error);
+                java.lang.Thread.sleep(100); // avoids overwhelming the SMTP server
+                if (didSend !== null) {
+                    this.client.logmsg("WARN",
+                        "Attempt to send email was not successful for message [" +
+                        error +
+                        "]\n\tReason: " +
+                        didSend);
+                }
+            }
+        }
+    };
+};]]></parameter>
+    </Script>
+</MetamergeConfig>

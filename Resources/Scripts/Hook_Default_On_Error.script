@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="4" UUID="07549f2b-fe3c-4e6e-b72e-59c4722708fa" created="Wed Apr 01 16:37:27 IST 2020" createdBy="DishaSingh" main="Hook_Default_On_Error" modified="Wed Jun 17 20:38:22 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="Hook_Default_On_Error">
+        <ModTime>1592419102898</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[log("FATAL", "Error reading from OpenPages: " + error.message);
+throw error.getObject("Exception");]]></parameter>
+    </Script>
+</MetamergeConfig>

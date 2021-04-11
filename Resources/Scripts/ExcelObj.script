@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="284" UUID="4e7f1c1e-da47-45eb-ad10-e149f79be745" created="Tue Jun 02 17:25:10 CEST 2020" createdBy="eddie" main="ExcelObj" modified="Sat Oct 31 13:59:06 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ExcelObj">
+        <ModTime>1604149145285</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// The args properties are optional and include:
+//
+//		filenameTemplate: optional name (with subst-tokens) of the Excel sheet, in case it is written to disk
+//    	sheetFileName: filepath for the Excel Sheet used by write() method, default is "$TDI_SOLDIR/_ExcelSheet.xlsx
+//						NOTE: may contain eval tokens in curly braces - support javascript
+//		columnsFileName: filepath to the text file with ordered names of Sheet columns, one per line
+//	 OR columnNames: semicolon-separated list of field names (instead of file)
+//		entry: Entry that the sheetFileName evaluation should use for eval tokens - i.e. {attribute-name}
+//
+var ExcelObj = function (args)
+{
+	//this.vrs = "20200602 1725"; // First version
+	//this.vrs = "20200603 1345"; // Finally working
+	//this.vrs = "20200603 2232"; // Corrected filename generation
+	//this.vrs = "20200703 2000"; // .generate() can return ByteArray
+	//this.vrs = "20200705 1408" // Removed POC_MVP/ as default path for files
+	//this.vrs = "20200711 1839" // Added support for multiple entries with .addRow() and .writeSheet()
+	//this.vrs = "20200712 1658"; // Added .getBytes() method
+	//this.vrs = "20200810 1905"; // Removed debug code for sheetname
+	//this.vrs = "20200815 1556"; // Removed hardcoded sheetname
+	//this.vrs = "20200815 1556"; // Removed hardcoded sheetname
+	//this.vrs = "2020921 1057"; // Added columnNames constructor argument
+	//this.vrs = "20200925 1010"; // Changed name to ExcelObj and .writeSheet() to .write()
+	this.vrs = "20201030 1557"; // Added feature to addRow so that Att Names starting with pipe (|) will be in bold font
+
+	args = args || {};
+
+	this.filenameTemplate = typeof(args) == "string" ? args : (args.fileName || "_ExcelWorkbook.xlsx");
+	this.filename = "_ExcelWorkbook.xlsx";
+	this.sheetname = args.sheetname || "Data";
+	this.entry = args.entry || system.newEntry();
+	this.map = new Mapper();
+	this.columns = null;
+	this.columnsFileName = args.columnsFileName || null;
+	this.columnNames = args.columnNames || null;
+	
+	this.workbook = null;
+	this.spreadsheet = {};
+	this.rowCount = {} ;
+	
+	// Used for copying spreadsheets
+	this.workbooks = {};
+	this.sheets = {};
+	this.rowIndex = {};
+	
+	// Local log function
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[ExcelObj] " + msg);
+		
+		if (throwit) throw "[ExcelObj] " + msg;
+	}
+	
+	// Write the workbook to a file
+	this.write = function(useFileName) {
+		useFileName = useFileName || this.filename;
+		var fos = new java.io.FileOutputStream(new java.io.File(useFileName));
+		this.workbook.write(fos);
+		fos.close();
+	}
+	
+	// Return the workbook as a byte array
+	this.getBytes = function() {
+		var fos = new java.io.ByteArrayOutputStream();
+		this.workbook.write(fos);
+		fos.close();
+		
+		return fos.toByteArray();
+	}
+	
+	// Add an Entry as a row to this spreadsheet, using the field list specified
+	this.addRow = function(entry, toSheetName, columns) {
+		columns = columns || this.columns;
+		toSheetName = toSheetName || this.sheetname;
+		
+		var row;
+		if (this.workbook == null) {
+			//Blank Document
+			this.workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+			
+			var boldFont = this.workbook.createFont();
+	        boldFont.setBold(true);
+	
+	        this.headerStyle = this.workbook.createCellStyle();
+	        this.headerStyle.setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderTop(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderRight(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setFillForegroundColor(200);
+	        this.headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+	        //headerStyle.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.TOP);
+	        this.headerStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+	        this.headerStyle.setFont(boldFont);			
+
+			this.cellStyle = this.workbook.createCellStyle();
+			this.cellStyle.setWrapText(true);
+	        this.cellStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+
+			this.boldCellStyle = this.workbook.createCellStyle();
+			this.boldCellStyle.setWrapText(true);
+	        this.boldCellStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+	        this.boldCellStyle.setFillForegroundColor(200);
+	        this.boldCellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+	        this.boldCellStyle.setFont(boldFont);			
+		}
+
+		if (!this.spreadsheet[toSheetName]) {
+			this.spreadsheet[toSheetName] = this.workbook.createSheet(toSheetName);
+			this.rowCount[toSheetName] = 0;
+		}
+
+		if (this.rowCount[toSheetName] == 0) {
+			row = this.spreadsheet[toSheetName].createRow(this.rowCount[toSheetName]);
+			for (var cellNum = 0; cellNum < columns.length; cellNum++) {
+				var name = columns[cellNum];
+				var xlCell = row.createCell(cellNum);
+				xlCell.setCellStyle(this.headerStyle);
+				xlCell.setCellValue(name);
+		        this.spreadsheet[toSheetName].autoSizeColumn(cellNum);
+			}
+			this.rowCount[toSheetName]++;
+		}
+		
+		row = this.spreadsheet[toSheetName].createRow(this.rowCount[toSheetName]);
+		for (var cellNum = 0; cellNum < columns.length; cellNum++) {
+			var name = columns[cellNum];
+			var bold = false;
+			
+			// First look if the attribute name is prepended with pipe (|) and if so, it's to be BOLDed
+			var att = entry["|" + name];
+			if (att == null) {
+				att = entry[name];	
+			}
+			
+			var value = null;
+			if (att != null) {
+				var attName = att.getName();
+
+				// Pipe symbol prefix indicates Bold font
+				if (attName.startsWith("|")) {
+					bold = true;
+				}
+				var values = att.getValues();
+				if (values.length == 1) {
+					var value = values[0];
+				} else {
+					//row.setHeightInPoints((Math.max(1, values.length) * this.spreadsheet[toSheetName].getDefaultRowHeightInPoints()));
+					var arr = [];
+					for (var value in values) {
+						arr.push(value.trim());
+					}
+					var value = arr.join("\n");
+				}
+			}	
+
+			var xlCell = row.createCell(cellNum);
+			if (bold) {
+	 			xlCell.setCellStyle(this.boldCellStyle);
+			} else {
+	 			xlCell.setCellStyle(this.cellStyle);
+			}
+			xlCell.setCellValue(value);
+		}
+
+		this.rowCount[toSheetName]++;
+	}
+	
+	// Initialize this object
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		
+		if (this.columnsFileName) {
+			var file = new java.io.File(this.columnsFileName) 
+			if (!file.exists()) {
+				this.log("FATAL", "Columns file name does not exist: " + this.columnsFileName, true);
+			}
+			
+			this.columns = loadFileToArray(this.columnsFileName);
+		} else 
+		if (this.columnNames) {
+			var sep = ",";
+			if (this.columnNames.contains(";")) {
+				sep = ";";
+			}
+			this.columns = system.splitString(this.columnNames, sep);
+		}
+
+		if (String(this.filenameTemplate).trim() != "") {
+			this.filename = this.map.evaluate("Excel sheet filename", this.filenameTemplate, this.entry);
+		}
+	}	
+	
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="7e851ed9-dcab-41e1-b4c9-dfaea243e7b2" created="Wed Sep 23 14:25:19 CEST 2020" createdBy="eddie" main="ePolicy2OP_Read and Set Reg Ctrl and Addtnl Ctl for new Policy" modified="Thu Dec 17 15:19:47 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Read and Set Reg Ctrl and Addtnl Ctl for new Policy">
+        <ModTime>1608214781932</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Find controls attached to this ePolicy CSD
+
+log("Reading controls...");
+ctlList = db.query("controls", CSD);
+
+// log("WARN", "\n\n\n-------------------- NOT MIGRATING CONTROL CLAUSES ------------\n\n\n--");
+// ctlList = (new java.util.ArrayList()).toArray();
+
+for (ctl in ctlList) {
+	log("Found control: " + ctl.toJSON());
+
+	// Use controls found to set values later used to create the Policy
+	ctlName = (ctl.getString("name") || "").toLowerCase();
+	if (ctlName.contains("regulatory control")) {
+		CSD.addAttributeValue("_regulatoryControls", ctl.getString("VARIABLE"));
+	} else
+	if (ctlName.contains("additional control")) {
+		CSD.addAttributeValue("_additionalControls", ctl.getString("VARIABLE"));
+	}
+}
+
+log("Found Controls in CSD:\n-------> Regulatory Controls: " + 
+		CSD._regulatoryControls
+		+ "\n"
+		+ "-------> Additional Controls: "
+		+ CSD._additionalControls);]]></parameter>
+    </Script>
+</MetamergeConfig>

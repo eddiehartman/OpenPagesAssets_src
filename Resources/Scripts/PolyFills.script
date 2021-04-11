@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="ea70e528-62ad-40a0-aafe-624a0941f72b" created="Tue Aug 18 13:39:45 CEST 2020" createdBy="eddie" main="PolyFills" modified="Tue Aug 18 13:40:12 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="PolyFills">
+        <ModTime>1597750806272</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//  Polyfill methods for javascript functions not supported by TDI 7.1.1.
+//
+//  The methods polyfilled here are:
+//
+//  1) Array.indexOf
+//  2) Array.map
+//  3) Array.forEach
+//  4) String.split --  however, instead of replacing String.split, String.prototype.splitPolyfilled is added, since
+//                      there are issues with the TDI environment where this is converned.  This method is only
+//                      needed currently to split a string using a regular expression.  Splitting on a string works
+//                      in TDI.  This is also the only polyfill here that doesn't come from developer.mozilla.org.
+//
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+ */
+if (! Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+        var k;
+        // 1. Let o be the result of calling ToObject passing
+        //    the this value as the argument.
+        if (this == null) {
+            throw new TypeError('"this" is null or not defined');
+        }
+        var o = Object(this);
+        // 2. Let lenValue be the result of calling the Get
+        //    internal method of o with the argument "length".
+        // 3. Let len be ToUint32(lenValue).
+        var len = o.length >>> 0;
+        // 4. If len is 0, return -1.
+        if (len === 0) {
+            return -1;
+        }
+        // 5. If argument fromIndex was passed let n be
+        //    ToInteger(fromIndex); else let n be 0.
+        var n = fromIndex | 0;
+        // 6. If n >= len, return -1.
+        if (n >= len) {
+            return -1;
+        }
+        // 7. If n >= 0, then Let k be n.
+        // 8. Else, n<0, Let k be len - abs(n).
+        //    If k is less than 0, then let k be 0.
+        k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+        // 9. Repeat, while k < len
+        while (k < len) {
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the
+            //    HasProperty internal method of o with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            //    i.  Let elementK be the result of calling the Get
+            //        internal method of o with the argument ToString(k).
+            //   ii.  Let same be the result of applying the
+            //        Strict Equality Comparison Algorithm to
+            //        searchElement and elementK.
+            //  iii.  If same is true, return k.
+            if (k in o && o[k] === searchElement) {
+                return k;
+            }
+            k++;
+        }
+        return -1;
+    };
+}
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Polyfill
+ */
+if (! Array.prototype.map) {
+    Array.prototype.map = function (callback/*, thisArg*/) {
+        var T, A, k;
+        if (this == null) {
+            throw new TypeError('this is null or not defined');
+        }
+        // 1. Let O be the result of calling ToObject passing the |this|
+        //    value as the argument.
+        var O = Object(this);
+        // 2. Let lenValue be the result of calling the Get internal
+        //    method of O with the argument "length".
+        // 3. Let len be ToUint32(lenValue).
+        var len = O.length >>> 0;
+        // 4. If IsCallable(callback) is false, throw a TypeError exception.
+        // See: http://es5.github.com/#x9.11
+        if (typeof callback !== 'function') {
+            throw new TypeError(callback + ' is not a function');
+        }
+        // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+        if (arguments.length > 1) {
+            T = arguments[1];
+        }
+        // 6. Let A be a new array created as if by the expression new Array(len)
+        //    where Array is the standard built-in constructor with that name and
+        //    len is the value of len.
+        A = new Array(len);
+        // 7. Let k be 0
+        k = 0;
+        // 8. Repeat, while k < len
+        while (k < len) {
+            var kValue, mappedValue;
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the HasProperty internal
+            //    method of O with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            if (k in O) {
+                // i. Let kValue be the result of calling the Get internal
+                //    method of O with argument Pk.
+                kValue = O[k];
+                // ii. Let mappedValue be the result of calling the Call internal
+                //     method of callback with T as the this value and argument
+                //     list containing kValue, k, and O.
+                mappedValue = callback.call(T, kValue, k, O);
+                // iii. Call the DefineOwnProperty internal method of A with arguments
+                // Pk, Property Descriptor
+                // { Value: mappedValue,
+                //   Writable: true,
+                //   Enumerable: true,
+                //   Configurable: true },
+                // and false.
+                // In browsers that support Object.defineProperty, use the following:
+                // Object.defineProperty(A, k, {
+                //   value: mappedValue,
+                //   writable: true,
+                //   enumerable: true,
+                //   configurable: true
+                // });
+                // For best browser support, use the following:
+                A[k] = mappedValue;
+            }
+            // d. Increase k by 1.
+            k++;
+        }
+        // 9. return A
+        return A;
+    };
+}
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Polyfill
+ */
+if (! Array.prototype.forEach) {
+    Array.prototype.forEach = function(callback/*, thisArg*/) {
+        var T, k;
+        if (this == null) {
+            throw new TypeError('this is null or not defined');
+        }
+        // 1. Let O be the result of calling toObject() passing the
+        // |this| value as the argument.
+        var O = Object(this);
+        // 2. Let lenValue be the result of calling the Get() internal
+        // method of O with the argument "length".
+        // 3. Let len be toUint32(lenValue).
+        var len = O.length >>> 0;
+        // 4. If isCallable(callback) is false, throw a TypeError exception.
+        // See: http://es5.github.com/#x9.11
+        if (typeof callback !== 'function') {
+            throw new TypeError(callback + ' is not a function');
+        }
+        // 5. If thisArg was supplied, let T be thisArg; else let
+        // T be undefined.
+        if (arguments.length > 1) {
+            T = arguments[1];
+        }
+        // 6. Let k be 0
+        k = 0;
+        // 7. Repeat, while k < len
+        while (k < len) {
+            var kValue;
+            // a. Let Pk be ToString(k).
+            //    This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the HasProperty
+            //    internal method of O with argument Pk.
+            //    This step can be combined with c
+            // c. If kPresent is true, then
+            if (k in O) {
+                // i. Let kValue be the result of calling the Get internal
+                // method of O with argument Pk.
+                kValue = O[k];
+                // ii. Call the Call internal method of callback with T as
+                // the this value and argument list containing kValue, k, and O.
+                callback.call(T, kValue, k, O);
+            }
+            // d. Increase k by 1.
+            k++;
+        }
+        // 8. return undefined
+    };
+}
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter#Polyfill
+ */
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function(fun/*, thisArg*/) {
+        'use strict';
+        if (this === void 0 || this === null) {
+            throw new TypeError();
+        }
+        var t = Object(this);
+        var len = t.length >>> 0;
+        if (typeof fun !== 'function') {
+            throw new TypeError();
+        }
+        var res = [];
+        var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+        for (var i = 0; i < len; i++) {
+            if (i in t) {
+                var val = t[i];
+                // NOTE: Technically this should Object.defineProperty at
+                //       the next index, as push can be affected by
+                //       properties on Object.prototype and Array.prototype.
+                //       But that method's new, and collisions should be
+                //       rare, so use the more-compatible alternative.
+                if (fun.call(thisArg, val, i, t)) {
+                    res.push(val);
+                }
+            }
+        }
+        return res;
+    };
+}
+/*!
+ * Cross-Browser Split 1.1.1
+ * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
+ * Available under the MIT License
+ * ECMAScript compliant, uniform cross-browser split method
+ */
+/**
+ * Splits a string into an array of strings using a regex or string separator. Matches of the
+ * separator are not included in the result array. However, if `separator` is a regex that contains
+ * capturing groups, backreferences are spliced into the result each time `separator` is matched.
+ * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
+ * cross-browser.
+ * @param {String} str String to split.
+ * @param {RegExp|String} separator Regex or string to use for separating the string.
+ * @param {Number} [limit] Maximum number of items to include in the result array.
+ * @returns {Array} Array of substrings.
+ * @example
+ *
+ * // Basic use
+ * split('a b c d', ' ');
+ * // -> ['a', 'b', 'c', 'd']
+ *
+ * // With limit
+ * split('a b c d', ' ', 2);
+ * // -> ['a', 'b']
+ *
+ * // Backreferences in result array
+ * split('..word1 word2..', /([a-z]+)(\d+)/i);
+ * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
+ */
+// Avoid running twice; that would break the `nativeSplit` reference
+var splitPolyfilled = splitPolyfilled || function (undef) {
+    var compliantExecNpcg = /()??/.exec("")[1] === undef, // NPCG: nonparticipating capturing group
+        self;
+    self = function (str, separator, limit) {
+        var output = [],
+            flags = (separator.ignoreCase ? "i" : "") +
+                (separator.multiline ? "m" : "") +
+                (separator.extended ? "x" : "") + // Proposed for ES6
+                (separator.sticky ? "y" : ""), // Firefox 3+
+            lastLastIndex = 0,
+        // Make `global` and avoid `lastIndex` issues by working with a copy
+            separator = new RegExp(separator.source, flags + "g"),
+            separator2, match, lastIndex, lastLength;
+        str += ""; // Type-convert
+        if (!compliantExecNpcg) {
+            // Doesn't need flags gy, but they don't hurt
+            separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+        }
+        /* Values for `limit`, per the spec:
+         * If undefined: 4294967295 // Math.pow(2, 32) - 1
+         * If 0, Infinity, or NaN: 0
+         * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
+         * If negative number: 4294967296 - Math.floor(Math.abs(limit))
+         * If other: Type-convert, then use the above rules
+         */
+        limit = limit === undef ?
+        -1 >>> 0 : // Math.pow(2, 32) - 1
+        limit >>> 0; // ToUint32(limit)
+        while (match = separator.exec(str)) {
+            // `separator.lastIndex` is not reliable cross-browser
+            lastIndex = match.index + match[0].length;
+            if (lastIndex > lastLastIndex) {
+                output.push(str.slice(lastLastIndex, match.index));
+                // Fix browsers whose `exec` methods don't consistently return `undefined` for
+                // nonparticipating capturing groups
+                if (!compliantExecNpcg && match.length > 1) {
+                    match[0].replace(separator2, function () {
+                        for (var i = 1; i < arguments.length - 2; i++) {
+                            if (arguments[i] === undef) {
+                                match[i] = undef;
+                            }
+                        }
+                    });
+                }
+                if (match.length > 1 && match.index < str.length) {
+                    output.push(match.slice(1));
+                }
+                lastLength = match[0].length;
+                lastLastIndex = lastIndex;
+                if (output.length >= limit) {
+                    break;
+                }
+            }
+            if (separator.lastIndex === match.index) {
+                separator.lastIndex++; // Avoid an infinite loop
+            }
+        }
+        if (lastLastIndex === str.length) {
+            if (lastLength || !separator.test("")) {
+                output.push("");
+            }
+        } else {
+            output.push(str.slice(lastLastIndex));
+        }
+        return output.length > limit ? output.slice(0, limit) : output;
+    };
+    // For convenience
+    String.prototype.splitPolyfilled = function (separator, limit) {
+        return self(this, separator, limit);
+    };
+    return self;
+}();
+var JSON = JSON || {
+    parse: function(sJSON) { return eval('(' + sJSON + ')'); },
+    stringify: (function () {
+        var toString = Object.prototype.toString;
+        var isArray = Array.isArray || function (a) { return toString.call(a) === '[object Array]'; };
+        var escMap = {'"': '\\"', '\\': '\\\\', '\b': '\\b', '\f': '\\f', '\n': '\\n', '\r': '\\r', '\t': '\\t'};
+        var escFunc = function (m) { return escMap[m] || '\\u' + (m.charCodeAt(0) + 0x10000).toString(16).substr(1); };
+        var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
+        return function stringify(value) {
+            if (value == null) {
+                return 'null';
+            } else if (typeof value === 'number') {
+                return isFinite(value) ? value.toString() : 'null';
+            } else if (typeof value === 'boolean') {
+                return value.toString();
+            } else if (typeof value === 'object') {
+                if (typeof value.toJSON === 'function') {
+                    return stringify(value.toJSON());
+                } else if (isArray(value)) {
+                    var res = '[';
+                    for (var i = 0; i < value.length; i++)
+                        res += (i ? ', ' : '') + stringify(value[i]);
+                    return res + ']';
+                } else if (toString.call(value) === '[object Object]') {
+                    var tmp = [];
+                    for (var k in value) {
+                        if (value.hasOwnProperty(k))
+                            tmp.push(stringify(k) + ': ' + stringify(value[k]));
+                    }
+                    return '{' + tmp.join(', ') + '}';
+                }
+            }
+            return '"' + value.toString().replace(escRE, escFunc) + '"';
+        };
+    })()
+};]]></parameter>
+    </Script>
+</MetamergeConfig>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="54" UUID="f5f3a951-6f25-441e-8bab-7be14c1bd1e7" created="Wed Sep 23 14:25:36 CEST 2020" createdBy="eddie" main="ePolicy2OP_Map and Add Policy" modified="Tue Dec 22 11:14:37 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Map and Add Policy">
+        <ModTime>1608632076602</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Map CSD to OpenPages Policy
+policyMap = new Mapper("POC_MVP/map_csd_to_policy.map");
+csdEntry = policyMap.map([CSD, opAccount, ePolicyAccount]);
+
+// Remove the Name attribute so OpenPages will Autogenerate the Name
+csdEntry.removeAttribute("Name");
+
+// Create the OpenPages Policy
+log("About to write OP Policy:\n" + csdEntry.toJSON());
+newPolicy = op.add(csdEntry, {
+	objectType: "Policy",
+	parentType: "SOXAccount",
+	parentID: opAccountID,
+//	parentID: cc.policyTemplateId(),
+	debug: debug || !doMigration
+});
+
+newPolicyId = newPolicy.getString("Resource Id");
+
+if (debug) {
+	debugJSON = '{' 
+		+ '\n	"Description": "Migrated from ePolicy: Customer Security Document_V2.1.4",'
+		+ '\n	"GTS-Policy:DPE": "anpde186@in.ibm.com",'
+		+ '\n	"Name": "POL-293-Acc-44-AG",'
+		+ '\n	"OPSS-Pol:Next Review Date": "",'
+		+ '\n	"OPSS-Pol:Version": "v1.",'
+		+ '\n	"OPSS-Pol:Common Name": "POL-293-Acc-44-AG",'
+		+ '\n	"OPSS-Pol:Type": "CSD",'
+		+ '\n	"GTS-Policy:Additional Ctl": "OPT_PCIDSS",'
+		+ '\n	"OPSS-Pol:Status": "DPE Approval",'
+		+ '\n	"GTS-Policy:Regulatory Ctl": "GDPR"'
+		+ '}'
+	newPolicy = com.ibm.di.entry.Entry.fromJSON(debugJSON);
+	newPolicyId = useId; log("\n\n\n*********** DEBUG CODE SETTING newPolicyId to " + newPolicyId + " *********\n\n\n*");
+} else {
+	// The Policy gets added with the DPE(s) specified in the SOXAccount. Now to correct this to that in the CSD (if valid)
+	var entry = system.newEntry();
+	entry.name = newPolicy.name;
+	entry["Resource ID"] = newPolicyId;
+
+	opDPEs = opAccount.getString("GTS-Account:DPE");
+	epDPE = CSD.getString("EMAIL");
+	var useDPE = selectDPE(opDPEs, epDPE);
+	entry["GTS-Policy:DPE"] = useDPE;
+
+	op.update(entry, {
+		objectType: "Policy",
+		debug: debug || !doMigration
+	})
+
+	// Finally, we need to add the OP Account as the parent of this Policy
+	op.addParent({
+		childId: newPolicy.getObject("Resource ID"),
+		childType: "Policy",
+		parentId: cc.policyTemplateId(),
+		parentType: "GTSLibPolicy",
+		debug: debug || !doMigration
+	});
+}
+
+// Add to the creation metric info
+if (doMigration) {
+	log("\n*****\n\n\n***** Created Policy with id: " + newPolicyId + "	name: " + newPolicy.name + "\n\n\n\n*****");
+}
+
+// Add some attribute names for later maps and templates
+newPolicy.Policy_Name = newPolicy.Name;
+newPolicyName = newPolicy.getString("Name") || "*VALIDATING*";
+p = newPolicyName.lastIndexOf(".");
+if (p > 0 && p < newPolicyName.length-1) {
+	newPolicyName = newPolicyName.substring(0, p);
+}
+oldALName = task.getParam("alName");
+task.setParam("alName", oldALName + "<" + newPolicyName);
+
+// Save details about the creation of this new Policy
+policyChildren = saveCreationDetails(accountNameWithCode, "Policy", [newPolicy, ePolicyAccount, CSD]);]]></parameter>
+    </Script>
+</MetamergeConfig>

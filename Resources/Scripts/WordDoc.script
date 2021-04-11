@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="156" UUID="c35420a2-7da5-4651-b292-3607c0375ee4" created="Tue Jun 02 17:24:59 CEST 2020" createdBy="eddie" main="WordDoc" modified="Fri Oct 09 15:34:19 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="WordDoc">
+        <ModTime>1602249884939</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var WordDoc = function (filenameTemplate)
+{
+	//this.vrs = "20200602 1725"; // First version
+	//this.vrs = "20200603 1345"; // Updated to handle templating
+	this.vrs = "20200603 2232"; // Corrected filename generation
+
+	this.filenameTemplate = filenameTemplate;
+	this.map = new Mapper();
+	 
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		 
+		log(lvl, "[WordDoc] " + msg);
+	}
+	
+	// 
+	
+	// Generate a Word Doc based on a file template
+	this.generate = function(entry) {
+		// Get filename
+		filename = this.map.evaluate("Word doc filename", this.filenameTemplate, entry);
+		this.log("Generating Word doc: " + filename);
+		
+		//Blank Document
+		var document = new org.apache.poi.xwpf.usermodel.XWPFDocument();
+		  
+		//Write the Document in file system
+		//fos = new java.io.ByteArrayOutputStream();
+		fos = new java.io.FileOutputStream(new java.io.File("POC_MVP/" + filename));
+
+		// First create the Abstract
+		var paragraph = document.createParagraph();
+		var run = paragraph.createRun();
+		run.setBold(true);
+		run.setFontSize(12);
+		
+		var contents = entry.getString("contents");
+		var lines = system.splitString(contents, "\n");
+		
+		for (var line in lines) {
+			run.setText(line);
+			run.addBreak();
+		}
+
+		document.write(fos);
+		fos.close();
+		
+		if (fos instanceof java.io.ByteArrayOutputStream) {
+			return fos.toByteArray();
+		}
+	}
+	
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+	}	
+	
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="9" UUID="ad9fa7f8-5197-4ba7-8d64-2f0004616930" created="Fri Oct 09 15:46:05 CEST 2020" createdBy="eddie" main="ePolicy2OP_Validate MappingTable Refs" modified="Tue Oct 13 14:30:58 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Validate MappingTable Refs">
+        <ModTime>1602592258289</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now validate that the TO refs in the mappingTable refer to actual Template CCs
+var notFound = [];
+for (var fromRef in mappingTable) {
+	var toRef = mappingTable[fromRef];
+	var templateCC = op.findOne("GTS-ClauseCtl:Col1", toRef, "GTSLibClauseCtl")
+	if (templateCC == null) {
+		notFound.push(toRef);
+	}
+}
+
+if (notFound.length > 0) {
+	log("ERROR", "Mapping Table To-Refs do not reference Template Clause Controls: " + notFound.join(", "));
+	system.exitFlow();
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

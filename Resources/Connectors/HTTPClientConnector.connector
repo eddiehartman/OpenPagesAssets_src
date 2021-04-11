@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="46bbd4da-e9db-45c0-9d41-30b8097ebef1" created="Fri Oct 30 13:15:49 CET 2020" createdBy="eddie" main="HTTPClientConnector" modified="Fri Oct 30 13:27:10 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Connector name="HTTPClientConnector">
+        <InheritFrom>system:/Connectors/ibmdi.HTTPClient</InheritFrom>
+        <ModTime>1604060654927</ModTime>
+        <ConnectorMode>AddOnly</ConnectorMode>
+        <ConnectorState>Enabled</ConnectorState>
+        <Configuration>
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060654927</ModTime>
+            <parameter name="url">https://gtsus-uat01.op.ibmcloud.com:8042</parameter>
+        </Configuration>
+        <Parser>
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </Parser>
+        <AttributeMap name="Input">
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </AttributeMap>
+        <AttributeMap name="Output">
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </AttributeMap>
+        <DeltaSettings/>
+        <Schema name="Input">
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </Schema>
+        <Schema name="Output">
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </Schema>
+        <LinkCriteria>
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </LinkCriteria>
+        <Hooks>
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060145276</ModTime>
+        </Hooks>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <Reconnect>
+            <InheritFrom>[parent]</InheritFrom>
+            <ReconnectRules/>
+        </Reconnect>
+        <Operations/>
+        <PoolDefinition>
+            <InheritFrom>[parent]</InheritFrom>
+            <ModTime>1604060149732</ModTime>
+            <Enabled>false</Enabled>
+            <MinPoolSize>0</MinPoolSize>
+            <MaxPoolSize>0</MaxPoolSize>
+            <PurgeInterval>0</PurgeInterval>
+            <InitializeAttempts>1</InitializeAttempts>
+            <InitializeSleepInterval>0</InitializeSleepInterval>
+        </PoolDefinition>
+        <PoolInstance/>
+    </Connector>
+</MetamergeConfig>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="17" UUID="8b6488a7-5335-4daa-abdd-e0f4ec3887e0" created="Sat Oct 10 17:32:51 CEST 2020" createdBy="eddie" main="Migrate ePolicy Service" modified="Tue Dec 01 18:08:22 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Scheduler name="Migrate ePolicy Service">
+        <ModTime>1606842501773</ModTime>
+        <parameter name="SchedulerType">1</parameter>
+        <parameter name="StartTimes">* * * * 0 0</parameter>
+        <parameter name="WithinSeconds">60</parameter>
+        <parameter name="assemblyLine">Migrate_ePolicy_Service</parameter>
+        <parameter name="enabled">true</parameter>
+    </Scheduler>
+</MetamergeConfig>

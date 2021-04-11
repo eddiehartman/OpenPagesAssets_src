@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="25" UUID="9c7918f7-525c-49be-9324-bbb07179b936" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPagesGRCObjectQuery" modified="Wed Jun 17 20:38:23 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Container name="References"/>
+    
+
+
+
+
+
+
+
+
+
+<Connector name="OpenPagesGRCObjectQuery">
+        <InheritFrom>system:/Connectors/ibmdi.ScriptConnector</InheritFrom>
+        <ModTime>1592419103193</ModTime>
+        <ConnectorMode>Lookup</ConnectorMode>
+        <ConnectorState>Enabled</ConnectorState>
+        <Configuration>
+            <InheritFrom>[parent]</InheritFrom>
+            <parameter name="$form$"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="7" UUID="79eadaf0-d654-45d6-8826-37565d38666c" created="Fri Feb 10 07:17:27 PST 2017" createdBy="Administrator" main="Form" modified="Thu Feb 16 07:00:03 PST 2017" modifiedBy="Administrator" version="7.1.1">
+    <Form name="Form">
+        <ModTime>1487257172219</ModTime>
+        <FormItemNames>
+            <ListItem>$GLOBAL.script</ListItem>
+            <ListItem>keepGlobalState</ListItem>
+            <ListItem>$GLOBAL.includeFiles</ListItem>
+            <ListItem>includePrologs</ListItem>
+            <ListItem>$GLOBAL.debug</ListItem>
+            <ListItem>$GLOBAL.help</ListItem>
+            <ListItem>root</ListItem>
+            <ListItem>url</ListItem>
+            <ListItem>password</ListItem>
+            <ListItem>username</ListItem>
+            <ListItem>query</ListItem>
+        </FormItemNames>
+        <FormSectionNames>
+            <ListItem>General</ListItem>
+            <ListItem>Advanced</ListItem>
+        </FormSectionNames>
+        <FormItem name="URL">
+            <ModTime>1486739989542</ModTime>
+            <parameter name="label">url</parameter>
+        </FormItem>
+        <FormItem name="apimethod">
+            <ModTime>1486740964372</ModTime>
+            <Values>
+                <ListItem>getMandateByUcfId</ListItem>
+            </Values>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">OpenPages API Method</parameter>
+            <parameter name="syntax">droplist</parameter>
+        </FormItem>
+        <FormItem name="field"/>
+        <FormItem name="fieldname">
+            <ModTime>1486743652414</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Field Name</parameter>
+        </FormItem>
+        <FormItem name="fields">
+            <ModTime>1486744335462</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Fields</parameter>
+        </FormItem>
+        <FormItem name="fieldvalue">
+            <ModTime>1486743640820</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Field Value</parameter>
+        </FormItem>
+        <FormItem name="grcobjecttype">
+            <ModTime>1486743680758</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">GRC Object Type</parameter>
+        </FormItem>
+        <FormItem name="includePrologs">
+            <parameter name="description">pro_desc</parameter>
+            <parameter name="label">pro_label</parameter>
+            <parameter name="script">selectGlobalProlog</parameter>
+            <parameter name="scriptLabel">pro_script_label</parameter>
+            <parameter name="scripthelp">pro_script_help</parameter>
+            <parameter name="syntax">textarea</parameter>
+        </FormItem>
+        <FormItem name="keepGlobalState">
+            <parameter name="description">SCRIPT_CONN_KEEP_GLOBAL_STATE_DESC</parameter>
+            <parameter name="label">SCRIPT_CONN_KEEP_GLOBAL_STATE_LABEL</parameter>
+            <parameter name="syntax">boolean</parameter>
+        </FormItem>
+        <FormItem name="keyvalue">
+            <ModTime>1486740938653</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Key Value</parameter>
+        </FormItem>
+        <FormItem name="password">
+            <ModTime>1486740946403</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Password</parameter>
+            <parameter name="syntax">password</parameter>
+        </FormItem>
+        <FormItem name="query">
+            <ModTime>1487257172219</ModTime>
+            <parameter name="description">OpenPages API Query that will substitute work attributes in the query where the query part is enclosed within ${ and }.  For example, work attribute "parentObject" in query select * from [${parentObject}] would return all values from the parent object type specified in work attribute parentObject.  If parentObject is Mandate, then all Mandates would be retrieved from OpenPages</parameter>
+            <parameter name="label">Query</parameter>
+        </FormItem>
+        <FormItem name="root">
+            <ModTime>1486740954685</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">Root</parameter>
+        </FormItem>
+        <FormItem name="url">
+            <ModTime>1486740949356</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">URL</parameter>
+        </FormItem>
+        <FormItem name="username">
+            <ModTime>1486740944106</ModTime>
+            <parameter name="Required">true</parameter>
+            <parameter name="label">User Name</parameter>
+        </FormItem>
+        <FormSection name="Advanced">
+            <FormSectionNames>
+                <ListItem>keepGlobalState</ListItem>
+                <ListItem>$GLOBAL.includeFiles</ListItem>
+                <ListItem>includePrologs</ListItem>
+                <ListItem>$GLOBAL.debug</ListItem>
+                <ListItem>$GLOBAL.userComment</ListItem>
+            </FormSectionNames>
+            <parameter name="initiallyExpanded">false</parameter>
+            <parameter name="title">Advanced</parameter>
+        </FormSection>
+        <FormSection name="General">
+            <FormSectionNames>
+                <ListItem>$GLOBAL.script</ListItem>
+                <ListItem>root</ListItem>
+                <ListItem>url</ListItem>
+                <ListItem>username</ListItem>
+                <ListItem>password</ListItem>
+                <ListItem>query</ListItem>
+            </FormSectionNames>
+        </FormSection>
+        <parameter name="title">CONN_TITLE</parameter>
+        <TranslationFile>NLS/idi_conn_scriptconn</TranslationFile>
+    </Form>
+</MetamergeConfig>]]></parameter>
+            <parameter name="includeFiles"/>
+            <parameter name="includePrologs"><![CDATA[JsonUtil
+OPClientFeedProps
+OPClientState
+OPConnectionProperties
+OPMailProvider
+OPQueryParser
+OPResultSet
+OpenPagesApiClient
+PolyFills
+TDIEnvironmentAccessor]]></parameter>
+            <parameter name="password">@SUBSTITUTE{property.POC_MVP:op.password}</parameter>
+            <parameter name="query"/>
+            <parameter name="root">@SUBSTITUTE{property.POC_MVP:op.uri.root}</parameter>
+            <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+
+var queryParser = null;
+var queryMeta = null;
+var api = null;
+var envAccessor = null;
+var iterated = false;
+
+function ensureInitialized() {
+    if (! envAccessor) {
+        envAccessor = new TDIEnvironmentAccessor();
+    }
+
+    if (! queryParser) {
+        queryParser = new OPQueryParser();
+        queryParser.init({
+            env : envAccessor
+        })
+    }
+
+    queryMeta = queryParser.parseQuery(connector.getParam("query"));
+
+    if (! api) {
+        api = new OpenPagesApiClient();
+        api.initializeConnector({
+            opConnectSettings : {
+                root : connector.getParam("root"),
+                url : connector.getParam("url"),
+                password : connector.getParam("password"),
+                username : connector.getParam("username"),
+                object : queryMeta.targetObject
+            }
+        });
+    } else {
+        // todo: set api object if it has changed
+    }
+}
+
+function callApiMethod() {
+    ensureInitialized();
+   // var grcObject = api.executeGrcObjectQuery(queryMeta.getQueryPath());
+   var grcObject = api.executeGrcObjectQuery(connector.getParam("query"));
+    return api.grcObjectToEntry(grcObject);
+}
+
+function selectEntries() {
+	iterated = false;
+}
+
+function getNextEntry () {
+    if (! iterated) {
+        var grcObjEntry = callApiMethod();
+        if (grcObjEntry.size() == 0) {
+        	result.setStatus(0);
+        	return null;
+        	// not returning status & query below
+            entry["status"] = "No results found";
+            entry["query"] = queryMeta.getQueryPath();
+        } else {
+            entry.merge(grcObjEntry);
+        }
+
+        iterated = true;
+        result.setStatus(1);
+        return entry;
+    }
+    result.setStatus (0);
+}
+
+function putEntry () {
+    api.logInfo("Adding a new " + queryMeta.targetObject);
+    entry.merge(callApiMethod());
+}
+
+function modEntry () {
+    api.logInfo("Updating " + queryMeta.targetObject);
+    entry.merge(callApiMethod());
+}
+
+function deleteEntry () {
+}
+
+function findEntry () {
+    ensureInitialized();
+
+    var grcObjectEntry = callApiMethod();
+    if (grcObjectEntry.size() == 0) {
+        throw new java.lang.IllegalArgumentException("Error executing query " + queryMeta.getQueryPath());
+    } else {
+        entry["entityFound"] = true;
+        entry.merge(grcObjectEntry);
+    }
+}
+
+function querySchema () {
+}
+]]></parameter>
+            <parameter name="url">@SUBSTITUTE{property.POC_MVP:op.url}</parameter>
+            <parameter name="username">@SUBSTITUTE{property.POC_MVP:op.username}</parameter>
+        </Configuration>
+        <Parser>
+            <InheritFrom>[parent]</InheritFrom>
+        </Parser>
+        <AttributeMap name="Input">
+            <InheritFrom>[parent]</InheritFrom>
+        </AttributeMap>
+        <AttributeMap name="Output">
+            <InheritFrom>[parent]</InheritFrom>
+        </AttributeMap>
+        <DeltaSettings>
+            <WhenToCommit>After every database operation</WhenToCommit>
+            <RowLocking>SERIALIZABLE</RowLocking>
+            <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+        </DeltaSettings>
+        <Schema name="Input">
+            <InheritFrom>[parent]</InheritFrom>
+        </Schema>
+        <Schema name="Output">
+            <InheritFrom>[parent]</InheritFrom>
+        </Schema>
+        <LinkCriteria>
+            <InheritFrom>[parent]</InheritFrom>
+        </LinkCriteria>
+        <Hooks>
+            <InheritFrom>[parent]</InheritFrom>
+            <Hook name="default_fail">
+                <InheritFrom>/Scripts/Hook_Default_On_Error</InheritFrom>
+                <Name>default_fail</Name>
+                <Enabled>true</Enabled>
+            </Hook>
+            <Hook name="initialize_fail">
+                <InheritFrom>/Scripts/Hook_On_Error</InheritFrom>
+                <Name>initialize_fail</Name>
+                <Enabled>true</Enabled>
+            </Hook>
+        </Hooks>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <Reconnect>
+            <InheritFrom>[parent]</InheritFrom>
+            <ReconnectRules/>
+        </Reconnect>
+        <Operations/>
+        <PoolDefinition>
+            <InheritFrom>[parent]</InheritFrom>
+            <Enabled>false</Enabled>
+            <MinPoolSize>0</MinPoolSize>
+            <MaxPoolSize>0</MaxPoolSize>
+            <PurgeInterval>0</PurgeInterval>
+            <InitializeAttempts>1</InitializeAttempts>
+            <InitializeSleepInterval>0</InitializeSleepInterval>
+        </PoolDefinition>
+        <PoolInstance/>
+    </Connector>
+</MetamergeConfig>

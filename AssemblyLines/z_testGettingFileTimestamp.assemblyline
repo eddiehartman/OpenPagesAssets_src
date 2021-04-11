@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="252" UUID="02553e44-fd3f-4bed-9240-f9777b3e0ff6" created="Wed Aug 19 12:22:55 CEST 2020" createdBy="eddie" main="z_testGettingFileTimestamp" modified="Fri Dec 11 14:04:34 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_testGettingFileTimestamp">
+        <ModTime>1607681527982</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[MailObj
+Mapper
+OpenPagesObj
+Script_Lib
+Timer
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="get file timestamp" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1607681527982</ModTime>
+            <Script name="get file timestamp">
+                <ModTime>1607681527982</ModTime>
+                <parameter name="script"><![CDATA[file = java.nio.file.Paths.get("POC_MVP/POC_MVP.xml");
+
+attr = java.nio.file.Files.readAttributes(file, java.nio.file.attribute.BasicFileAttributes);
+
+log(attr.lastModifiedTime())]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="5f5a7223-f3af-4781-98c4-15a617f6fd95" created="Tue Aug 18 13:50:10 CEST 2020" createdBy="eddie" main="OPClientFeedProps" modified="Tue Aug 18 13:50:23 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="OPClientFeedProps">
+        <ModTime>1597751422115</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+var OPClientFeedProps = function () {
+    return {
+        staticPrimaryParentId : null,
+        parentType : null,
+        parentLoc : null,
+        derivedPrimaryParentId : null,
+        // isoCode for each mapped CURRENCY_TYPE value per iteration
+        currencyIsoCodes : null,
+        mailer : null,
+        client : null,
+        initialize : function(args) {
+            this.currencyIsoCodes = new java.util.concurrent.ConcurrentHashMap();
+            this.client = args.client;
+            this.mailer = this.client.mailer;
+            return this;
+        },
+        clear : function () {
+            this.staticPrimaryParentId = null;
+            this.parentType = null;
+            this.parentLoc = null;
+            this.derivedPrimaryParentId = null;
+            this.currencyIsoCodes.clear();
+        },
+        recoverPrimaryParentIdFromFeed : function (entry) {
+            if (entry.primaryparentType && entry.primaryparentLocation) {
+                this.parentType = entry.primaryparentType.getValue();
+                this.parentLoc = entry.primaryparentLocation.getValue();
+                if (this.parentType && this.parentType !== "" && this.parentLoc && this.parentLoc !== "") {
+                    var parentObjectType = this.state.getParentObjectType(this.parentType);
+                    if (parentObjectType) {
+                        this.derivedPrimaryParentId =
+                            this.client.state.getParentObjectIdFromTypeAndLoc(this.parentType, this.parentLoc);
+                    }
+                    if (this.derivedPrimaryParentId === null) {
+                        var msg = "A primaryParentId could not be derived from the feed's parentType '" +
+                            this.parentType +
+                            "' and parentLocation '" +
+                            this.parentLoc +
+                            "' properties for this entry." +
+                            "Verify that the parentType is a legitimate parent type for an object of type '" +
+                            this.client.state.getGrcObjectType() +
+                            "' and that the parentLocation is correct.";
+                        this.client.logmsg("WARN", msg);
+                        this.mailer.sendEmailNotification(msg);
+                    }
+                }
+            }
+        },
+        obtainPrimaryParentIdFromFeed : function (entry) {
+            var msg = "";
+            var parentObjectType = null;
+            if (entry && entry instanceof com.ibm.di.entry.Entry) {
+                var currentWork = task && task.getCurrentWork();
+                if (currentWork) {
+                    if (currentWork.primaryParentId) {
+                        entry.primaryParentId = currentWork.primaryParentId;
+                    }
+                    
+                    if (currentWork.primaryParentTypeId) {
+                        entry.primaryParentTypeId = currentWork.primaryParentTypeId;    
+                    }
+                }
+                // First check if a valid primary parent id value was included in
+                // the feed
+                // if (entry.primaryParentId && this.client.state.isPrimaryParentIdValid(entry.primaryParentId.getValue())) {
+                if (entry.primaryParentId) {
+                    this.staticPrimaryParentId = entry.primaryParentId.getValue();
+                }
+                // Otherwise check if it can be derived from the feed's parentType
+                // and parentLocation values
+                else if (entry && entry.parentLocation) {
+                    this.parentType = entry.parentType.getValue();
+                    this.parentLoc = entry.parentLocation.getValue();
+                    if (this.parentType && this.parentType !== "" &&
+                        this.parentLoc && this.parentLoc !== "") {
+                        parentObjectType = this.client.state.getParentObjectType(this.parentType);
+                        if (parentObjectType !== null) {
+                            this.derivedPrimaryParentId =
+                                this.client.state.getParentObjectIdFromTypeAndLoc(this.parentType, this.parentLoc);
+                        }
+                        if (this.derivedPrimaryParentId === null) {
+                            msg = "A primaryParentId could not be derived from the feed's parentType '" +
+                                this.parentType +
+                                "' and parentLocation '" +
+                                this.parentLoc +
+                                "' properties for this entry." +
+                                "Verify that the parentType is a legitimate parent type for an object of type '" +
+                                this.client.state.getGrcObjectType() +
+                                "' and that the parentLocation is correct.";
+                            this.client.logmsg("WARN", msg);
+                            this.mailer.sendEmailNotification(msg);
+                        }
+                    }
+                }
+            }
+        }
+    };
+};]]></parameter>
+    </Script>
+</MetamergeConfig>

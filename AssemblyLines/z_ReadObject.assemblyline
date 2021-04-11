@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1117" UUID="56eae6cc-1562-44cf-baea-b5ffa6b1e330" created="Wed May 27 16:17:07 IST 2020" createdBy="DishaSingh" main="z_ReadObject" modified="Thu Sep 03 15:02:17 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Container name="References"/>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<AssemblyLine name="z_ReadObject">
+        <ModTime>1599138134995</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs">ClauseControlObj
+ExcelObj
+Mapper
+OpenPagesObj
+RequestObj
+SCP
+Script_Lib
+Timer
+WordDoc
+ePolicyObj
+</parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks>
+            <ModTime>1599123574537</ModTime>
+        </Hooks>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Display" state="Enabled"/>
+                <Component name="OpenPages Connector" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer">
+            <ModTime>1599138134995</ModTime>
+            <Connector name="OpenPages Connector">
+                <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
+                <ModTime>1599138134995</ModTime>
+                <ConnectorMode>Iterator</ConnectorMode>
+                <ConnectorState>Enabled</ConnectorState>
+                <Configuration>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ModTime>1599138134995</ModTime>
+                    <parameter name="object">Policy</parameter>
+                    <parameter name="query">select * from [SOXAccount] where [SOXAccount].[Name]='Acc-341-AG'</parameter>
+                </Configuration>
+                <Parser>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Parser>
+                <AttributeMap name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ModTime>1599123685725</ModTime>
+                    <AttributeMapItem>
+                        <Name>*</Name>
+                        <Type>simple</Type>
+                        <Simple>*</Simple>
+                    </AttributeMapItem>
+                </AttributeMap>
+                <AttributeMap name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </AttributeMap>
+                <DeltaSettings>
+                    <ModTime>1599123591106</ModTime>
+                    <WhenToCommit>After every database operation</WhenToCommit>
+                    <RowLocking>SERIALIZABLE</RowLocking>
+                    <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                </DeltaSettings>
+                <Schema name="Input">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <Schema name="Output">
+                    <InheritFrom>[parent]</InheritFrom>
+                </Schema>
+                <LinkCriteria>
+                    <InheritFrom>[parent]</InheritFrom>
+                </LinkCriteria>
+                <Hooks>
+                    <InheritFrom>[parent]</InheritFrom>
+                </Hooks>
+                <CheckpointConfig/>
+                <SandboxConfig/>
+                <Reconnect>
+                    <InheritFrom>[parent]</InheritFrom>
+                    <ReconnectRules/>
+                </Reconnect>
+                <Operations/>
+                <PoolDefinition>
+                    <InheritFrom>[parent]</InheritFrom>
+                </PoolDefinition>
+                <PoolInstance/>
+            </Connector>
+        </ContainerEF>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1599124770258</ModTime>
+            <Script name="Display">
+                <ModTime>1599124770258</ModTime>
+                <parameter name="script"><![CDATA[log(work.name + " - " + work["Resource Id"]);
+log("\n" + work);]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

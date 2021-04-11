@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="c62125ff-a7fb-43ac-9fd3-a5a131f2f166" created="Tue Aug 18 13:42:57 CEST 2020" createdBy="eddie" main="OPQueryParser" modified="Tue Aug 18 13:43:09 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="OPQueryParser">
+        <ModTime>1597750988091</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+var OPQueryParser = function () {
+    /**
+     * Parses an OpenPages GRC API query for the purposes of:
+     *      1) Validation in a TDI connector
+     *      2) Substitution of TDI environment work variables specified in the query.
+     *          - If any part of the query is wrapped in ${ and }, the part inside the braces is substituted
+     *            with the value of that work parameter.
+     *              - example: in the query: select * from [${parentObject}], and in the work environment there is
+     *                         a value of "Mandate" in work.parentObject, the query becomes:
+     *                              select * from [Mandate]
+     *
+     * Usage (where api is an instance of OpenPagesApiClient:
+     *      var parser = new OPQueryParser();
+     *      var results = parser.parseQuery(someQueryString);
+     *      api.executeGrcObjectQuery(results.getQueryPath());
+     *
+     * Regular expressions for each part of an OpenPages API query.
+     *
+     * The query is in the format of:
+     * select <* or field list> from <grc object name> where <grc field name> <comparison operation> <grc field value>
+     * <* or field list>
+     *      * - indicates all fields from the matching object or objects
+     *      field list - one or more field names surrounded by brackets, comma delimeted if there are more than one
+     *          examples:
+     *              [ID] - a single field called ID, where ID is a valid field within the grc object specified in the query
+     *              [ID], [Name] - two fields, ID and Name, both valid within the grc object specified
+     * <grc object name>
+     *      a grc object type name, such as "Mandate", "Submandate", "Requirement", "SoxBusEntity", etc, surrounded with brackets
+     *          example: [Mandate]
+     * <grc field name>
+     *      a field from the grc object the value of which needs to match the value being used in the where clause, surrounded by brackets.
+     *      same formatting rules as the field list above, but there is one one.
+     * <comparsion operation>
+     *      how the field compares to the value being queried.  values are =, <, >, <=, >, >= and !=.
+     * <grc field value>
+     *      an actual value to compare.  if a string value, surround with single quotes.
+     *
+     * The where clause is optional.
+     * The key words of select, from and where are case-insensitive, but all letters must be of the same casing (all upper or all lower)
+     *
+     * Valid query syntax:
+     *      1) select [Resource ID] from [Mandate] where [UCF-Mand:UCFID] = '0002794'
+     *      2) SELECT * FROM [Submandate]
+     *      3) select [Name], [Description] from [SoxBusEntity] where [ID] = 12345
+     *
+     *  Parser doesn't support compound where clauses yet.
+     */
+    var selectPart = "\\s*(select|SELECT)";     // the select statement, disregarding preceding white space
+    var columnsPart = "\\s+(.+)";               // the columns being queried taken entirely until the "from" section, parsed seperately
+    var fromPart = "\\s+(from|FROM)";           // the from statement (enforce at least one whitespace character before)
+    var grcObjectPart = "\\s+(?:\\[(.+)\\])";   // the grc object being queried, surrounded by brackets (enforce at least one whitespace character before)
+    var wherePart = "\\s+(where|WHERE)";        // the where statement (enforce at least one whitespace character before)
+    var fieldsPart = "(?:\\s+\\[(.+)\\])";      // the field name in the where clause, one whitespace before, value surrounded by brackets
+    var operation = "\\s*(=|<|<=|>|>=|!=)";     // the compare operator in the where clause
+    var valuesPart = "\\s*(.*)\\s*";            // the field value in the where clause
+    var whereClause = "(?:" + wherePart + fieldsPart + operation + valuesPart + ")?";
+    var joinClause = "(?:" + "\\sjoin \\[SOXRisk\\] on PARENT\\(\\[SOXAccount\\]\\)" + ")?";
+    
+//    var queryExpr = new RegExp(
+//        "^" +
+//        selectPart +
+//        columnsPart +
+//        fromPart +
+//        grcObjectPart +
+//        joinClause +
+//        whereClause +
+//        "$"
+//    );
+ 		
+ 	var queryExpr = new RegExp(
+ 		".*"
+ 	);
+    var fieldBracketsPattern = new RegExp("\\[(.+)]");
+    var OPQueryMeta = function () {
+        return {
+            selectColumns: null,
+            targetObject: null,
+            whereFieldName: null,
+            compareOperation: null,
+            whereFieldValue: null,
+            joinFieldValue: null,
+            whereFieldValueQuoted: false,
+            env: null,
+            init: function (args) {
+                if (args.env) {
+                    this.env = args.env;
+                }
+            },
+            getQueryPath: function () {
+                return "select " +
+                    this.getSelectColumnsQueryString() +
+                    " from [" + this.targetObject + "]" +
+//                    ( this.joinFieldValue ? this.joinFieldValue : "" 
+//                    ) +
+					" join [SOXRisk] on PARENT([SOXAccount])" +
+                    (   this.whereFieldName ?
+                        " where [" + this.whereFieldName + "] " + this.compareOperation + " " +
+                        (this.whereFieldValueQuoted ? "'" + this.whereFieldValue + "'" : this.whereFieldValue) :
+                            ""
+                    );
+            },
+            getSelectColumnsQueryString: function () {
+                if (this.selectColumns === "*") {
+                    return "*";
+                } else {
+                    return this.selectColumns.map(function (column) {
+                        return "[" + column + "]";
+                    }).join(", ");
+                }
+            },
+            setSelectColumns: function (columns) {
+                if (!columns || columns === "*") {
+                    this.selectColumns = "*";
+                } else {
+                    this.selectColumns = this.substituteWorkValues(columns);
+                }
+            },
+            setTargetObject: function (targetObject) {
+                this.targetObject = this.substituteWorkValue(targetObject);
+            },
+            setWhereFieldName: function (fieldName) {
+                this.whereFieldName = this.substituteWorkValue(fieldName);
+            },
+            setCompareOperation: function (operation) {
+                this.compareOperation = operation;
+            },
+            setWhereFieldValue: function (fieldValue) {
+                this.whereFieldValue = this.substituteWorkValue(fieldValue);
+            },
+            
+             setJoinFieldValue: function (fieldValue) {
+                this.joinFieldValue = this.substituteWorkValue(fieldValue);
+            },
+            substituteWorkValues: function (values) {
+                var that = this;
+                return values.map(function (value) {
+                    return that.substituteWorkValue(value);
+                })
+            },
+            /**
+             * Check to see if the value is wrapped in ${ and }.
+             * If so, extract that value, which is to be used as key for the intended value from the work environment.
+             *
+             * But wait!  There's more.
+             *
+             * If the value key pair delineated by an equals sign, then to the right of the sign is the default
+             * value to assign this variable if either the work environment doesn't exist or the environment doesn't
+             * have a value for the specified variable.  This allows the connectors to work outside of an environment,
+             * or when querying the connector schema where there is no work environment.
+             *
+             * @param value -   either plain value, where it is returned unchanged,
+             *                  a key wrapped in ${ and }, as in these two examples:
+             *                      ${workVariableName} - specifies that the value of this is acquired from work env variable named workVariableName
+             *                      ${varName:Default Value} - specifies work var varName, but if not found, "Default Value" is returned instead
+             * @returns {*}
+             */
+            substituteWorkValue: function (value) {
+                if (!value || value.length == 0) {
+                    return value;
+                }
+                var tokenIndex = value.indexOf("${");
+                if (tokenIndex == -1) {
+                    return value;
+                }
+                var valuePrefix = tokenIndex == 0 ? "" : value.substring(0, tokenIndex);
+                var remainingValue = value.substring(tokenIndex + 2);
+                if (!remainingValue || remainingValue.length === 0) {
+                    return value;
+                }
+                tokenIndex = remainingValue.indexOf("}");
+                if (tokenIndex == -1) {
+                    return value;
+                }
+                var substitutionToken = remainingValue.substring(0, tokenIndex);
+                
+                var subbedValue = this.env && this.env["get"] && typeof this.env["get"] === "function" ?
+                    this.env.get(substitutionToken) : substitutionToken;
+                remainingValue = remainingValue.substring(tokenIndex + 1);
+                var newValue = valuePrefix + subbedValue;
+                return remainingValue && remainingValue.length ?
+                    newValue + this.substituteWorkValue(remainingValue) : newValue;
+            }
+        }
+    };
+    return {
+        env: null,
+        init: function (args) {
+            if (args.env) {
+                this.env = args.env;
+            }
+        },
+        /**
+         * Pass through convenience method for substitution of global variables
+         * @param value the value to
+         */
+        substituteWorkValue: function (value) {
+            return new OPQueryMeta({env: this.env}).substituteWorkValue(value);
+        },
+        parseQuery: function (query) {
+        	
+            var queryParts = queryExpr.exec(query);
+            if (!queryParts || !queryParts.length) {
+                throw "The query " + query + " cannot be parsed.";
+            }
+            var opQueryMeta = new OPQueryMeta();
+            opQueryMeta.init({
+                env: this.env
+            });
+            var columns = this.getQueryPartAfter("select", queryParts);
+            var whereFieldName = this.getQueryPartAfter("where", queryParts);
+            var compareOperation = this.getQueryPartAfter(whereFieldName, queryParts);
+            opQueryMeta.setSelectColumns(this.parseColumns(columns));
+            opQueryMeta.setTargetObject(this.getQueryPartAfter("from", queryParts));
+            opQueryMeta.setWhereFieldName(whereFieldName);
+            opQueryMeta.setCompareOperation(compareOperation);
+            opQueryMeta.setWhereFieldValue(this.getQueryPartAfter(compareOperation, queryParts));
+            return opQueryMeta;
+        },
+        getQueryPartAfter: function (queryPartValue, queryParts) {
+            if (typeof queryPartValue === "undefined") {
+                return;
+            }
+            var fromIndex = queryParts.indexOf(queryPartValue);
+            if (fromIndex >= 0 && queryParts && queryParts.length > fromIndex + 1) {
+                return queryParts[fromIndex + 1];
+            }
+        },
+        parseColumns: function (columns) {
+            if (!columns || columns.trim() === "*") {
+                return "*";
+            }
+            var colsSplit = columns.split(",");
+            if (colsSplit) {
+                return colsSplit.map(function (fv) {
+                    return fieldBracketsPattern.exec(fv.trim())[1];
+                });
+            }
+        }
+    }
+};]]></parameter>
+    </Script>
+</MetamergeConfig>

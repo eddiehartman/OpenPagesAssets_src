@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="52" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get CSD Version" modified="Thu Dec 10 22:56:11 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Get CSD Version">
+        <ModTime>1607637370216</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Find policy Version and Sub- Version
+versionSubversion = {
+	template: {
+		value: "0.0",
+		match: "template version:"
+	},
+	policy: {
+		value: "0.0",
+		match: "document identification:"
+	}
+}
+	
+csdDocumentList = db.query("csd_document", CSD);
+versionErrors = [];
+
+for (csdDoc in csdDocumentList) {
+	bytesarr = csdDoc.getObject("FORM")
+	// Initial version numbers to unknown values
+	
+	versionSubversion = readVersion(versionSubversion, bytesarr);
+	if (versionSubversion.policy.value.toLowerCase().startsWith("x") 
+		|| versionSubversion.policy.value.startsWith("9")
+		|| versionSubversion.policy.value.startsWith("0")
+		|| versionSubversion.template.value.startsWith("x")
+		|| versionSubversion.template.value.startsWith("9")
+		|| versionSubversion.template.value.startsWith("0")) {
+		versionSubversion = findVersion(versionSubversion, bytesarr);
+	}
+}
+
+versionSubversion.policy.value = String(latestVersion(getVersion(CSD.getString("Name")), versionSubversion.policy.value) || "0.0")
+									.replace("Version", "").replace("version", "").replace("V", "").replace("v", "");
+
+versionSubversion.template.value = CSD.getString("TEMPLATE_VERSION") || "0.0";
+
+// Accumulate any errors regarding missing info
+versionErrors = [];
+
+// Verify that policy and/or template versions have been found
+for (verType in versionSubversion) {
+	if (versionSubversion[verType].value == "0.0") {
+		//versionErrors.push("No " + verType + " version number read from the CSD or its attached documents.");
+	}
+}
+
+// Log this if it is the case as an error
+if (versionErrors.length > 0) {
+	log("ERROR", "Error getting version info for CSD: " + CSD.Name + " (" + CSD.id + ")"
+					+ "|" + versionErrors.join("|"));
+	return;
+}
+
+for (type in versionSubversion) {
+	log(" -> " + type + " version.subversion string found: " + versionSubversion[type].value);
+
+	// Set default values
+	verStr = versionSubversion[type].value;
+	version = verStr;
+	subversion = "";
+	
+	p = verStr.indexOf(".");
+	if (p > 0) {
+		version = verStr.substring(0, p).trim();
+		subversion = verStr.substring(p+1).trim();
+	}
+	
+	if (!CSD["ePolicy_" + type + "_version"] || version != "?") {
+		CSD["ePolicy_" + type + "_version"] = version + "." + subversion;
+	}
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="ba1dd56e-b5f3-4dd6-ae79-894cb858af49" created="Mon Oct 19 11:58:44 CEST 2020" createdBy="eddie" main="ePolicy2OP_Correct Clause Controls NEW" modified="Mon Oct 19 11:58:44 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Correct Clause Controls NEW">
+        <ModTime>1603097710236</ModTime>
+        <parameter name="enabled">true</parameter>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now to process clause controls and update OpenPages as needed
+
+// If validating or in debug mode, skip this script
+if (debug || !doMigration || skipToEnd) {
+	return; // do nothing
+}
+
+timer.start("Clause Control Correction");
+
+// Get the keys to the Control Clause updates HashMap and sort them
+var keys = updates.cc.keySet().toArray();
+java.util.Arrays.sort(keys);
+
+var updateCount = {success: 0, failed: 0};
+
+// Loop through the REFs
+for (var ref in keys) {
+	log("Looking at " + ref);
+	
+	// Grab the deviation (change) object from the map
+	var changeObj = updates.cc[ref];
+ 
+	// Prepare an Entry for use with the op.update() method
+	var entry = system.newEntry();
+
+	var fields = [];
+
+	for (var field in changeObj) {
+		if (field != "id" && !field.contains("_TEMPLATE")) {
+			fields.push(field);
+			entry[field] = (changeObj[field] || "").trim();
+		}
+	}
+	
+	// Set up the id and name - always required for an update to OpenPages
+	entry["Resource ID"] = changeObj.id;
+	entry.name = changeObj.name;
+
+	// Get the updated OpenPages object - it could be in either for the maps (one for RV and one for RR)
+	var ccType = devMapObj.getCCType(ref);
+	//var opObj = devMapObj.devMap.RR.get(ref) || devMapObj.devMap.RV.get(ref);
+	
+	// Update Col 1 with the REF - as with name for most other objects, this must be included for an update
+	entry["GTS-ClauseCtl:Col1"] = ref;
+
+	try {
+		ccUpdate.update(entry);
+	} catch (ex) {
+		log("ERROR", "Error updating " 
+						+ ccType
+						+ " Clause Control ("
+						+ ref
+						+ ") - "
+						+ ex);
+	}
+}
+
+var results = ccUpdate.getResults();
+
+updateCount.success = results.success;
+updateCount.failed = results.failed;
+
+timer.stop("Clause Control Correction");
+log("Update result - success: " + updateCount.success + "   failed: " + updateCount.failed);]]></parameter>
+    </Script>
+</MetamergeConfig>

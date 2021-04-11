@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="61e1c876-08f8-4ffa-8e5b-918797ed5f29" created="Tue Aug 18 13:38:47 CEST 2020" createdBy="eddie" main="TDIEnvironmentAccessor" modified="Tue Aug 18 13:39:30 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="TDIEnvironmentAccessor">
+        <ModTime>1597750767506</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+var TDIEnvironmentAccessor = function() {
+    return {
+        get : function(parmValue) {
+            try {
+                if (typeof parmValue !== "undefined" && task && task.getCurrentWork()) {
+                    var value = task.getCurrentWork()[parmValue];
+                    if (value) {
+                        return value[0];
+                    }
+                }
+            } catch (e) {
+            }
+        }
+    };
+};
+//noinspection JSAnnotator
+return TDIEnvironmentAccessor;]]></parameter>
+    </Script>
+</MetamergeConfig>

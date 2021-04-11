@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="11" UUID="89b5166f-9443-4e9d-be7c-6fb0b0fa91f8" created="Wed Sep 23 14:24:19 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get details from iwe" modified="Tue Dec 22 12:00:16 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Get details from iwe">
+        <ModTime>1608634814762</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Get passed setting from the Initial Work Entry
+if (typeof work != "undefined" 
+	&& work != null
+	&& work._args != null) {
+		
+	args = work.getObject("_args");
+	
+	requestID		= args.requestID;
+	
+	accountName 	= args.accountName || "* NOT SPECIFIED *";
+	cc 				= args.cc || {me: "* NOT SPECIFIED *"};
+	CSD 			= args.csd || {me: "* NOT SPECIFIED *"};
+	ePolicy 		= args.ePolicy || {me: "* NOT SPECIFIED *"};
+	mappingTable	= args.mappingTable || {};
+	
+	opAccount 		= args.opAccount || {me: "* NOT SPECIFIED *"};
+	opAccountID 	= args.opAccountID || "* NOT SPECIFIED *";
+	ePolicyAccount 	= args.ePolicyAccount || {me: "* NOT SPECIFIED *"};
+	accountNameWithCode = args.accountNameWithCode || {me: "* NOT SPECIFIED *"};
+
+	operation 		= args.operation|| {me: "* NOT SPECIFIED *"};;
+
+	//skippingClauseControls = (typeof args.skippingClauseControls == "undefined") ? "* NOT SPECIFIED *" : args.skippingClauseControls;
+	debug 			= (typeof args.debug == "undefined") ? "* NOT SPECIFIED *" : args.debug;
+	debugId 		= args.debugId || "* NOT SPECIFIED *";
+} else {
+	throw "This AL must be called with Initial Work Entry";
+}
+
+alName = task.getParam("alName");
+alName = "_CSD_" + alName;
+timer.start(alName);
+
+if (!CSD || CSD == null) {
+	log("ERROR", "CSD not passed correctly in - is null");
+	system.exitFlow();
+}
+
+task.setParam("CSD_Name", CSD.getString("Name"));
+
+migrate = operation.toLowerCase() == "migrate";
+doMigration = migrate;
+
+log("Performing operation: " + operation + " on "
+	+ CSD.name + " from account: " + accountName);]]></parameter>
+    </Script>
+</MetamergeConfig>

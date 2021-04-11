@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="246" UUID="02553e44-fd3f-4bed-9240-f9777b3e0ff6" created="Wed Aug 19 12:22:55 CEST 2020" createdBy="eddie" main="z_testCountingRunningALs" modified="Mon Dec 14 21:17:15 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name="z_testCountingRunningALs">
+        <ModTime>1607976464655</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[MailObj
+Mapper
+OpenPagesObj
+Script_Lib
+Timer
+ePolicyObj]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="do it" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1607976464655</ModTime>
+            <Script name="do it">
+                <ModTime>1607976464655</ModTime>
+                <parameter name="script"><![CDATA[als = session.getAssemblyLines();
+log(als.length)]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>

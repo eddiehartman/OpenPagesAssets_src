@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="183" UUID="726db767-bbb7-457f-bbdb-91b323e468fc" created="Tue Oct 13 15:51:22 CEST 2020" createdBy="eddie" main="z_sendEmail" modified="Tue Dec 22 14:11:27 CET 2020" modifiedBy="eddie" project="_test" version="7.1.1">
+    <AssemblyLine name="z_sendEmail">
+        <ModTime>1608642686068</ModTime>
+        <Settings>
+            <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+            <parameter name="automapattributes">false</parameter>
+            <parameter name="createTombstones">false</parameter>
+            <parameter name="includeGlobalPrologs">true</parameter>
+            <parameter name="includePrologs"><![CDATA[MailObj
+Script_Lib]]></parameter>
+            <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+        </Settings>
+        <Hooks/>
+        <CheckpointConfig/>
+        <SandboxConfig/>
+        <SimulationConfig>
+            <SimulationStates>
+                <Component name="Set up metrics" state="Enabled"/>
+                <Component name="ePolicy2OP_define service functions" state="Enabled"/>
+                <Component name="Build Message" state="Enabled"/>
+                <Component name="Test MailObj" state="Enabled"/>
+                <Component name="MailObj tester" state="Enabled"/>
+            </SimulationStates>
+            <ProxySettings/>
+        </SimulationConfig>
+        <LogConfig/>
+        <ContainerEF name="EntryFeedContainer"/>
+        <ContainerDF name="DataFlowContainer">
+            <ModTime>1608642686068</ModTime>
+            <Script name="Set up metrics">
+                <ModTime>1606228255953</ModTime>
+                <parameter name="enabled">false</parameter>
+                <parameter name="script"><![CDATA[request = {
+	epolicy: {
+	    userName: "db2inst1",
+	    password: "Epolicy2ibm@123",
+	    hostname: "mopbzp174025.fr.dst.ibm.com",
+	    port: "50000",
+	    database: "POLICYL"
+	  },
+	accounts: [
+			"ABB",
+			"WHU"
+			"Copacabana"
+	],
+	opUserEmail : "eddie.hartman@no.ibm.com",
+	mappingTable : {
+		"BR001": "CL02-ST-CBR001",
+//		"XYZZY": "XX02-XX-XXX001",
+		"BR002": "CL06-SR-CBR001"
+	}
+};
+
+accounts = request.accounts;
+ePolicy = request.epolicy;
+counters = fromJson('{"Service":{"GTSTechSpec":5,"Policy":5,"SOXDocument":26},"Copacabana":{"GTSTechSpec":4,"Policy":3,"SOXDocument":18},"WHU":{"GTSTechSpec":1,"Policy":2,"SOXDocument":8}}');
+errors = fromJson('{"ABB":"Unable to find Account in OpenPages: ABB","Copacabana":[],"WHU":[]}');
+operation = "migrate";
+
+migrationStart = new Date();
+migrationEnd = new Date();
+
+function inError() {
+	return false;
+}
+
+function rootCause() {
+	return "Unable to connect to ePolicy db";
+}]]></parameter>
+            </Script>
+            <Script name="ePolicy2OP_define service functions">
+                <InheritFrom>/Scripts/ePolicy2OP_define service functions</InheritFrom>
+                <ModTime>1602751736245</ModTime>
+            </Script>
+            <Script name="Build Message">
+                <ModTime>1602751719514</ModTime>
+                <parameter name="enabled">false</parameter>
+                <parameter name="script"><![CDATA[// Send out email notification
+function buildMailMessage() {
+	var firstColWidth = 20;
+	var nameColWidth = 20;
+	if(typeof accounts == "undefined"){
+		return;	
+	}	
+
+	var opNoun = (operation == "migrate") ? "Migration" : "Validation";
+	var policyCnt = {};
+	var accountError = {};
+	var accountsInError = 0;
+	
+	var lines = ["<!DOCTYPE html><html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style></head><body>",
+				 "<h1>IBM Global GTS SR&RM - OpenPages</h1>"
+				 "<hr width:100% size:20px/>",
+				 "<div>Below are details of the requested ePolicy " + opNoun + " performed on " + system.formatDate(new Date(), "d-MMM-yyyy HH:mm:ss") + "</div>",
+				 "<div><h2>" + opNoun + " Status:</h2></div>"];
+
+    // First go through each Account passed in the request to see if
+    // there are errors for that Account
+    for (var i in accounts) {
+	    var accountName = accounts[i];
+	    if ((accountName.length+1) > nameColWidth) {
+	    	nameColWidth = accountName.length+1;
+	    }
+    
+	    var useErrors = errors[accountName] || [];
+	    if (!(useErrors instanceof Array)) {
+		    useErrors = [useErrors];
+		}
+	    // If errors were found, attach them
+	    if (useErrors.length > 0) {
+		    accountError[accountName] = useErrors[0];
+		    accountsInError++;
+	    }
+	}
+	
+	// Now start creating mail body lines
+
+	lines.push("<table>")
+	var lineCnt = 0;
+	lines.push('<tr><td style="color:white;background-color:gray">ePolicy Instance</td><td>' + ePolicy.hostname + "</td></tr>");
+	
+	if (inError()) {
+		lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " failed with internal error</td></tr>");
+		lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>' + rootCause() + "</td></tr>");
+	} else {
+		if (accountsInError == 0) {
+			lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " Successful</td></tr>");
+			lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>' + accounts.length + " Accounts " + operation + "d successfully</td></tr>");
+		} else {
+			lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " Failed for " + accountsInError + " Accounts</td></tr>");
+			lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>'+ "Some accounts fail to " + operation + "<br/>"
+						+ "Correct the issues identified in the Account Details below and resubmit the " + opNoun + " request</td></tr>");
+		}	
+	}
+	
+	
+	lines.push('<tr><td style="color:white;background-color:gray">Accounts in Request</td><td>' + accounts.length + "</td></tr>");
+	lines.push('<tr><td style="color:white;background-color:gray">Migration Start</td><td>' + system.formatDate(migrationStart, "dd-MMM-yyyy HH:mm:ss") + "</td></tr>");
+	lines.push('<tr><td style="color:white;background-color:gray">Migration End</td><td>' + system.formatDate(migrationEnd, "dd-MMM-yyyy HH:mm:ss") + "<td></tr>");
+	lines.push("</table>");
+
+	lines.push("<div><h2>Account Details:</h2></div>");
+
+	lines.push("<table>");	
+	lines.push('<tr><td><b>Account Name</b></td><td><b>Details</b></td></tr>');
+	for (var i in accounts) {
+		var accountName = accounts[i];
+		if (inError()) {
+			var details = accountError[accountName] || opNoun + " failed due to error listed above";
+		} else {
+			var details = accountError[accountName] || opNoun + " successful";
+		}
+		if (inError() || (accountError[accountName] && accountError[accountName].length > 0)) {
+			lines.push('<tr><td style="color:red">' + accountName + "</td><td>" + details + "</td></tr>");
+		} else {
+			lines.push('<tr><td>' + accountName + "</td><td>" + details + "</td></tr>");
+		}
+	}
+	lines.push("</table>");
+	
+	lines.push("<br/><br/>")
+	lines.push('<div>For more information on GTS Global ITRM Process and OpenPages implementation refer to <a href="https://w3-connections.ibm.com/wikis/home?lang=en#!/wiki/Wf49a2ed8f3ed_49c2_bc11_b9e51af1f556/page/Welcome%20to%20OpenPages">ITRM OpenPages wiki</a></div>');
+	lines.push("<hr width:100% size:10/>");
+	lines.push('<div style="color:white;background-color:black">This email is auto generated by IBM OpenPages GRC Platform. Have a question? Click <a href="mailto://itrmop@us.ibm.com">here</a> to write to us.</div>')
+
+	lines.push("</body></html>")
+
+	log("\n" + lines.join("\n") + "\n");
+
+	return lines.join("");
+}]]></parameter>
+            </Script>
+            <Script name="Test MailObj">
+                <ModTime>1606228305885</ModTime>
+                <parameter name="enabled">false</parameter>
+                <parameter name="script"><![CDATA[// The argument 'args' can hold the following properties:
+//		o hostname 	- SMTP hostname
+//		o port		- SMTP port (default is 25)
+//		o ssl		- true/false if SSL is enabled (default = true)
+//		o username	- username credential for SMTP server
+//		o password 	- password credential for SMTP server
+mail = new MailObj({
+	hostname: "smtp.gmail.com",
+	port: 465,
+	ssl: true,
+	username: "eddiehartman@gmail.com",
+	password: "fadiheowgawprnac"	
+});
+
+mail.send({
+	to: "eddie.hartman@gmail.com", 
+	from: "tdi@ibm.com", 
+	subject: "File test", 
+//	attachment: "/opt/IBM/TDI/V7.2/docs/api/index.html",
+//	body: "/opt/IBM/TDI/V7.2/docs/api/index.html",
+	body: buildMailMessage(),
+	contentType: "text/html"
+});]]></parameter>
+            </Script>
+            <Script name="MailObj tester">
+                <ModTime>1608642686068</ModTime>
+                <parameter name="script"><![CDATA[// The argument 'args' can hold the following properties:
+//		o hostname 	- SMTP hostname
+//		o port		- SMTP port (default is 25)
+//		o ssl		- true/false if SSL is enabled (default = true)
+//		o username	- username credential for SMTP server
+//		o password 	- password credential for SMTP server
+
+mail = new MailObj({
+	hostname: system.getTDIProperty("hostname"),
+	port: system.getTDIProperty("port"),
+	ssl: true,
+	username: system.getTDIProperty("username"),
+	password: system.getTDIProperty("password")	
+});
+
+/*
+mail = new MailObj({
+	hostname: "smtp.gmail.com",
+	port: 465,
+	ssl: true,
+	username: "eddiehartman@gmail.com",
+	password: "fadiheowgawprnac"	
+});
+*/
+
+mail.send({
+	to: "eddiehartman@gmail.com", 
+	from: "tdi@ibm.com", 
+	subject: "File test", 
+//	attachment: "/opt/IBM/TDI/V7.2/docs/api/index.html",
+//	body: "/opt/IBM/TDI/V7.2/docs/api/index.html",
+	body: "<html><head><title>SendEmail Test</title></head><body><h1>Successfull!</h1></body></html>",
+	contentType: "text/html"
+});]]></parameter>
+            </Script>
+        </ContainerDF>
+        <ThreadOptions/>
+        <Operations/>
+        <InitParams>
+            <Schema name="AssemblyLineInitParams"/>
+        </InitParams>
+    </AssemblyLine>
+</MetamergeConfig>
