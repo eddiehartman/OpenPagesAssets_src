@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="44" UUID="4d968ed2-c5c3-405d-95e7-0b3f1ee906ef" created="Wed Sep 23 14:24:59 CEST 2020" createdBy="eddie" main="ePolicy2OP_Get CSD Version NEW" modified="Tue Feb 16 17:40:41 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Get CSD Version NEW">
+        <ModTime>1613493641139</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Find policy Version and Sub- Version
+
+csdDocumentList = db.query("csd_document", CSD);
+
+// Initial version numbers to unknown values
+versionSubversion = {
+	template: {
+		value: "0.0",
+		match: "template version:"
+	},
+	policy: {
+		value: "0.0",
+		match: "document identification:"
+	}
+}
+
+for (var csdDoc in csdDocumentList) {
+	var bytesarr = csdDoc.getObject("FORM")
+
+	// Try to read the doc to parse out the version numbers for Policy and Template
+	var foundVersion = false;
+	try {
+		var fis = new java.io.ByteArrayInputStream(bytesarr);
+		var document = new org.apache.poi.xwpf.usermodel.XWPFDocument(org.apache.poi.openxml4j.opc.OPCPackage.open(fis));					// ***********************
+
+		var bodyElements = document.bodyElements();
+		
+		for (var i = 0; i < bodyElements.length; i++) {
+			var element = bodyElements[i];
+			if (element instanceof org.apache.poi.xwpf.usermodel.XWPFTable) {
+				var body = element.getBody();
+				var tables = body.getTables();
+				for (var table in tables) {
+					var rows = table.getRows();
+				}
+			}
+		}
+
+		tables = document.getTables();
+		paras = [];
+		
+		for (table in tables) {
+			paraStr = table.getText();
+			paras.push(paraStr);
+	
+			if (paraStr.toLowerCase().contains(versionSubversion.policy.match)) {
+				foundVersion = true;
+				lines = system.splitString(paraStr, "\n");
+				for (line in lines) {
+					for (type in versionSubversion) {
+						p = line.toLowerCase().indexOf(versionSubversion[type].match);
+						if (p >= 0) {
+							versionSubversion[type].value = getVersion(line.substring(p));
+						}	
+					}	
+				}
+			}	
+		}
+	} catch (ex) {
+		msg = "Unable to read CSD Document: " + csdDoc.Name + ". ";
+		log("WARN", msg + " - " + ex);
+	}
+
+	fis.close();
+
+	// Compare what we have so var with the name of the CSD doc
+	versionSubversion.policy.value = latestVersion(getVersion(csdDoc.getString("Name")), versionSubversion.policy.value) || "0.0";
+}
+
+versionSubversion.policy.value = latestVersion(getVersion(CSD.getString("Name")), versionSubversion.policy.value) || "0.0";
+
+versionSubversion.template.value = latestVersion(CSD.getString("TEMPLATE_VERSION"), versionSubversion.template.value) || "0.0";
+
+// Accumulate any errors regarding missing info
+versionErrors = [];
+
+// Verify that policy and/or template versions have been found
+for (verType in versionSubversion) {
+	if (versionSubversion[verType].value == "0.0") {
+		//versionErrors.push("No " + verType + " version number read from the CSD or its attached documents.");
+	}
+}
+
+// Log this if it is the case as an error
+if (versionErrors.length > 0) {
+	log("ERROR", "Error getting version info for CSD: " + CSD.Name + " (" + CSD.id + ")"
+					+ "|" + versionErrors.join("|"));
+	return;
+}
+
+for (type in versionSubversion) {
+	log(" -> " + type + " version.subversion string found: " + versionSubversion[type].value);
+
+	// Set default values
+	verStr = versionSubversion[type].value;
+	version = verStr;
+	subversion = "";
+	
+	p = verStr.indexOf(".");
+	if (p > 0) {
+		version = verStr.substring(0, p).trim();
+		subversion = verStr.substring(p+1).trim();
+	}
+	
+	if (!CSD["ePolicy_" + type + "_version"] || version != "?") {
+		CSD["ePolicy_" + type + "_version"] = version + "." + subversion;
+	}
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

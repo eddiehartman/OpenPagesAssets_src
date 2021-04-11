@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="b08b93a5-fb66-4295-802a-759cb0181b89" created="Tue Feb 16 17:40:49 CET 2021" createdBy="edbir" main="_csdFields" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="_csdFields">
+        <ModTime>1613493649125</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[{
+  "TEMPLATE_ID": 3364,
+  "TEMPLATE_TYPE_ID": 2,
+  "ACCOUNT_ID": 8862,
+  "TEMPLATE_TYPE_NAME": "Base Policy",
+  "ACCOUNT_NUMBER_TYPE_NAME": null,
+  "STATUS": "IBM_Approval_Pending",
+  "DELETED_TS": null,
+  "LOCKED_FLAG": "N",
+  "FULL_NAME": "United States of America",
+  "NAME": "Customer Security Document_V2.1.4",
+  "POLICY_TYPE_ID": 24,
+  "ID": 17396,
+  "REVISION": 1,
+  "FILE_NAME": "",
+  "IMPORTED_FLAG": "N",
+  "TEMPLATE_POLICYTYPE_NAME": "CSD",
+  "LOCATION_ID": 245,
+  "LOCKED_BY": null,
+  "REVISION_COUNT": 1,
+  "STATUS_ID": 4,
+  "ENVIRONMENT": "",
+  "TEMPLATE_POLICYTYPE_ID": 24,
+  "NOTES_MAIL": "Disha Singh019/India/IBM",
+  "UPDATED_TS": "2020-06-01 15:19:18.455545",
+  "POLICY_TYPE_NAME": "CSD",
+  "LOCKED_TS": null,
+  "TEMPLATE_VERSION": "2.1.4                    ",
+  "FORMAT": "DOCX",
+  "POLICY_ID": 13309,
+  "SHORTNAME": "WHU",
+  "ACCOUNT_NUMBER": "",
+  "HISTORY_FLAG": "N"
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

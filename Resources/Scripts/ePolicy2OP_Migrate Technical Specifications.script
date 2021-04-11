@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="5" UUID="34a83376-cc9b-45da-b0d2-b4b35ad8cac1" created="Wed Sep 23 14:30:14 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate Technical Specifications" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Migrate Technical Specifications">
+        <ModTime>1613493654684</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now get Technical Specifications
+
+tsFound = db.query("technicalspecifications", CSD);
+policyTS = system.formatDate(CSD.getObject("UPDATED_TS"), "yyyyMMddHHmmssSSS");
+
+useTechSpec = new java.util.ArrayList();
+found = {};
+version = {};
+thisVersion = {};
+thisTS = {};
+
+for (ts in tsFound) {
+	status = ts.getString("STATUS");
+	if (status != "Production" 
+		&& status != "Customer_Approved"
+		&& status != "Obsolete") {
+		status = "Other"
+	};
+	
+	tsName = ts.getString("NAME");
+	
+	thisTS[tsName] = system.formatDate(ts.getObject("Updated_TS"), "yyyyMMddHHmmssSSSSSS");
+	thisVersion[tsName] = ts.getObject("Revision") + " " + thisTS[tsName];
+
+	if (typeof version[tsName] == "undefined"
+		|| typeof version[tsName][status] == "undefined" 
+		|| thisVersion > version[tsName][status]) {
+		if (typeof version[tsName] == "undefined") {
+			version[tsName] = {};
+		}	
+		if (typeof found[tsName] == "undefined") {
+			found[tsName] = {};
+		}	
+			
+		if (status != "Obsolete" || thisTS[tsName] <= policyTS) {
+			found[tsName][status] = ts;
+			version[tsName][status] = thisVersion;
+		}	
+	}
+}
+
+for (tsName in found) {
+	if (found[tsName].Production) {
+		useTechSpec.add(found[tsName].Production);
+	}
+	if (found[tsName].Customer_Approved) {
+		useTechSpec.add(found[tsName].Customer_Approved);
+	}
+	if (useTechSpec.size() == 0) {
+		if (found[tsName].Other) {
+			useTechSpec.add(found[tsName].Other);
+		}
+	}
+	if (useTechSpec.size() == 0) {
+		if (found[tsName].Obsolete) {
+			useTechSpec.add(found[tsName].Obsolete);
+		}
+	}
+}	
+
+// Now we see if we have found any techspec that meet our filter
+
+techSpecMap = new Mapper("POC_MVP/map_csd_to_techspec.map");
+techSpecDocMap = new Mapper("POC_MVP/map_techspec_doc.map");
+
+// Use this next to filter Tech Specs
+	statusById = {
+	    "1": "IBM_Approved",
+	    "2": "Draft",
+	    "3": "In_Review",
+	    "4": "IBM_Approval_Pending",
+	    "6": "Customer_Approved",
+	    "7": "Production",
+	    "8": "Obsolete"
+	}
+
+// First to combine all Tech Spec docs into a single file
+tsIndex = 0;
+for (techspec in useTechSpec) {
+	tsIndex++;
+	techspec.TechSpec_TEMPLATE_POLICYTYPE_NAME = techspec.TEMPLATE_POLICYTYPE_NAME;
+	techspec.techspec_revision = techspec.revision;
+	techspec.techspec_updated_ts = techspec.updated_ts;
+		
+	nameParts = getFilenameParts(techspec.getString("File_Name"));
+	useFileName = nameParts.filename 
+					|| techspec.getString("Name") 
+					 	+ "__CSD_"
+					 	+ ePolicyAccount.ePolicy_Account_ShortName
+					 	+ "_"
+					 	+ formatDate(techspec.UPDATED_TS, "yyyy-MM-dd-HH.mm.ss.SSSSSS");
+	useFileExt = nameParts.extension;
+	
+	techspec.TechSpec_FileName = useFileName;
+	techspec.TechSpec_FileExt = techspec.getString("FORMAT").toLowerCase();	
+	
+	techSpecEntry = techSpecMap.map([techspec, ePolicyAccount, opAccount, newPolicy]);
+
+	//log("About to write Techspec :\n" + techSpecEntry.toJSON());
+	newTechSpec = op.add(techSpecEntry, {
+		objectType: "GTSTechSpec",
+		parentType: "Policy",
+		parentID: newPolicyId,
+		debug: debug || !doMigration
+	});
+	
+	// Add to the creation metric info
+	if (doMigration) {
+		log("Created GTSTechSpec in OpenPages: " + newTechSpec.getString("Resource ID"));
+	}
+
+	tsChildren = saveCreationDetails(accountNameWithCode, "GTSTechSpec", newTechSpec, policyChildren);
+
+	newTechSpecId = newTechSpec.getString("Resource Id");
+	newTechSpec.techspec_Name = newTechSpec.name;
+	log("----> new GTSTechSpec ID: " + newTechSpecId);
+
+	useDoc = new java.util.ArrayList();	
+	techSpecDocList = db.query("techspec_document", techspec);
+	found = {};
+	version = {};
+	for (techSpecDoc in techSpecDocList) {
+		status = statusById[techSpecDoc.getString("STATUS_ID")];
+		if (status != "Production" 
+			&& status != "Customer_Approved"
+			&& status != "Obsolete") {
+			status = "Other"
+		};
+		
+		thisTS = system.formatDate(techSpecDoc.getObject("Updated_TS"), "yyyyMMddHHmmssSSS");
+		thisVersion = techSpecDoc.getObject("Revision") + " " + thisTS;
+
+		if (typeof version[status] == "undefined" || thisVersion > version[status]) {
+			found[status] = techSpecDoc;
+			version[status] = thisVersion;
+		}
+	}
+	
+	if (found.Production) {
+		useDoc.add(found.Production);
+	}
+	if (found.Customer_Approved) {
+		useDoc.add(found.Customer_Approved);
+	}
+	if (useDoc.size() == 0) {
+		if (found.Other) {
+			useDoc.add(found.Other);
+		}
+	}
+	if (useDoc.size() == 0) {
+		if (found.Obsolete) {
+			useDoc.add(found.Obsolete);
+		}
+	}
+	
+	var tsdIndex = 0;
+	for (techSpecDoc in useDoc) {
+		log("Adding TechSpec as attachment to new OpenPages Policy...");
+				
+		//log("techSpecDoc in OpenPages: " + techSpecDoc.toJSON());
+		tsdIndex++;
+		techSpecDocEntry = techSpecDocMap.map([techSpecDoc, techspec, ePolicyAccount, CSD, opAccount, newTechSpec, newPolicy]);
+		techSpecDocEntry.extension = techspec.getString("FORMAT").toLowerCase();
+		
+		var showTSD = system.newEntry();
+		showTSD.merge(techSpecDocEntry);
+		showTSD.content = "*content in base 64 encoding*";
+		//log("About to write Techspec doc: " + showTSD.toJSON());
+		optechSpecDoc = op.add(techSpecDocEntry,
+			{
+				objectType: "SOXDocument",
+				//parentType: "Policy",
+				//parentId: newPolicyId,
+				parentType: "GTSTechSpec",
+				parentId: newTechSpecId,
+				debug: debug || !doMigration							  // ***********************
+				//							debug: false // ***********************************************************
+			});												// ***********************
+		// Add to the creation metric info
+		if (doMigration) {
+			log("Created  techspec doc in OpenPages: " + optechSpecDoc.getString("Resource ID"));
+		}
+		tsChildren = saveCreationDetails(accountNameWithCode, "SOXDocument", optechSpecDoc, tsChildren);
+	}
+	
+	// Now add evidence and logs for this TechSpec
+	addEvidenceAndLogs({
+		parentEntry: newTechSpec,
+		techspec: techspec,
+		parentType: "GTSTechSpec",
+		parentId: newTechSpecId,
+		entryForQuery: techspec,
+		templatePolicy: templatePolicy,
+		document_version: String(techspec.getString("TEMPLATE_VERSION") || "?").trim(),
+		debug: debug,
+		doMigration: doMigration,
+		namePrefix: "Tech Spec",
+		nameSuffix: useFileName + "-",
+		isTechSpec: true,
+		useTemplateName: techspec.Name
+	});
+	
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

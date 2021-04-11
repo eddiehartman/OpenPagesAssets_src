@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="913460e4-477a-4c90-a93c-55111fd42104" created="Fri Oct 09 16:47:45 CEST 2020" createdBy="eddie" main="ePolicy2OP_ValidateMappingTableRefs" modified="Fri Oct 09 16:47:45 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_ValidateMappingTableRefs">
+        <ModTime>1602254824160</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now validate that the TO refs in the mappingTable refer to actual Template CCs
+var notFound = [];
+for (var fromRef in mappingTable) {
+	var toRef = mappingTable[fromRef];
+	var templateCC = cc.findClauseControl(toRef);
+	if (templateCC == null) {
+		notFound.push(toRef);
+	}
+}
+
+if (notFound.length > 0) {
+	log("ERROR", "Mapping Table To-Refs do not reference Template Clause Controls: " + notFound.join(", "), true);
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

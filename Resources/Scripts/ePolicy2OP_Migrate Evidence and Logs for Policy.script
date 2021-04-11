@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="42ce0abc-301d-43ba-a5d9-ba17b78d9baf" created="Wed Sep 23 14:27:02 CEST 2020" createdBy="eddie" main="ePolicy2OP_Migrate Evidence and Logs for Policy" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Migrate Evidence and Logs for Policy">
+        <ModTime>1613493654367</ModTime>
+        <parameter name="script"><![CDATA[// Here we add Evidence and logs for the Policy
+templatePolicy = (cc && cc.templatePolicy) ? cc.templatePolicy : system.newEntry();
+
+addEvidenceAndLogs({
+	parentEntry: newPolicy,
+	parentType: "Policy",
+	parentId: newPolicyId,
+	entryForQuery: CSD,
+	templatePolicy: templatePolicy,
+	document_version: CSD.ePolicy_policy_version,
+	debug: debug,
+	doMigration: doMigration,
+	namePrefix: "CSD",
+	useTemplateName: CSD.csd_name
+});]]></parameter>
+    </Script>
+</MetamergeConfig>

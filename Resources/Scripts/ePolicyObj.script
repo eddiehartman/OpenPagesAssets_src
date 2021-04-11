@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="67" UUID="9ebb9502-3217-45e3-b205-fa149975b77c" created="Wed Jun 03 20:07:57 CEST 2020" createdBy="eddie" main="ePolicyObj" modified="Tue Feb 16 17:40:48 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicyObj">
+        <ModTime>1613493648920</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var ePolicyObj = function(args) {
+	//this.vrs = "20200603 2008"; // Initial version
+	//this.vrs = "20200630 1522"; // Beefed up .query() method to accept existing Array of entries
+	//this.vrs = "20200805 2241"; // added timings
+	this.vrs = "20200820 1646"; // Added args to Constructor for setting ePolicy db parameters
+
+	this.args = args || {};
+	this.ctr = null;
+	this.map = new Mapper();
+
+	this.timer = typeof timer != "undefined" ? timer : {start: function() {}, stop: function() {}, timers: function() {return {} }};
+	
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[ePolicyDB] " + msg);
+		if (throwit) throw "[ePolicyDB] " + msg;
+	}
+	
+	// Load and initialize ePolicy_db Connector from Resources > Connectors
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+   
+		this.timer.start("initializing ePolicyObj");
+		this.ctr = system.getConnector("ePolicy_db");
+		if (this.ctr == null) this.log("ERROR", "Could not find Resources/Connectors/ePolicy_db Connector", true);
+		if(this.args.hostName){
+			this.ctr.setParam("jdbcLogin" , this.args.userName || this.args.username);
+			this.ctr.setParam("jdbcPassword" , this.args.password);
+			var source = "jdbc:db2://" 
+							+ (this.args.hostName || this.args.hostname) 
+							+ ":" + this.args.port 
+							+ "/" + this.args.database ;
+			this.ctr.setParam("jdbcSource" , source);
+		}
+		this.ctr.initialize(null);
+		this.timer.stop("initializing ePolicyObj");
+	}
+	
+	// Add single quotes around value if of type string
+	this.quote = function(value) {
+		if (typeof value == "string") {
+			return "'" + value + "'"
+		} else {
+			return value;
+		}
+	}
+	
+	// Find an Account based on an Column
+	this.find = function(tableName, columnName, searchValue, operator) {
+		this.timer.start("finding ePolicyObj");
+		
+		operator = operator || "=";
+		
+		if (searchValue instanceof com.ibm.di.entry.Attribute) {
+			searchValue = searchValue.getValue(0);
+		}
+		
+		var select = "select * from " + tableName
+						+ " where " + columnName 
+						+ operator + this.quote(searchValue);
+		
+		this.timer.stop("finding ePolicyObj");
+		return this.select(select);
+	}
+	
+	// Perform a select and return the Array of Entries
+	this.select = function(select) {
+		this.timer.start("selecting ePolicyObj");
+		var result = this.ctr.execSQLSelect(select);
+		if (result) {
+			this.timer.stop("selecting ePolicyObj");
+			this.log("ERROR", "Error making selection: " + select + " - " + result, true);
+		}
+		
+		var list = new java.util.ArrayList();
+		var entry;
+		while ((entry = this.ctr.getNextSQLSelectEntry()) != null) {
+			list.add(entry);
+		}
+		
+		this.timer.stop("selecting ePolicyObj");
+		return list.toArray();
+	}
+	
+	
+	//Read query from file , apply evaluation and perfrom select
+	
+	this.query = function(queryName , entry, addToResult){
+		addToResult = addToResult || new java.util.ArrayList().toArray();
+		
+		this.timer.start("querying ePolicyObj");
+
+		var select = loadFileToString("POC_MVP/query_" + queryName + ".txt" );
+		select = this.map.evaluate("epolicydb.query" , select , entry);
+		var resultArray = this.select(select);
+		
+		if (addToResult.length > 0) {
+			var result = new java.util.ArrayList();
+			for (var entry in resultArray) {
+				result.add(entry);
+			}
+			for (var entry in addToResult) {
+				result.add(entry);
+			}
+			resultArray = result.toArray();
+		}
+		
+		this.timer.stop("querying ePolicyObj");
+		return resultArray;
+	}
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

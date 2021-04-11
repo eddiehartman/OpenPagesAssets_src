@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="30" UUID="37e28b3b-9665-45a8-af6f-110f6a214013" created="Wed Sep 23 14:26:44 CEST 2020" createdBy="eddie" main="ePolicy2OP_Process Clause Controls" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Process Clause Controls">
+        <ModTime>1613493649342</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now to process clause controls and update OpenPages as needed
+
+if (debug || !doMigration) {
+	return; // do nothing
+}
+
+
+var keys = updates.keySet().toArray();
+java.util.Arrays.sort(keys);
+
+var entry = system.newEntry();
+
+var updateCount = {success: 0, failed: 0};
+
+timer.start("Updating Clause Controls");
+for (var ref in keys) {
+	//log("Looking at " + ref);
+	var changeObj = updates[ref];
+
+	entry.removeAllAttributes();
+	var fields = [];
+
+	for (var field in changeObj) {
+		if (field != "id") {
+			fields.push(field);
+			entry[field] = changeObj[field].trim();
+		}
+	}
+	entry["Resource ID"] = changeObj.id;
+	entry.name = changeObj.name;
+
+	var ccType = devMapObj.getCCType(ref);
+	var opObj = devMapObj.opMap[ccType].get(ref);
+	
+	// Set the value of Col 4 as well in OP, as there seems to be problems with this value
+	entry["GTS-ClauseCtl:Col4"] = mapColumn(opObj.col4.trim());
+	entry["GTS-ClauseCtl:Col1"] = opObj.ref;
+
+	op.log("Updating " + ref + " changing to " + entry);
+	try {
+		op.update(entry, {objectType: "GTSClauseCtl", id: changeObj.id});
+		updateCount.success++;
+	} catch (ex) {
+		updateCount.failed++;
+		log("ERROR", "Error updating " 
+						+ ccType
+						+ " Clause Control ("
+						+ ref
+						+ ") - "
+						+ ex);
+	}	
+	//log("Update complete...")
+}
+log("Update result - success: " + updateCount.success + "   failed: " + updateCount.failed);
+timer.stop("Updating Clause Controls");]]></parameter>
+    </Script>
+</MetamergeConfig>

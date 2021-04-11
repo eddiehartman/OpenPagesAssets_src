@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="3" UUID="9f6c13a7-42d6-413e-a010-a93a632ed258" created="Tue Aug 18 13:50:36 CEST 2020" createdBy="eddie" main="JsonUtil" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="JsonUtil">
+        <ModTime>1613493654792</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
+//
+//  Licensed Materials - Property of IBM
+//
+//  5725-D51
+//
+//  (C) Copyright IBM Corporation 2017.  All Rights Reserved.
+//
+//  US Government Users Restricted Rights - Use, duplication or
+//  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//
+//////////////////////////////////////////////////////////////////////////////
+var JsonUtil = function () {
+    return {
+        getJsonPropertyType : function(propValue) {
+            var propType = typeof propValue;
+            if (propType === "object") {
+                // If object is type type and it has a child called "0", then this is an array
+                try {
+                    return propValue && propValue["0"] ? "array" : "object";
+                } catch (e) {
+                    return "string";
+                }
+            } else {
+                return propType;
+            }
+        },
+        visitJsonObject : function(obj, callback) {
+            try {
+                for (var propName in obj) {
+                    var propValue = null;
+                    try {
+                        propValue = obj[propName];
+                    } catch (e) {}
+                    this.visitJsonProperty(propName, propValue, callback);
+                }
+            } catch (e) {}
+        },
+        visitJsonProperty : function(propName, propValue, callback) {
+            var propType = this.getJsonPropertyType(propValue);
+            if (propType === "object") {
+                if (callback.jsonObjectStart) {
+                    callback.jsonObjectStart.call(this, propName);
+                }
+                this.visitJsonObject(propValue, callback);
+                if (callback.jsonObjectEnd) {
+                    callback.jsonObjectEnd.call(this, propName);
+                }
+            } else if (propType === "array") {
+                if (callback.jsonArrayStart) {
+                    callback.jsonArrayStart.call(this, propName);
+                }
+                try {
+                    for (var index in propValue) {
+                        this.visitJsonProperty(null, propValue[index], callback);
+                    }
+                } catch (e) {}
+                if (callback.jsonArrayEnd) {
+                    callback.jsonArrayEnd.call(this, propName);
+                }
+            } else if (propType === "function") {
+                if (callback.jsonFunction) {
+                    callback.jsonFunction.call(this, propName, propValue);
+                }
+            } else if (propName) {
+                if (callback.jsonProperty) {
+                    callback.jsonProperty.call(this, propName, propType, propValue);
+                }
+            } else if (callback.jsonArrayElement) {
+                callback.jsonArrayElement.call(this, propType, propValue);
+            }
+        },
+        toJsonString : function(obj) {
+            var jsonEntries = [];
+            var jsonContextStack = [];
+            var isArray = this.getJsonPropertyType(obj) === "array";
+            function startEntry() {
+                jsonContextStack.push(jsonEntries);
+                jsonEntries = [];
+            }
+            function endEntry(entryName, entryIsArray) {
+                if (jsonContextStack.length == 1 && isArray) {
+                    entryName = null;
+                }
+                var entryJson = formatEntry(entryName, entryIsArray);
+                jsonEntries = jsonContextStack.pop();
+                jsonEntries.push(entryJson);
+            }
+            function formatEntry(entryName, isArray) {
+                var entry = "";
+                if (entryName) {
+                    entry += "\"" + entryName + "\":";
+                }
+                entry += (isArray ? "[" : "{") + jsonEntries.join(",") + (isArray ? "]" : "}");
+                return entry;
+            }
+            function formatPropValue(propType, propValue) {
+                return propValue && propType === "string" ?
+                "\"" + propValue.replace(/\n/g, "\\\\n")
+                    .replace(/"/g, '\\\\"')
+                    .replace(/'/g, '\\\'"')
+                    .replace(/\\r/g, "\\\\r")
+                    .replace(/\\t/g, "\\\\t")
+                    .replace(/\\b/g, "\\\\b")
+                    .replace(/\\f/g, "\\\\f") + "\"" :
+                    propValue;
+            }
+            this.visitJsonObject(obj, {
+                jsonObjectStart : function() {
+                    startEntry();
+                },
+                jsonObjectEnd : function(objectName) {
+                    endEntry(objectName, false);
+                },
+                jsonArrayStart : function() {
+                    startEntry();
+                },
+                jsonArrayEnd : function(arrayName) {
+                    endEntry(arrayName, true);
+                },
+                jsonArrayElement : function(propType, propValue) {
+                    return jsonEntries.push(this.formatPropValue(propType, propValue));
+                },
+                jsonProperty : function(propName, propType, propValue) {
+                    return jsonEntries.push("\"" + propName + "\":" + this.formatPropValue(propType, propValue));
+                }
+            });
+            return formatEntry(null, isArray);
+        }
+    }
+};]]></parameter>
+    </Script>
+</MetamergeConfig>

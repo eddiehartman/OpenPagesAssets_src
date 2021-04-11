@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="184" UUID="478f562e-c093-4f50-8272-d44916c33f7c" created="Wed Jul 01 10:48:32 CEST 2020" createdBy="eddie" main="ClauseControlObj" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ClauseControlObj">
+        <ModTime>1613493655504</ModTime>
+        <parameter name="enabled">true</parameter>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var ClauseControlObj = function(args) {
+//	this.vrs = "20200701 1049"; // Initial version
+	//this.vrs = "20200701 1817"; // Finding latest published policy template
+	//this.vrs = "20200702 1538"; // Storing Templace Clauses in a map and providing getTemplateClause() method
+	//this.vrs = "20200805 2241"; // added timings
+	//this.vrs = "20200903 1456"; // added policyTemplateId() function
+	//this.vrs = "20200904 1825"; // not reading in Clause Controls from Policy Template (for now)
+	this.vrs = "20201110 1640"; // fixed passing in openPagesObj
+	
+	args = args || {};
+	
+	this.debug = args.debug || false;
+	
+	this.timer = typeof timer != "undefined" ? timer : {start: function() {}, stop: function() {}, timers: function() {return {} }};
+	this.op = args.openPagesObj || new OpenPagesObj();
+	this.validateClauseControls = args.validate || false;
+	this.ccMap = new java.util.HashMap();
+	this.clauseMap = new java.util.HashMap();
+	this.templatePolicy = null;
+	this.mandatoryClauses = [
+							"Introduction", 
+							"Scope", 
+							"Processes used in this document",
+							"Document structure",
+							"Appendices"
+							//"Technical Specifications"
+							];
+	
+
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[ClauseControlObj] " + msg);
+		if (throwit) throw "[ClauseControlObj] " + msg;
+	}
+	
+	this.findClauseControl = function(code) {
+		return this.ccMap.get(code);
+	}
+	
+	this.getTemplateClause = function(clause) {
+		return this.clauseMap.get(String(clause || "").toLowerCase());
+	}
+	
+	this.policyTemplateId = function() {
+		return this.templatePolicy.getString("Resource ID");
+	}
+	
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		
+		var useTemplate = system.getTDIProperty("policy.template");
+		if (useTemplate == null) {
+			this.log("FATAL", "The policy.template property is not set!", true);
+		}
+		
+		//if (this.readCache(useTemplate)) {
+		//	return;
+		//}
+
+		this.timer.start("initializing ClauseControlObj");
+		var templatePolicy = null;
+		var lastVersion = '';
+	
+		var list = this.op.query("select * from [GTSLibPolicy]");
+ 		for(var temp in list)
+		{
+			//this.log(temp);
+			// Commented out this as we need to use POLT-50 for testing
+//			if("Published".equalsIgnoreCase(temp.getString("GTS-LibPolicy:Status")))
+//			{
+//				var version = temp.getString("GTS-LibPolicy:Version");
+//				if(version > lastVersion)
+//				{
+//					templatePolicy = temp;
+//					lastVersion = version;
+//				}
+//			}
+		 // Hard-coding for now 
+		 if(useTemplate.equalsIgnoreCase(temp.getString("Name"))){
+		 	var version = temp.getString("GTS-LibPolicy:Version");
+			if(version > lastVersion)
+			 {
+			  templatePolicy = temp;
+			  lastVersion = version;
+			}
+		 } 
+		}
+
+//		templatePolicy = this.op.findOne("Name", useTemplate, {grcObjectType: "GTSLibPolicy"}); // Does not seem to work
+
+		if(templatePolicy == null) {
+			this.log("FATAL","Could not find published policy template in OpenPages",true);
+		} else
+		if(!"Published".equalsIgnoreCase(templatePolicy.getString("GTS-LibPolicy:Status"))) {
+			this.log("FATAL","The specified Policy Template is not Published: " + useTemplate,true);
+		}
+		
+		
+		this.log("Found Template Policy: " + templatePolicy.name + " - " + templatePolicy["Resource ID"]);
+		this.templatePolicy = templatePolicy;
+
+		// If this is a migrate operation, then do not perform Template Clause Control validation
+		if (!this.validateClauseControls) {
+			this.log("NOT reading in Template Clause Controls...")
+			this.timer.stop("initializing ClauseControlObj");
+			
+			return;
+		}
+
+		var duplicates = [];
+		var templateClauses = this.op.findChildren("GTSLibPolicy",
+											templatePolicy.getString("Resource ID"),
+											"GTSLibClause");
+		for (var tc in templateClauses) {
+			this.log("Found Template Clause: " + tc.description);
+			if (this.debug) this.log("----- Found Template Clause: " + tc.name + " - " + tc["Resource ID"] + " - " + tc.description);
+			
+			var description = tc.getString("description") || "*no_template_clause_description_found*";
+			var p = description.indexOf(" ");
+			var procedureIndex = -1;
+			if (p > 0 && p < 4) {
+				var indexStr = description.substring(0,p).trim();
+				if (system.isValidInt(indexStr)) {
+					procedureIndex = system.toInt(indexStr);
+					description = description.substring(p+1).trim().toLowerCase();
+				}
+			}
+			if (procedureIndex == -1) {
+				if (description.substring(1,2) == ".") {
+					procedureIndex = description.substring(0, 1);
+					description = description.substring(2).trim().toLowerCase();
+				} else {
+					description = description.trim().toLowerCase();
+				}
+			}
+			this.clauseMap.put(description, tc);
+			
+			var controlTopics = this.op.findChildren("GTSLibClause",
+											tc.getString("Resource ID"),
+											"GTSCtlTopic");
+											
+			for (var ct in controlTopics) {
+				//this.log("	 Found Control Topic: " + ct);
+				if (this.debug) this.log("		   Found Control Topic: " + ct.Name + " - " + ct["Resource ID"]);
+				
+				var templateClauseControls = this.op.findChildren("GTSCtlTopic",
+															ct.getString("Resource ID"),
+															"GTSLibClauseCtl");
+				for (var tcc in templateClauseControls) {
+					//this.log("				Found Template Clause Controls: " + tcc);
+					if (this.debug) this.log("				  Found Template Clause Control: " + tcc.description);
+					var tccId = tcc.getString("description");
+					tcc.controlTopic = ct;
+					tcc.templateClause = tc;
+					tcc.templatePolicy = templatePolicy;
+					
+					var oldCC = this.ccMap.get(tccId);
+					if (oldCC != null) {
+						duplicates.push(tccId);
+					}
+					
+					this.ccMap.put(tccId, tcc);
+				}
+			}
+		}
+		
+		if (duplicates.length > 0) {
+			this.log("Validation failed. Multiple Template Clause Controls found with same REF: " + duplicates.join(", "), true);
+		}
+		
+		// Check that mandatory clauses are defined for the Policy Template
+		var missingClauses = [];
+		for (var clauseIndex in this.mandatoryClauses) {
+			var mandatoryClause = this.mandatoryClauses[clauseIndex];
+			
+			var templateClause = this.getTemplateClause(mandatoryClause);
+				
+			if (templateClause == null) {
+				missingClauses.push(mandatoryClause);
+			}
+		}
+		if (missingClauses.length > 0) {
+			this.timer.stop("initializing ClauseControlObj");
+			this.log("FATAL", "The following mandatory clause(s) are missing from the Policy Template: " + missingClauses.join(", "), true);
+		}
+		
+		//this.saveCache(useTemplate);
+		
+		this.timer.stop("initializing ClauseControlObj");
+	}
+	
+	// ------ initialization code below
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

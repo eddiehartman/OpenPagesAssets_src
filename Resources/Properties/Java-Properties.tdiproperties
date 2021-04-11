@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="459981e6-8ed1-4e71-9a42-8afe9ecd0968" created="Mon Mar 30 14:14:39 IST 2020" createdBy="DishaSingh" modified="Mon Mar 30 14:14:39 IST 2020" modifiedBy="DishaSingh" project="POC_MVP" version="7.1.1">
+    <Container>
+        <Container name="Data"/>
+        <Properties name="Config">
+            <Stores>
+                <PropertyStore name="POC_MVP">
+                    <Parser/>
+                    <RawConnector>
+                        <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                        <parameter name="collection">@SUBSTITUTE{config.$directory}/POC_MVP.properties</parameter>
+                        <parameter name="collectionType">POC_MVP</parameter>
+                    </RawConnector>
+                    <Key>key</Key>
+                    <Value>value</Value>
+                    <ReadOnly>false</ReadOnly>
+                    <InitialLoad>true</InitialLoad>
+                    <CacheTimeout>0</CacheTimeout>
+                </PropertyStore>
+            </Stores>
+        </Properties>
+    </Container>
+</MetamergeConfig>

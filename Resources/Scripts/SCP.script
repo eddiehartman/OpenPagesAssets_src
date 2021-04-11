@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="44" UUID="5a0f8ceb-2ca5-4266-9fb8-9f78c9cfb520" created="Wed Apr 15 14:10:59 IST 2020" createdBy="DishaSingh" main="SCP" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="SCP">
+        <ModTime>1613493649277</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var SCP = function (hostname, username, password, hostkey, cmdPath)
+{
+//	this.vrs = "20200508 1553"; // making it support linux as well
+//	this.vrs = "20200511 1248"; // works for linux (scp) & windows (winscp)
+//	this.vrs = "20200511 1348"; // made it work for windows again
+	this.vrs = "20200519 1247"; // updated scp for Centos based on Shikhas recommendation
+	
+	this.cmdPath = cmdPath || null;
+	this.hostname = hostname;
+	this.username = username;
+	this.password = password;
+	this.hostkey = hostkey;
+	this.os = java.lang.System.getProperty("os.name").toLowerCase();
+	
+	this.isLinux = function() {
+		return this.os == "linux";
+	} 
+	
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[SCP] " + msg);
+	}
+	
+	this.put = function (filepath, tofolder)
+	{
+		if (this.os == "linux") {
+			var args = [
+						"-i",
+						"POC_MVP/id_rsa",
+						filepath, 
+						this.username + "@" + this.hostname + ":" + tofolder
+						];
+			log(" --> executing command: scp " + args.join(" "));
+			var exstmt = system.shellCommand("scp", args);
+		} else {
+			var cmdfilepath = this.createCommandFile(filepath, tofolder);
+			var batchFilepath = this.createBatchFile(cmdfilepath);		
+			var exstmt = system.shellCommand(batchFilepath);
+		}
+		if(exstmt.getExitValue() != 0)
+		{
+			var errmsg = "Error executing command line: " 
+							+ exstmt.getExitValue() + " - "
+							+ exstmt.getError() + " - "
+							+ exstmt.getOutputBuffer();
+			log("ERROR", errmsg);
+			throw errmsg;
+		}
+	}
+	
+	this.createCommandFile = function(filepath, tofolder) 
+	{
+		var fileName = "POC_MVP/scp.txt";
+		var file = system.openFileForOutput(fileName);
+		
+		file.write("option confirm off");
+		file.newLine();
+		file.write("open sftp://"
+					+ this.username
+					+ ":" + this.password
+					+ "@" + this.hostname
+					+ ' -hostkey="' + this.hostkey + '"');
+		file.newLine();
+		file.write("put "
+					+ (new java.io.File(filepath).getAbsolutePath())
+					+ " " + tofolder);
+		file.newLine();
+		file.write("exit");
+		file.newLine();
+		
+		file.close();	
+		return (new java.io.File(fileName)).getAbsolutePath();	
+	}
+	
+	this.createBatchFile = function(cmdfilepath) 
+	{
+		var fileName = "POC_MVP/winscp.bat";
+		var file = system.openFileForOutput(fileName);
+		file.write('"' + this.cmdPath + '"'
+					+ " /ini=nul /script="
+					+ '"' + cmdfilepath + '"');
+		file.newLine();
+		file.close();
+		return (new java.io.File(fileName)).getAbsolutePath();
+	}
+	
+
+	// Initialization code below
+	this.log("SCP v" + this.vrs);
+	
+	if (!this.cmdPath) {
+		if (this.os == "linux") {
+			this.cmdPath = "scp";
+		} else {
+			this.cmdPath = "C:\\Program Files (x86)\\WinSCP\\WinSCP.com";
+		}
+	}
+	
+	
+		
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

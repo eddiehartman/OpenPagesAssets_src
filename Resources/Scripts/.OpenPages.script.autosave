@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="33518a40-8a83-4b66-b2d2-d07cf2e3a613" created="Thu Jun 04 13:58:22 CEST 2020" createdBy="eddie" main="OpenPages" modified="Thu Jun 04 13:58:22 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Script name="OpenPages">
+        <ModTime>1591271901107</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var Mapper = function (filePath)
+{
+	this.vrs = "20200603 1354"; // Initial version
+	
+	this.ctr = null;
+	
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[OpenPages obj] " + msg);
+		if (throwit) throw "[OpenPages obj] " + msg;
+	}
+	
+	this.select = function(objectType, query) {
+		query = query || null;
+		
+		this.ctr
+	}
+	
+	// Load and initialize ePolicy_db Connector from Resources > Connectors
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		this.ctr = system.getConnector("OpenPages Connector");
+		if (this.ctr == null) this.log("ERROR", "Could not find Resources/Connectors/OpenPages Connector", true);
+		
+		this.ctr.initialize(null);
+	}
+	
+
+	// Initialization code below here
+
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

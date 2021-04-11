@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="7" UUID="51b499c0-4e58-406d-922e-93b3dd8dd5b5" created="Wed Sep 23 14:24:43 CEST 2020" createdBy="eddie" main="ePolicy2OP_Setup" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Setup">
+        <ModTime>1613493655170</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[db = new ePolicyObj({
+		hostName: ePolicy.hostName || ePolicy.hostname,
+		userName: ePolicy.userName || ePolicy.username, 
+		password: ePolicy.password, 
+		port: ePolicy.port, 
+		database: ePolicy.database	
+	});
+
+if (debug) {
+	log("\n\n\n\n\n	****** NOTE: Debug is TRUE ******   \n\n,");
+	system.sleep(2);
+}
+
+// Use the Passive OpenPages Connector if available to enable debugging
+if (typeof ctr != "undefined") {
+	op = new OpenPagesObj(ctr);
+} else {
+	op = new OpenPagesObj();
+}
+
+log("Handing account " + accountName + "   migrating: " + doMigration);
+
+log("Found CSD: " + CSD.toJSON());
+
+// Set attributes used for later mapping
+CSD.CSD_NAME = CSD.NAME;
+CSD.epolicy_account_name = ePolicyAccount.ePolicy_Account_Name;
+CSD.csd_updated_ts = CSD.Updated_TS;
+CSD.csd_status = CSD.STATUS;
+CSD.csd_revision = CSD.REVISION;
+
+//CSD.ePolicy_Template_Name = CSD.TEMPLATE_POLICYTYPE_NAME;
+CSD.ePolicy_Template_Name = CSD.NAME;
+CSD.ePolicy_Template_Version = CSD.TEMPLATE_VERSION;
+
+// End initialization timing
+timer.stop("initialization");
+
+// Set up the object for multi-threading the CC update
+ccUpdate = new ccUpdateObj();]]></parameter>
+    </Script>
+</MetamergeConfig>

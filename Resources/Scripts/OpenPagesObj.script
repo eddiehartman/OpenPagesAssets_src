@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="748" UUID="6c83ac8f-1996-446f-a3e7-7d82eaeda084" created="Thu Jun 04 13:53:22 CEST 2020" createdBy="eddie" main="OpenPagesObj" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="OpenPagesObj">
+        <ModTime>1613493654278</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var OpenPagesObj = function(opconnector) {
+	//this.vrs = "20200603 1354"; // Initial version
+	//this.vrs = "20200605 1404"; // add() returns newly created object in Entry form
+	//this.vrs = "20200609 18:57"; // added queryReply function which handles both Entry and JS Object argument
+	//this.vrs = "20200609 18:57"; // made add() function accept JS Object as argument
+	//this.vrs = "20200610 2019"; // added find(), saveParams(), restoreParams() and findAccount
+	//this.vrs = "20200617 2110"; // fixed problem with add() method. Adding file does not return object from OP call
+	//this.vrs = "20200625 1225"; // corrected error in selectEntries() - defined default value for objectType
+	//this.vrs = "20200626 1543"; // improved saveParams and restoreParams
+	//this.vrs = "20200629 1603"; // restoreParams when debug is true
+	//this.vrs = "20200630 1204"; // Added findParents() and findChildren() methods
+	
+	//this.vrs = "20200701 1908"; // .add() method Supports 'parentId'
+	//this.vrs = "20200729 1840"; // Started on .modify{}
+	//this.vrs = "20200731 1706"; // .add() correctly returns new object
+	//this.vrs = "20200731 2335"; // completed .update() method (renamed from .modify)
+	//this.vrs = "20200802 1545"; // corrected .update() and now it also calls .add if entry not found to modify
+	//this.vrs = "20200805 2241"; // added timings
+	//this.vrs = "20200922 1244"; // added performTransition() function
+	//this.vrs = "20200923 1409"; // made addParent() obey debug setting
+	//this.vrs = "20201002 1045"; // added debug to performTransition() and update()
+	//this.vrs = "20201009 1502"; // change transition timeout to 20 min
+	//this.vrs = "20201016 1602"; // trying to make update() faster, although less flexible - may need to enhance modEntry() in Connector
+	//this.vrs = "20201020 1520"; // fixed find() to send objectType as arg to query().
+	//this.vrs = "20201021 1148"; // changing findKin() to use URIs instead of JOIN query
+	this.vrs = "20201204 1209"; // Fixed writeableEntry() to only add Attributes found in passed Entry
+	
+	this.ctr = null;
+	this.opconnector = opconnector || null;
+	this.savedParams = [];
+	this.typesById = null;
+	this.typesByName = null;
+	this.fieldDefinitions = new java.util.HashMap();
+	//this.tempEntry = null; // Doesnt work since methods call each other - would need a pool. Not worth the effort
+	
+	this.transitionTimeoutMillis = system.getTDIProperty("transition.timeout.millis") || 240 * 60 * 1000; // 4 hours in msecs
+	this.transitionSleepTimeMillis = system.getTDIProperty("transition.sleep.time.millis") || 3 * 1000; // 3 sec in msecs
+	
+	this.timer = typeof timer != "undefined" ? timer : {start: function() {}, stop: function() {}, timers: function() {return {} }};
+	
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		msg = String(msg).replace("java.lang.IllegalArgumentException: ", "");
+		
+		log(lvl, "[OpenPagesObj] " + msg);
+		if (throwit) throw "[OpenPagesObj] " + msg;
+	}
+	
+	// Call the Iterator mode selectEntries(), passing an optional query
+	this.selectEntries = function(objectType, query) {
+		this.timer.start("querying OpenPagesObj");
+		objectType = objectType || this.ctr.getParam("object");
+		query = query || null;
+		
+		this.saveParams();
+		
+		if (query != null) {
+			this.ctr.setParam("query", query);
+		}
+		
+		this.ctr.setParam("object", objectType);
+		
+		var cmdEntry = system.newEntry();
+		cmdEntry.operation = "select";
+		try {
+			this.ctr.queryReply(cmdEntry);
+		} catch (ex) {
+			this.log("ERROR", "Error searching - " + ex, true);
+		}	
+		
+		this.restoreParams();
+		this.timer.stop("querying OpenPagesObj");
+	}
+	
+	// Return the next entry from the selected result set of selectEntries()
+	this.getNextEntry = function() {
+		try {
+			return this.ctr.getNextEntry();
+		} catch (ex) {
+			this.log("ERROR", "Error reading - " + ex, true);
+		}	
+	}
+	
+	// Search function
+	this.find = function(fieldName, fieldValue, args) {
+		args = args || {};
+		if (typeof args == "string") { // Just passed in the object type
+			var objectType = args;
+		} else {
+			var objectType = args.objectType || this.ctr.getParam("object");
+		}
+		
+		if (fieldName.equalsIgnoreCase("Resource ID")) {
+			var responseEntry = this.makeRequest({
+													path: "/contents/" + fieldValue,
+													method: "GET"
+												});
+			if (responseEntry == null) return null;
+			return [responseEntry];
+		} else {
+			var query = "select * from [" + objectType + "] where [" + objectType + "].[" + fieldName + "]=" + this.quotes(fieldValue);
+			
+			return this.query(objectType, query);
+		}
+	}
+	
+	// This local find() returns either one Entry or null
+	this.findOne = function(attName, attValue, args) {
+		args = args || {};
+		
+		var objList = this.find(attName, attValue, args);
+		var obj = objList.length == 0 ? null : objList[objList.length-1];
+		if (obj == null) {
+			//this.log("WARN", "Unable to find object with " + attName + ": " + attValue);
+			return null;
+		}
+		
+		return obj;
+	}
+
+	// Find an account, searching for either Name or GTS-Account:AccAlias
+	this.findAccount = function(accountName, args) {
+		args = args || {};
+		var res = this.find("Name", accountName, args);
+		if (res.length == 0) {
+			res = this.find("GTS-Account:AccAlias", accountName, args);
+		}
+		return res;
+	}
+	
+	// Quote a value if it is a string
+	this.quotes = function(value) {
+		if (typeof value == "string") {
+			return "'" + value + "'";
+		} else {
+			return value;
+		}
+	}
+	
+	// Request the Connector for the object definitions
+	this.getTypes = function() {
+		if (this.typesById == null || this.typesByName == null) {
+			var result = this.queryReply({operation: "get_types"});
+			var types = result.getObject("types");
+			this.typesById = types.typesById;
+			this.typesByName = types.typesByName;
+		}
+	}
+	
+	// Returns fields defintions for an Object Type Name
+	this.getFieldDefinitions = function(objectType) {
+		//this.timer.start("getting field defs for OpenPagesObj");
+		var objectTypeLC = objectType.toLowerCase(); // Since this is how fieldDefinitions are keyed in the OP Connector
+		
+		if (this.fieldDefinitions.get(objectTypeLC) == null) {
+			var entry = this.distillEntry({objectType: objectType});
+			entry.operation = "get_fielddefinitions";
+			var result = this.queryReply(entry);
+			var fieldDef = result.getObject("field_definitions").get(objectTypeLC);
+			this.fieldDefinitions.put(objectTypeLC, fieldDef);
+			//this.timer.stop("getting field defs for OpenPagesObj");
+			return fieldDef;
+		}
+
+		//this.timer.stop("getting field defs for OpenPagesObj");
+		return this.fieldDefinitions.get(objectTypeLC)
+	}
+
+	// Return types based on Object Type Id
+	this.getTypeById = function(typeId) {
+		if (this.typesById == null) {
+			this.getTypes();
+		}
+		return this.typesById.get(typeId);
+	}
+	
+	// Return types based on Object Type Name
+	this.getTypeByName = function(objectType) {
+		if (this.typesByName == null) {
+			this.getTypes();
+		}
+		return this.typesByName.get(objectType);
+	}
+	
+	// Returns the type for either a type id or an object name
+	this.getType = function(idOrName) {
+		if (typeof idOrName == "number" ||
+			(typeof idOrName == "string" && system.isValidInt(idOrName))) {
+			var id = system.toInt(String(idOrName));
+			return this.getTypeById(id);
+		} else {
+			return this.getTypeByName(idOrName);
+		}
+	}
+	
+	// Return list of all fields for an object type
+	this.getFieldList = function(idOrName) {
+		var fieldListMaxLength = 40;
+		
+		var type = this.getType(idOrName);
+		var fieldDefs = this.getFieldDefinitions(type.name);
+		//var fieldNames = fieldDefs.keySet().toArray();
+		//java.util.Arrays.sort(fieldNames);
+		
+		var fieldList = new java.util.ArrayList();
+		var foundId = false;
+		var foundName = false;
+		for (var name in fieldDefs) {
+			if (name.startsWith("$")) continue;
+			
+			var fieldDef = fieldDefs.get(name)
+			fieldList.add("[" + type.name + "].[" + fieldDef.name + "]");
+
+			if ("Resource ID".equalsIgnoreCase(fieldDef.name)) {
+				foundId = true;
+			} else
+			if ("Name".equalsIgnoreCase(fieldDef.name)) {
+				foundName = true;
+			}
+			
+			if (fieldListMaxLength-- <= 0) {
+				break;
+			}
+		}
+		
+		if (!foundId) {
+			fieldList.add("[" + type.name + "].[Resource ID]");
+		}
+		if (!foundName) {
+			fieldList.add("[" + type.name + "].[Name]");
+		}
+		
+		return fieldList.toArray();
+	}
+	
+	// Find parents
+	this.findParents = function(mainType, resourceID, kinType) {
+		if (typeof kinType == "undefined") {
+			this.log("ERROR", "findParents() must be passed the type of parent as the second parameter", true);
+			return list.toArray();
+		}
+		return this.findKin(mainType, resourceID, kinType, "parents");
+		//return this.findKin(mainType, resourceID, kinType, "PARENT");
+	}
+	
+	// Find children
+	this.findChildren = function(mainType, resourceID, kinType) {
+		if (typeof kinType == "undefined") {
+			this.log("ERROR", "findChildren() must be passed the type of child as the second parameter", true);
+			return list.toArray();
+		}
+		return this.findKin(mainType, resourceID, kinType, "children");
+//		return this.findKin(mainType, resourceID, kinType, "CHILD");
+	}
+	
+	// Return Associations
+	this.getAssociations = function(resourceID, kinType, childOrParent) {
+		childOrParent = childOrParent || "PARENT";
+
+		var responseEntry = this.makeRequest({
+			path: "/grc/api/contents/" + resourceID + "/associations/" + childOrParent,
+			method: "GET"
+		});
+		
+		var kinTypeId = this.getType(kinType).id;
+		var list = responseEntry.getObject("entryArray");
+		var returnList = new java.util.ArrayList();
+		for (var entry in list) {
+			var objType = entry.getString("$grcObjectType");
+			if (!kinType || objType == kinTypeId) {
+				returnList.add(entry);
+			}
+		}
+		
+		return returnList.toArray();
+	}
+	
+	// Find kin (children or parents) for the mainType passed
+	this.findKinNew = function(mainType, resourceID, kinType, childOrParent) {
+		childOrParent = childOrParent || "PARENT";
+		
+		if (typeof kinType == "undefined") {
+			this.log("ERROR", "findKin() must be passed the type of kin (e.g. SOXAccount, Policy, etc) as the second parameter", true);
+			return list.toArray();
+		}
+	
+		var kinList = new java.util.ArrayList();
+		var assocList = this.getAssociations(resourceID, kinType, childOrParent);
+		for (var kin in assocList) {
+			var kin = this.findOne("Resource ID", kin.getString("Resource ID"));
+			if (kin) {
+				kinList.add(kin);
+			}
+		}
+		
+		return kinList.toArray();
+	}
+	
+	// Find kin (children or parents) for the mainType passed
+	this.findKin = function(mainType, resourceID, kinType, childOrParent) {
+		childOrParent = childOrParent || "PARENT";
+		
+		if (typeof kinType == "undefined") {
+			this.log("ERROR", "findKin() must be passed the type of kin (e.g. SOXAccount, Policy, etc) as the second parameter", true);
+			return list.toArray();
+		}
+		
+		var fieldList = this.getFieldList(kinType);
+
+		var query = "select " + fieldList.join(", \n")
+				+ "\n from [" + kinType + "]"
+				+ " join [" + mainType + "] on " + childOrParent.toUpperCase() + "([" + kinType + "])"
+				+ " where [" + mainType + "].[Resource ID]='" + resourceID + "';"
+		//this.log("Query:\n" + query);
+		
+		var entries = this.query(kinType, query);
+		
+		return entries;
+	}
+	
+	// Return an Array with entries based on a query
+	this.query = function(objectType, query) {
+		if (typeof query == "undefined") {
+			query = objectType;
+			objectType = this.ctr.getParam("object");
+		}
+		var list = new java.util.ArrayList();
+		
+		this.saveParams();
+		
+		this.ctr.setParam("query", query);
+		var p = query.toLowerCase().indexOf(" from ");
+		if (p > 0) {
+			p = query.indexOf("[", p+6);
+			var p2 = query.indexOf("]", p+1);
+			var objType = query.substring(p+1, p2);
+			this.ctr.setParam("object", objType);
+		}
+		this.selectEntries(objectType, query);
+		
+		var entry;
+		while ((entry = this.getNextEntry()) != null) {
+			list.add(entry);
+		}
+		
+		this.restoreParams();
+		return list.toArray();
+	}
+	
+	// Add a new parent association to an object
+	this.addParent = function(args) {
+		if (args.debug) return;
+		
+		this.saveParams();
+		
+		// use queryReply of OP Connector to add the parent
+		var requestEntry = system.newEntry();
+		requestEntry.operation = "add_parent";
+		for (propName in args) {
+			if (typeof args[propName] == "undefined" || args[propName] == null) {
+				this.log("ERROR", "addParent() - null/invalid argument property passed: " + propName);
+			}
+			requestEntry[propName] = args[propName];
+		}
+
+		var response = null;
+		try {
+			response = this.ctr.queryReply(requestEntry);
+		} catch (ex) {
+			this.log("ERROR", "Error adding parent - " + ex, true);
+		}	
+		
+		this.restoreParams();
+	}
+	
+	// Set the status of a Policy
+	this.setStatus = function(objectResourceId, objectType, statusField, newStatus, objectEntry) {
+		if (typeof objectEntry == "undefined") {
+			var objAndStatus = this.getObjectAndStatus({
+				resourceId: objectResourceId,
+				objectType: objectType,
+				statusField: statusField
+			});
+			objectEntry = objAndStatus.objectEntry;
+		}
+		
+		var currentStatus = objectEntry.getString(statusField);
+		
+		if (currentStatus == newStatus) {
+			return;
+		}
+		
+		var entry = system.newEntry();
+		entry["Resource ID"] = objectResourceId;
+		entry.name = objectEntry.name;
+		entry.description = objectEntry.description;
+		entry[statusField] = newStatus;
+		
+		this.update(entry, {objectType: objectType});
+	}
+
+	// Make a request to OpenPages by specifying the path, method and body
+	this.makeRequest = function(args) {
+		args = args || {};
+		
+		if (typeof args == "string") {
+			args = {path: args};	
+		}
+
+		this.saveParams();
+		
+		var requestEntry = system.newEntry();
+
+		var path = args.path || "* NOT SPECIFIED *";
+		var method = args.method || "GET";
+		var resourceId = args.resourceId || "* NOT SPECIFIED *";
+		var body = args.body || {me: "* NOT SPECIFIED *"};
+		var debug = args.debug || false;
+		
+		requestEntry.operation = "make_request";
+		requestEntry.path = path;
+		requestEntry.method = method;
+		requestEntry.body = body || null;
+		
+		if (debug) {
+			this.log("DEBUG", "::makeRequest() args: " + toJson(args) + " " + method + " " + path + " " + requestEntry.toJSON());
+		}	
+		var responseEntry = null;
+		try {
+			responseEntry = this.ctr.queryReply(requestEntry);
+		} catch (ex) {
+			this.log("ERROR", "Error making REST request - " + ex, true);
+		}
+		
+		if (debug) {
+			this.log("DEBUG", "::makeRequest() got response: " + responseEntry.toJSON() + "\nbody: " + responseEntry.getString("http.bodyAsString"));
+		}	
+
+		this.restoreParams();
+
+		return responseEntry;
+	}
+
+	// Invokes a Workflow Action/Transition for a Policy, waiting for it to complete and the
+	// Policy Status to be set to resultingStatus
+	this.performTransition = function(args) {
+		args = args || {};
+		
+		var objectResourceId = args.resourceId || "*NOT SPECIFIED*";
+		var objectType = args.objectType || "*NOT SPECIFIED*";
+		var workflowName = args.workflowName || "*NOT SPECIFIED*";
+		var transitionName = args.transitionName || "*NOT SPECIFIED*";
+		var statusField = args.statusField || "*NOT SPECIFIED*";
+		var resultingStatus = args.resultingStatus  || "";
+		var debug = args.debug || false;
+
+		if (debug) {
+			return;
+		}
+		
+		var opName = "Workflow Action: " + workflowName + " > " + transitionName;
+		this.timer.start(opName);
+		
+		// Make sure the object exists and that the statusField is readable		
+		var objAndStatus = this.getObjectAndStatus({
+			resourceId: objectResourceId,
+			objectType: objectType,
+			statusField: statusField
+		});
+		var currentStatus = objAndStatus.status;
+		var objectEntry = objAndStatus.objectEntry;
+
+		this.log("Invoking " + opName);
+					
+		var alName = task.getParam("alName") || task.getShortName();
+		task.setParam("alName", alName + " >> " + opName);
+
+		var responseEntry = this.makeRequest({
+			path: "/grc/ext/custom/workflow/transition/process",
+			method: "POST",
+			body: {
+				resourceId: objectResourceId,
+				workflowName: workflowName,
+				transitionName: transitionName
+			}
+		});
+		
+		// Now wait for the object Status to be set to resultingStatus, indicating the transition has completed
+		var status = "";
+		var timeoutMillis = java.lang.System.currentTimeMillis() + this.transitionTimeoutMillis;
+		do {
+			task.sleep(this.transitionSleepTimeMillis); // sleep for a bit
+			
+			objectEntry = this.findOne("Resource ID", objectResourceId, {objectType: objectType})
+
+			if (objectEntry == null) {
+				status = "Unknown";
+			} else {
+				status = objectEntry.getString(statusField);
+			}
+					
+			//this.log("...got " + statusField + ": " + status + " - " + objectEntry.toJSON());
+		} while (status != resultingStatus && resultingStatus != "" && java.lang.System.currentTimeMillis() < timeoutMillis);
+		
+		task.setParam("alName", alName);
+		
+		this.timer.stop(opName);
+		this.log(opName + " completed.")
+
+		return status;
+	}
+	
+	// Read in the Object and its status field
+	this.getObjectAndStatus = function(args) {
+		args = args || {};
+		var objAndStatus = {};
+		
+		var objectResourceId = args.resourceId || "*NOT SPECIFIED*";
+		var objectType = args.objectType || "*NOT SPECIFIED*";
+		var statusField = args.statusField || "*NOT SPECIFIED*";
+		var debug = args.debug || false;
+
+		if (debug) {
+			return;
+		}
+
+		objAndStatus.objectEntry = this.findOne("Resource ID", objectResourceId, {objectType: objectType});
+		if (objAndStatus.objectEntry == null) {
+			this.log("ERROR", "Could not find "
+								+ objectType
+								+ " with Resource ID: "
+								+ objectResourceId,
+					 true); // Throw exception
+		}
+		
+		objAndStatus.status = objAndStatus.objectEntry.getString(statusField);
+		if (objAndStatus.status == null) {
+			this.log("ERROR", "Cannot read field '"
+								+ statusField
+								+ " to determine current status of "
+								+ objectType
+								+ " with Resource ID: "
+								+ objectResourceId,
+					 true);
+		}
+
+		return objAndStatus
+		;
+	}
+		
+	// Add an object to OpenPages
+	// Parameters:
+	//     newObject - 	Is either an Entry, a JS Object (with Attributes for properties) or JSON
+	//					This is the object to add.
+	//					It can contain any of these optional, special attributes:
+	//					$grcObjectType - overrides the Object Type parameter of the Connector - type created
+	//					primaryParentType - type of OP Object of the Parent
+	//					primaryParentId - Resource ID of the parent for this new object
+	//		args	-	Optional second parameter which is either a String, in which it is the type of
+	//					object to be written (like $grcObjectType attribute for newObject)
+	//					Or, it is a JS Object with can hold any of the following properties:
+	//						objectType - sets the type of object to create (like $grcObjectType above)
+	//						parentType - defines the type of the parent object
+	//						parentId - the Resource ID of the parent of this new object
+	this.add = function(newObject, args) {
+		args = args || {};
+		
+		this.timer.start("adding OpenPagesObj");
+		if (typeof args == "string") {
+			args = { objectType: args }; 
+		}
+		
+		var debug = args.debug || false;
+		var objectType, parentType, parentID;
+		
+		// If entry passed is a JS Object, then convert to an Entry. If its a string, the assume its JSON
+		var entry = this.distillEntry(newObject);
+		
+		var objectType = args.objectType || entry.getString("$grcObjectType") || this.ctr.getParam("object");
+		var parentType = args.parentType || entry.getString("parentType") || this.ctr.getParam("parentType");
+		var parentID = args.primaryParentId || args.parentID || args.parentId
+							|| entry.getObject("primaryParentId") 
+							|| entry.getObject("parentId");
+		if (typeof parentID == "string") {
+			parentID = parentID.trim();
+		}
+		
+		if ("SOXDocument".equalsIgnoreCase(objectType)) {
+			if (entry.content == null || typeof entry.getObject("content") != "[B") {
+				log("WARN", "\n\n!!!!!!! Cannot add SOXDocument - content is not valid Byte Array\n\n" + entry + "\n\n!!!!!!!");
+				return entry;
+			}
+		}
+		
+		this.saveParams();
+
+		entry["$grcObjectType"] = objectType;
+		this.ctr.setParam("object" , objectType);
+		
+		if (parentType) {
+			log("Setting parent type to: " + parentType);
+			this.ctr.setParam("parentType", parentType);
+		}
+		
+		if (parentID) {
+			try {
+				log("Setting primary parent Id as: " + parentID)
+				var parentID = system.toInt(parentID);
+				entry["primaryParentId"] = parentID;
+			} catch (ex) {
+				this.log("ERROR", "parentID must be a number and reference the Resource Id of the parent object", true);
+			}
+		}
+		
+		if (debug) {
+			entry["Resource ID"] = "42";
+			this.restoreParams();
+			this.timer.stop("adding OpenPagesObj");
+			return entry;
+		}
+		
+		try {
+			this.ctr.putEntry(entry);
+		} catch (ex) {
+			this.log("ERROR", "Error adding new - " + ex, true);
+		}
+		
+		// get newly created object 
+		var requestEntry = system.newEntry();
+		requestEntry.operation = "get_conn";
+
+		var newObjectEntry = null;
+		try {
+			newObjectEntry = this.ctr.queryReply(requestEntry);
+		} catch (ex) {
+			this.log("ERROR", "Error re-reading new - " + ex, true);
+		}
+
+		this.restoreParams();
+		
+		// re-read to get full object
+		newObjectEntry = this.find("Resource ID" , newObjectEntry.getString("Resource ID") , args)[0];
+		
+		this.timer.stop("adding OpenPagesObj");
+		return newObjectEntry;
+	}
+	
+	
+	// Update an object to OpenPages, which means if no Resource ID is passed, it becomes an Add operation, otheriwse a Modify
+	// Parameters:
+	//     modObject - 	Is either an Entry, a JS Object (with Attributes for properties) or JSON
+	//					This is the object to add.
+	//					It can contain any of these optional, special attributes:
+	//					$grcObjectType - overrides the Object Type parameter of the Connector - type created
+	//					primaryParentType - type of OP Object of the Parent
+	//					primaryParentId - Resource ID of the parent for this new object
+	//		args	-	Optional second parameter which is either a String, in which it is the type of
+	//					object to be written (like $grcObjectType attribute for newObject)
+	//					Or, it is a JS Object with can hold any of the following properties:
+	//						objectType - sets the type of object to create (like $grcObjectType above)
+	//						parentType - defines the type of the parent object
+	//						parentId - the Resource ID of the parent of this new object
+	//						linkCriteria - the Link Criteria (name & value properties, optionally match as well) used to find the entry to modify
+	//									   NOTE: if Resource ID is part of the entry, this is not used.
+	this.update = function(passedEntry, args) {
+		args = args || {};
+		
+		//this.timer.start("updating OpenPagesObj");
+		if (typeof args == "string") {
+			args = { objectType: args }; 
+		}
+		
+		var debug = args.debug || false;
+		var objectType, parentType, parentID;
+		
+		// If entry passed is a JS Object, then convert to an Entry. If its a string, the assume its JSON
+		var entry = this.distillEntry(passedEntry);
+		
+		var objectType = args.objectType || entry.getString("$grcObjectType") || this.ctr.getParam("object");
+		var parentType = args.parentType || entry.getString("parentType") || this.ctr.getParam("parentType");
+		var parentID = String(args.primaryParentId || args.parentID || args.parentId
+							|| entry.getObject("primaryParentId") 
+							|| entry.getObject("parentId")).trim();
+		var linkCriteria = args.linkCriteria || args.linkcriteria || args.link_criteria;
+		var resourceID = args.ID || args.id || args.Id || entry.getString("Resource ID");
+
+		var searchCrit = system.newSearchCriteria();
+		if (resourceID != null) {
+			// Set the internal params.current property in the OpenPages Connector
+			var requestEntry = system.newEntry();
+			requestEntry.operation = "set_current";
+			//entry["Resource ID"] = resourceID;
+			requestEntry.current = entry;
+			searchCrit.addCriteria("Resource ID", searchCrit.EXACT, resourceID);
+	
+			//this.ctr.queryReply(requestEntry);
+		} else 
+		if (linkCriteria) {
+			searchCrit.addCriteria(linkCriteria.name, searchCrit.EXACT, linkCriteria.value);
+		}
+		
+		this.saveParams();
+
+		entry["$grcObjectType"] = objectType;
+		this.ctr.setParam("object" , objectType);
+
+		if (debug) {
+			this.restoreParams();
+			//this.timer.stop("updating OpenPagesObj");
+			return entry;
+		}
+		
+		try {
+			this.ctr.modEntry(entry, searchCrit);
+		} catch (ex) {
+			this.log("ERROR", "Error modifying - " + ex, true);
+		}
+				
+		// re-read to get full object
+		var list = this.find("Resource ID" , passedEntry.getString("Resource ID") , args);
+		if (list.length == 0) {
+			this.log("ERROR", "Call to update() failed to find the entry being updated - " + passedEntry.getString("Resource ID"));
+		}
+		
+		//this.timer.stop("updating OpenPagesObj");
+		return list[0];
+	}
+	
+	// Distills an Entry object from either an Entry, a JS Object or JSON
+	this.distillEntry = function(newObject) {
+		if (typeof newObject == "string") {
+			var entry = com.ibm.di.entry.Entry.toJSON(newObject);
+		} else
+		if (!(newObject instanceof com.ibm.di.entry.Entry)) {
+			if (typeof newObject == "object") {
+				var entry = this.jsObj2Entry(newObject, system.newEntry());
+			} else {
+				this.log("ERROR", "Unable to handle entry passed to add() function: " + entry);
+			}
+		} else {
+			var entry = newObject;
+		}
+		
+		return entry;
+	}
+	
+	// Return a new Entry with the writeable attributes from the passed entry
+	this.writeableEntry = function(entry, objectType) {
+		objectType = objectType || entry.getString("$grcObjectType");
+		var newEntry = system.newEntry();
+		
+		var fieldDefs = this.getFieldDefinitions(objectType);
+		for (var field in fieldDefs) {
+			var thisField = fieldDefs[field];
+			if (typeof thisField == "object" && thisField.readOnly == false) {
+				if (newEntry[thisField.name] == null && entry[thisField.name] != null) {
+					newEntry[thisField.name] = entry[thisField.name];
+				}
+			}
+		}
+		
+		return newEntry;
+	}
+	
+	// List of params to save/restore
+	this.paramsList = ["url", "username", "password", "object", "parentType", "parentLoc", "query"];
+	
+	// Save parameters for the OP Connector
+	this.saveParams = function() {
+		var params = {};
+		for (var i = 0; i < this.paramsList.length; i++) {
+			var pname = this.paramsList[i];
+			params[pname] = this.ctr.getParam(pname);
+		}
+		this.savedParams.push(params);
+	}
+	
+	// Restore saved parameters for the OP Connector
+	this.restoreParams = function() {
+		if (this.savedParams.length == 0) {
+			return;
+		}
+		
+		var params = this.savedParams.pop();
+		this.savedParams = this.savedParams.slice(0, this.savedParams.length);
+		
+		for (var i = 0; i < this.paramsList.length; i++) {
+			var pname = this.paramsList[i];
+			this.ctr.setParam(pname, params[pname]);
+		}
+	}
+	
+	// Call the queryReply function which is used to handle all sorts of requests:
+	// Although for compliance sake, the function accepts an Entry as its argument.
+	// Note that you can also pass a JS object with properties. These properties are
+	// turned into attributes in a requestEntry that is set up and passed to the
+	// underlying CI method queryReply() which expects an Entry.
+	// 
+	// Setting the operation attribute controls behavior:
+	//
+	//	'get_conn'		Returns the last conn Entry. The conn Entry contains
+	//					the newly created object after an add() operation, 
+	//					including its Resource ID.
+	this.queryReply = function(arg) {
+		arg = arg || {};
+		
+		if (arg instanceof com.ibm.di.entry.Entry) {
+			var requestEntry = arg;
+		} else {
+			var requestEntry = system.newEntry();
+
+			if (typeof arg == "object") {
+				requestEntry = this.jsObj2Entry(arg, requestEntry);
+			}			
+		}
+		
+		var responseEntry = null;
+		try {
+			responseEntry = this.ctr.queryReply(requestEntry);
+		} catch (ex) {
+			this.log("ERROR", "(queryReply) Error making REST request - " + ex, true);
+		}	
+		
+		return responseEntry;
+	}
+	
+	// Turns a JS Object into an Entry with Attributes for the objects properties
+	this.jsObj2Entry = function(jsObj, useEntry) {
+		useEntry = useEntry || system.newEntry();
+		useEntry.removeAllAttributes();
+		
+		for (var pname in jsObj) {
+			if (pname.startsWith("_")) {
+				useEntry[pname.substring(1)] = jsObj[pname];
+			} else {
+				useEntry[pname] = jsObj[pname];
+			}
+		}
+		
+		return useEntry;
+	}
+	
+	// Load and initialize ePolicy_db Connector from Resources > Connectors
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		
+		this.timer.start("initializing OpenPagesObj");
+		if (this.opconnector != null) {
+			this.ctr = opconnector;
+		} else {
+			this.ctr = system.getConnector("OpenPages Connector");
+			
+			if (this.ctr == null) {
+				this.log("ERROR", "Could not find Resources/Connectors/OpenPages Connector", true);
+			} 
+			
+			try {
+				this.ctr.initialize(null);
+			} catch(ex) {
+				this.log("ERROR", "Error initializing - " + ex, true);
+			}
+		}
+		this.timer.stop("initializing OpenPagesObj");
+	}
+	
+	
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

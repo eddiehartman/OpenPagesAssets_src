@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="11" UUID="fa25d15d-5ada-47b9-b989-d057bfda0a38" created="Tue Aug 04 11:01:58 CEST 2020" createdBy="eddie" main="Timer" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="Timer">
+        <ModTime>1613493655074</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var Timer = function() {
+	this.vrs = "20200804 1048"; // initial version
+	this._timers = {};
+	this._times = {};
+	
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[Timer] " + msg);
+	}
+	
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+	}	
+	
+	// ------- Timing functions
+	
+	this.start = function(name) {
+		if (this._times[name]) {
+			this.log("WARN", "Restarting timer for " + name);
+		}
+		this._times[name] = java.lang.System.currentTimeMillis();
+	}
+	
+	this.stop = function(name) {
+		if (typeof this._times[name] != "number") {
+			this.log("WARN", "No start time found for " + name);
+		} else {
+			var diff = java.lang.System.currentTimeMillis() - this._times[name];
+			var newVal = (this._timers[name] || 0) + diff;
+			this._timers[name] = newVal;
+		}
+		
+		delete this._times[name];
+	}
+	
+	this.timers = function() {
+		var t;
+		var stillOpen = [];
+		for (t in this._times) {
+			stillOpen.push(t);
+		}
+		if (stillOpen.length > 0) {
+			log("WARN", "The following timers are still open: " + stillOpen.join(", "));
+		}
+		return this._timers;
+	}
+		
+	// ------- Initialization code below
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

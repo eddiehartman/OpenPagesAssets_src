@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="325" UUID="cc2c1334-a20f-4535-ba0b-de021014c4e4" created="Mon Oct 12 16:40:29 CEST 2020" createdBy="eddie" main="ePolicy2OP_define service functions SAVE" modified="Tue Feb 16 17:40:42 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_define service functions SAVE">
+        <ModTime>1613493642444</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Functions used by this AL
+// Gather metrics from the passed AL, returning an object with the following properties:
+//	errors		- object, account-property based array of errors
+//	warnings	- object, account-property based array of warnings
+//  metrics		- object, account-property based array of creation metrics
+//  timers		- object, account-property based array of timers
+function gatherMetrics(al, errors, warnings, metrics, alTimers) {
+	var ignoreMissingWork = (typeof errors == "undefined") ? true : false;
+		
+	errors = errors || {};
+	warnings = warnings || {};
+	metrics = metrics || {};
+	alTimers = alTimers || {};
+	
+	var state = al.getCurrentState();
+	// Only check the work entry if the AL is actually cycling
+	if (state > 4) {
+		try {
+			var al = als[alName];
+			// Get the current Work Entry
+			var entry = al.getResult();
+			
+			if (entry != null) {
+				// Get the metrics object
+				alMetrics = entry.getObject("_metrics");
+				
+				if (alMetrics == null) {
+					log("WARN", "No metrics returned for " + al.getShortName());
+					continue;
+				}
+				
+				var accountName = metrics.accountName;
+				
+				errors[accountName] = errors[accountName] || [];
+				for (i in alMetrics.errors) {
+					errors[accountName].push(alMetrics.errors[i]);
+				}
+		
+				warnings[accountName] = warnings[accountName] || [];
+				for (i in alMetrics.warnings) {
+					warnings[accountName].push(metrics.warnings[i]);
+				}
+		
+		
+				var alCount = alMetrics.counters;
+				for (var item in alCount) {
+					counters.Service = counters.Service || {};
+					if (item == "Policy_Names") {
+						counters.Service.Policy_Names = counters.Service.Policy_Names || [];
+						if (alCount.Policy_Names && alCount.Policy_Names.length > 0) {
+							counters.Service.Policy_Names = counters.Service.Policy_Names.concat(alCount.Policy_Names);
+						}
+					} else {
+						counters[accountName] = counters[accountName] || {};
+					 	counters.Service[item] = (counters.Service[item] || 0) + alCount[item];
+					 	counters[accountName][item] = (counters[accountName][item] || 0) + alCount[item];
+					}
+				}
+		
+				var alTimers = alMetrics.timer.timers();
+				
+				for (var item in alTimers) {
+					timers.Service = timers.Service || {};
+					timers[accountName] = timers[accountName] || {};
+					timers.Service[item] = (timers.Service[item] || 0) + alTimers[item];
+					timers[accountName][item] = (timers[accountName][item] || 0) + alTimers[item];
+				}
+			}
+		} catch (excptn) {
+			log("ERROR", "Error gathering metrics from " + al.getParam("alName") + " - " + excptn);
+		}
+	}	
+		
+	return {
+		errors: errors,
+		warnings: warnings,
+		metrics: metrics,
+		timers: timers
+	}
+}	
+
+// Return the capitalized name of the operation
+function operationName(op) {
+	switch (op) {
+		case "validate": return "Validation";
+		case "migrate": return "Migration";
+		default: return "Processing"
+	}
+}
+
+// Change the responseObj with error settings
+function responseError(code, msg, errorMsg, message, entry) {
+	entry = entry || work;
+//	if (!responseObj.code.startsWith("2")) {
+//		return;
+//	}
+
+	if (typeof responseObj == "undefined") {
+		responseObj = {};
+	}
+
+	log("ERROR", errorMsg);
+	if (!code.startsWith("2")) { 
+		responseObj.code = code;
+		responseObj.msg = msg;
+		responseObj.message = message || msg;
+		responseObj.errorMsg = errorMsg || message || msg;
+		responseObj.errors.push(errorMsg);
+	}
+	
+	entry["http.responseCode"] = responseObj.code;
+	entry["http.responseMsg"] = responseObj.msg;
+	entry["http.message"] = entry["http.message"] || responseObj.message;
+	entry["http.errorMsg"] = responseObj.errorMsg;
+	log("DEBUG", "Setting response to: " + errorMsg);
+    entry["http.Content-Type"] = "application/json";
+}
+
+// Setting up response for client
+function response(code, msg, message, body, entry) {
+	entry = entry || work;
+	entry["http.body"] = body;
+
+	// If already set (like for an error) do not change code and message
+	
+	if (entry["http.responseCode"] != null) {
+		return;
+	}
+	
+	entry["http.responseCode"] = code;
+	entry["http.responseMsg"] = msg;
+	entry["http.message"] = entry["http.message"] || message;
+    entry["http.Content-Type"] = "application/json";
+
+//	log("ERROR", "Response is now: " +  entry);
+	responseMade = true;
+	return entry;
+}
+
+var responseAlreadyMade = false;
+// Create the return response to the client
+function makeResponse(useEntry, requestID) {
+	//log("=====\n=====\n===== Making Response In Entry: " + useEntry);
+	var responseObj = responseObj || {};
+	
+	if (responseAlreadyMade) {
+		return;
+	}
+	responseAlreadyMade = true;
+	// If GET request, return reply
+	if (typeof getRequest != "undefined") {
+		response("200", "Service is alive", "Service is alive", toJson({message: "Service is alive"}), null);
+		return;
+	}
+	
+	// Make the response, based on the operation
+
+	// Set the create string based on doMigration or not
+	var createStr = doMigration ? "Created " : "Will create ";
+	
+	// First look at errors collected during log("ERROR", ...) done by this main listener thread.
+	// If errors found, report these first as they are problems for the Service itself
+	if (typeof work == "undefined" || work == null || typeof accounts == "undefined") {
+		log("ERROR", "Unable to process request");
+	}
+	if (inError()) {
+		var code = work.getString("http.responseCode");
+		if (code || code.startsWith("2")) {
+			code = 500;
+		}
+		response(code, 
+				"Internal Server Error",
+				"Could not process " 
+					+ operationName(operation) 
+					+ " request " + requestID 
+					+  " due to error: " + rootCause());
+		responseObj.status = "Failed";
+	} else {
+		// Prepare for adding AL metrics to the overall results
+		operation = operation || "validate"
+		responseObj.message = "The " 
+								+ operationName(operation) 
+								+ " request completed successfully";
+								
+		// Now go through each account passed in the request. The various
+		// metrics objects, like errors and counters, have a property for each
+		// accountName that holds the data related to that account.
+		var accountsInError = [];
+		for (var i in accounts) {
+			accountName = accounts[i];
+			
+			var useErrors = errors[accountName] || [];
+			if (!(useErrors instanceof Array)) {
+				useErrors = [useErrors];
+			}
+			// If errors were found, attach them
+			if (useErrors.length > 0) {
+				accountsInError.push(accountName);
+			}
+		
+			accountObj = {
+				name: accountName,
+				status: (useErrors.length > 0) ? "Failed" : "Success",
+				error: (useErrors.length > 0) ? useErrors[0] : ""
+			};
+			
+			if (counters[accountName]) {
+				//accountObj.created = counters[accountName];
+				var createdArray = [];
+				for (var objType in counters[accountName]) {
+					createdArray.push(objType + ": " + counters[accountName][objType]);
+				}
+				accountObj.created = createStr + createdArray.join(", ");
+			}
+			
+			accountObj.message = accountObj.error || accountObj.created || "";
+			
+			responseObj.accounts = responseObj.accounts || [];
+			responseObj.accounts.push(accountObj);
+		}
+		
+		if (typeof counters != "undefined" && counters.Service) {
+			var createdArray = [];
+			for (var objType in counters.Service) {
+				createdArray.push(objType + ": " + counters.Service[objType]);
+			}
+			responseObj.created = createStr + createdArray.join(", ");
+		}
+		
+		// Now change the response status property if some or all accounts show failure
+		if (accountsInError.length == accounts.length) {
+			responseError("400", 
+							"Bad Request",
+							operationName(operation) + " of all accounts failed",
+							"See Account details for more information");
+			responseObj.status = "Failed";
+		} else 
+		if (accountsInError.length > 0) {
+			responseError("400", 
+//							"Partial Failure",
+							"Failed",
+							operationName(operation) + " of the following accounts failed: " 
+								+ accountsInError.join(", "),
+							"See Account details for more information");
+//			responseObj.status = "Partial Failure";
+			responseObj.status = "Failed";
+			responseObj.errors = [];
+		}	
+	} // for each accountName passed
+	
+	resetErrors();
+	
+	if (debug) {
+		responseObj.debug = "DEBUG MODE";
+	}
+	
+	response(responseObj.code, responseObj.msg, responseObj.message || "", toJson(responseObj), useEntry);
+	
+	// Log response to Client
+	log("Returning resultCode: " + useEntry);
+	
+	// Print metrics to the log 
+	logMetrics();
+
+	if (opUserEmail == null) {
+		log("ERROR", "No OpenPages User email address passed in request");
+	} else {
+		sendEmail(opUserEmail, requestID);
+	}
+}
+
+// Simple function to stringify a JS object, used by logMetrics()
+function showJson(obj, lvl) {
+	lvl = lvl || 0;
+	var sb = java.lang.StringBuilder();
+	var pad = "                                  ".substring(0, lvl*4);
+	if (typeof obj != "object" || obj == null) {
+		sb.append(pad + obj + "\n");
+	} else {
+		for (var propName in obj) {
+			var subobj = obj[propName];
+			if (subobj instanceof Array) {
+				if (subobj.length > 0) {
+					sb.append(pad + "  " + propName + ": [\n");
+					for (var i = 0; i < subobj.length; i++) {
+						sb.append(showJson(subobj[i], lvl+1) + "\n");
+					}
+					sb.append(pad + "]\n");
+				}
+			} else
+			if (typeof subobj == "object") {
+				sb.append(pad + "  " + propName + ": {\n");
+				sb.append(showJson(subobj, lvl+1) + "\n");
+				sb.append(pad + "  }\n");
+			} else {
+				sb.append(pad + "  " + propName + ": " + subobj + "\n");
+			}
+		}
+	}
+	return sb.toString();
+}
+
+// Log out request operation metrics
+function logMetrics(){
+	
+	if (!timer || !timer.timers() || !timer.timers().Service) {
+		return;
+	}
+	
+	// Log all creations
+	log("--------- Objects created:\n" + showJson(counters));
+	log("");
+	log("--------- Errors:\n" + showJson(errors));
+	log("");
+	//log("--------- Warnings:\n" + showJson(warnings));
+	
+	// Show timing metrics - those for Service are the accumulation
+	var serviceTimers = timer.timers().Service;
+	var timingMap = new java.util.HashMap();
+	for (var itemName in serviceTimers) {
+		timingMap.put(itemName, serviceTimers[itemName]);
+	}
+	var timingArray = timingMap.keySet().toArray();
+	java.util.Arrays.sort(timingArray);
+	
+	var i = 0;
+	for (var itemName in timingArray) {
+		var timing = timingMap[itemName];
+		var seconds = Math.round(timing/1000);
+		var minutes = Math.floor(seconds / 60);
+		var secondsAfter = seconds % 60;
+		log("    " + LJ(itemName, 65, i) 
+					+ RJ(minutes, 11, i) + " min"
+					+ RJ(secondsAfter, 3) + " sec");
+		i++;
+	}
+}
+
+// Build email message based on service results
+function buildMailMessage(requestID) {
+	requestID = requestID || null;
+	
+	var firstColWidth = 20;
+	var nameColWidth = 20;
+	if(typeof accounts == "undefined"){
+		return;	
+	}	
+
+	var opNoun = (operation == "migrate") ? "Migration" : "Validation";
+	var policyCnt = {};
+	var accountError = {};
+	var accountsInError = 0;
+	
+	var lines = ["<!DOCTYPE html><html><head><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style></head><body>",
+				 "<h1>IBM Global GTS SR&RM - OpenPages</h1>"
+				 "<hr width:100% size:20px/>"];
+
+	if (requestID) {
+		lines.push("<br/><h2>Request " + requestID + "</h2><br/>");
+	}
+
+	lines.push("<div>Below are details of the requested ePolicy " + opNoun + " performed on " + system.formatDate(new Date(), "d-MMM-yyyy HH:mm:ss") + "</div>");
+	lines.push("<div><h2>" + opNoun + " Status:</h2></div>");
+
+    // First go through each Account passed in the request to see if
+    // there are errors for that Account
+    for (var i in accounts) {
+	    var accountName = accounts[i];
+	    if ((accountName.length+1) > nameColWidth) {
+	    	nameColWidth = accountName.length+1;
+	    }
+    
+	    var useErrors = errors[accountName] || [];
+	    if (!(useErrors instanceof Array)) {
+		    useErrors = [useErrors];
+		}
+	    // If errors were found, attach them
+	    if (useErrors.length > 0) {
+		    accountError[accountName] = useErrors.join("§");
+		    accountsInError++;
+	    }
+	}
+	
+	// Now start creating mail body lines
+
+	lines.push("<table>")
+	var lineCnt = 0;
+	lines.push('<tr><td style="color:white;background-color:gray">ePolicy Instance</td><td>' + ePolicy.hostname + "</td></tr>");
+	
+	// Get the status from the response attribute already set up in the work Entry
+	var responseCode = work.getString("http.responseCode");
+	var responseMsg = work.getString("http.responseMsg");
+	
+	if (responseCode != "200") {
+		lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " failed with service error</td></tr>");
+		lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>' + rootCause() + "</td></tr>");
+	} else {
+		if (accountsInError == 0) {
+			lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " Successful</td></tr>");
+			lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>' + accounts.length + " Accounts " + operation + "d successfully</td></tr>");
+		} else {
+			lines.push('<tr><td style="color:white;background-color:gray">Status</td><td>' + opNoun + " Failed for " + accountsInError + " Accounts</td></tr>");
+			lines.push('<tr><td style="color:white;background-color:gray">Detailed Status</td><td>'+ "Some accounts fail to " + operation + "<br/>"
+						+ "Correct the issues identified in the Account Details below and resubmit the " + opNoun + " request</td></tr>");
+		}	
+	}
+	
+	var policiesMigrated = 0;
+	var accountsMigrated = 0;
+	if (!inError() && responseCode == "200") {
+		for (var accountName in counters) {
+			if (accountName == "Service") {
+				continue;
+			} else
+			if (!errors[accountName] || errors[accountName].length == 0) {
+				accountsMigrated++;
+				policiesMigrated += counters[accountName].Policy;
+			}
+		}
+	}	
+	
+	if (counters.Service) {
+		policiesMigrated = counters.Service.Policy_Names;
+	} else {
+		policiesMigrated = [];
+	}
+	
+	if (operation == "migrate") {
+		lines.push('<tr><td style="color:white;background-color:gray">Accounts Migrated</td><td>' + accountsMigrated + "</td></tr>");		
+		lines.push('<tr><td style="color:white;background-color:gray">Policies Migrated</td><td>' + policiesMigrated.join("<br/>") + "</td></tr>");		
+	} else {
+		lines.push('<tr><td style="color:white;background-color:gray">Accounts Validated</td><td>' + accountsMigrated + "</td></tr>");		
+	}
+
+	lines.push('<tr><td style="color:white;background-color:gray">Migration Start</td><td>' + system.formatDate(migrationStart, "dd-MMM-yyyy HH:mm:ss") + "</td></tr>");
+	lines.push('<tr><td style="color:white;background-color:gray">Migration End</td><td>' + system.formatDate(migrationEnd, "dd-MMM-yyyy HH:mm:ss") + "</td></tr>");
+	lines.push("</table>");
+
+	lines.push("<div><h2>Account Details:</h2></div>");
+
+	lines.push("<table>");	
+	lines.push('<tr><td><b>Account Name</b></td><td><b>Details</b></td></tr>');
+	for (var i in accounts) {
+		var accountName = accounts[i];
+		if (inError() || responseCode != "200") {
+			var details = accountError[accountName] || opNoun + " failed due to error listed above";
+		} else {
+			var details = accountError[accountName] || opNoun + " successful";
+		}
+		
+		if (inError() || responseCode != "200" || (accountError[accountName] && accountError[accountName].length > 0)) {
+			lines.push('<tr><td style="color:red">' + accountName + "</td><td>" 
+					+ details.replace("|", "<br/>.<br/>").replace("§", "<hr width:100% size:20px/>")
+					+ "</td></tr>");
+		} else {
+			lines.push('<tr><td>' + accountName + "</td><td>" + details + "</td></tr>");
+		}
+	}
+	lines.push("</table>");
+	
+	lines.push("<br/>");
+	
+	// If no errors and at least one Account is successfully validated, then include the link to the Migrate UI page
+	if (responseCode == "200" && operation == "validate") {
+		lines.push("<b>Ensure you are logged into OpenPages and then click on "
+					+ '<a href="' + migrateURL + "?param=" + requestID + '">this link</a>'
+					+ " to perform Migration.</b>")
+	} 
+	
+	lines.push("<br/><br/>");
+	lines.push('<div>For more information on GTS Global ITRM Process and OpenPages implementation refer to <a href="https://w3-connections.ibm.com/wikis/home?lang=en#!/wiki/Wf49a2ed8f3ed_49c2_bc11_b9e51af1f556/page/Welcome%20to%20OpenPages">ITRM OpenPages wiki</a></div>');
+	lines.push("<hr width:100% size:10/>");
+	lines.push('<div style="color:white;background-color:black">This email is auto generated by IBM OpenPages GRC Platform. Have a question? Click <a href="mailto://itrmop@us.ibm.com">here</a> to write to us.</div>')
+
+	lines.push("</body></html>")
+
+	log("\nNotification mail body:\n\n" + lines.join("\n") + "\n");
+
+	return lines.join("");
+}
+
+// Returns vital SMTP properties
+function getSMTPProperty(propName) {
+	var val = system.getTDIProperty(propName);
+	if (val == null) {
+		log("ERROR", "Missing SMTP property: " + propName);
+	}
+	return val;
+}
+
+// Send out the notification email
+function sendEmail(toUser, requestID) {
+	var hostname = getSMTPProperty("smtp.hostname");
+	var port = getSMTPProperty("smtp.port");
+	var username = getSMTPProperty("smtp.username");
+	var password = getSMTPProperty("smtp.password");
+	
+	if (!hostname || !port || !username || !password) {
+		log("WARN", "Cannot send notification email because settings are incorrect");
+		return;
+	}
+
+	try {
+		var mail = new MailObj({
+			hostname: hostname,
+			port: port,
+			username: username,
+			password: password,
+			ssl: true
+		});
+		var opNoun = (operation == "migrate") ? "Migration" : "Validation";
+		
+		mail.send({
+			to: toUser,
+			from: "SDI@IBM.COM",
+			subject: "ePolicy " + opNoun + " result notification",
+			body: buildMailMessage(requestID),
+			contentType: "text/html"
+		});
+	} catch (ex) {
+		log("WARN", "Error sending notification email - " + ex);
+	}
+}
+
+// Return a new Request ID
+function newRequestID() {
+	var id = system.formatDate(new Date, "yyMMdd") + randomPart(10);
+	return id;
+}
+
+// Generate the random part of a Request ID
+function randomPart(len) {
+	len = len || 5;
+	var charStr = "ABCDEFGHIJKLMNOP0123456789";
+	var chars = charStr.split();
+	var buf = new java.lang.StringBuilder();
+	
+	while (buf.length() < len) {
+		var ndx = Math.floor(Math.random() * chars.length);
+		buf.append(chars[ndx]);
+	}
+	
+	return buf.toString();
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

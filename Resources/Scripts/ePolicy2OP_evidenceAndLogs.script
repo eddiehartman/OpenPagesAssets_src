@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="143" UUID="2cd71b2e-c91a-46ac-82f3-faeb9f7fac8d" created="Mon Aug 17 15:52:05 CEST 2020" createdBy="eddie" main="ePolicy2OP_evidenceAndLogs" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_evidenceAndLogs">
+        <ModTime>1613493655940</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[function addEvidenceAndLogs(args) {
+	// Now to find Evidences for this CSD
+
+	var parentEntry = args.parentEntry;
+	var techspec = args.techspec || null;
+	var parentType = args.parentType;
+	var parentId = args.parentId;
+	var entryForQuery = args.entryForQuery;
+	var templatePolicy = args.templatePolicy || system.newEntry();
+	var document_version = args.document_version;
+	var debug = args.debug || false
+	var doMigration = args.doMigration || false;
+	var namePrefix = args.namePrefix || "";
+	var nameSuffix = args.nameSuffix || "";
+	var isTechSpec = (args.isTechSpec || false);
+	var useTemplateNameForLogs = (args.useTemplateName) || "*UNDEFINED*";
+	
+	parentEntry.document_version = document_version;
+	parentEntry.namePrefix = namePrefix;
+	parentEntry.Use_Template_Name = useTemplateNameForLogs;
+
+	var EVList = db.query("evidence", entryForQuery);
+
+	for (var evidence in EVList) {
+		log("Found evidence: " + evidence.toJSON());
+
+		// Set up attributes for later mapping
+
+		evidence.Evidence_filename = evidence.NAME;
+		evidence.document_version = document_version;
+		evidence.evidence_format = evidence.format;
+
+		// Prepare to add evidence documents by mapping the details
+
+		var map = new Mapper("POC_MVP/map_evidence.map");
+		
+		var evidenceDetails = map.map([evidence, 
+										parentEntry, 
+										ePolicyAccount, 
+										CSD,
+										newPolicy, 
+										opAccount]);
+
+		log("Preparing to log evidence attachments for: " + evidenceDetails.toJSON());
+
+		// Find attachment for evidence
+
+		var EVAttachList = db.query("evidence_attachment", evidence);
+
+		//break; log("\n\n\n****** debug short-circuit at line 140 ****\n\n\n");
+
+		if (isTechSpec) {
+			var map = new Mapper("POC_MVP/map_evidencedoc_techspec.map");
+		} else {
+			var map = new Mapper("POC_MVP/map_evidencedoc.map");
+		}
+
+		for (var EVAttachDoc in EVAttachList) {
+			// Add the doc as child of the policy
+			log("Attaching evidence doc to OpenPages Policy");
+			
+			var evDoc = map.map([EVAttachDoc, 
+									evidence,
+									techspec, 
+									parentEntry, 
+									CSD,
+									ePolicyAccount, 
+									newPolicy, 
+									opAccount]);
+									
+			evDoc.content = EVAttachDoc.getObject("DATA");
+			var name = EVAttachDoc.getString("Name");
+			var nameParts = getFilenameParts(name);
+			evDoc.Name = nameParts.filename;
+			evDoc.extension = nameParts.extension;
+
+			var opEVDoc = op.add(evDoc, {
+				objectType: "SOXDocument",
+				parentType: parentType,
+				primaryParentId: parentId,
+				debug: debug || !doMigration
+			});
+			
+			if (doMigration) {
+				log("Created evidence attachment: " + opEVDoc.getString("Resource ID"));
+			}
+	
+			// Add to the creation metric info
+			saveCreationDetails(accountNameWithCode, "SOXDocument", opEVDoc, policyChildren);
+		}
+	}
+
+
+	// Now to find validation logs for this CSD
+	var vLogmap = new Mapper("POC_MVP/map_validationlog.map");
+	if (isTechSpec) {
+		var vLogDocmap = new Mapper("POC_MVP/map_validationlogdoc_techspec.map");
+	} else {
+		var vLogDocmap = new Mapper("POC_MVP/map_validationlogdoc.map");
+	}
+
+	var VLList = db.query("validation_log", entryForQuery);
+
+	// Set up the Template Policy name for mapping below
+	templatePolicy.template_name = templatePolicy.name;
+
+	var excel = null;
+	var vLog = null;
+	for (var vLog in VLList) {
+		log("Migrating Validation Log: " + vLog.toJSON());
+
+		// Map VLog Entry for Excel spread sheet
+		var vlEntry = vLogmap.map([vLog, 
+									evidence,
+									parentEntry, 
+									ePolicyAccount, 
+									templatePolicy, 
+									CSD, 
+									opAccount, 
+									newPolicy]);
+
+		log("Mapped Validation Log to: " + vlEntry.toJSON());
+
+		// generate Excel sheet
+		if (excel == null) {
+			excel = new ExcelObj({
+				sheetFileName: vlEntry.getString("File name"),
+				sheetname: "Validation Log",
+				columnsFileName: "POC_MVP/fields_validationlog.txt"
+			});
+		}
+		excel.addRow(vlEntry);
+	}
+
+	if (vLog != null) {
+		// Map VLog attachement
+		var vlDoc = vLogDocmap.map([vLog, 
+									parentEntry,
+									techspec,
+									ePolicyAccount, 
+									CSD,
+									newPolicy, 
+									opAccount]);
+
+		// Now set the content and name of the attachment
+		vlDoc.content = excel.getBytes();
+		vlDoc.extension = "xlsx";
+
+		// Create Policy attachment
+		var opVLDoc = op.add(vlDoc, {
+			objectType: "SOXDocument",
+			parentType: parentType,
+			primaryParentId: parentId,
+			debug: debug || !doMigration
+		});
+		
+		if (doMigration) {
+			log("Created validation log file : " + opVLDoc.getString("Resource ID"));
+		}
+
+		// Add to the creation metric info
+		saveCreationDetails(accountNameWithCode, "SOXDocument", opVLDoc, policyChildren);
+	}
+
+	// Now to find evidence logs for this CSD
+	var eLogmap = new Mapper("POC_MVP/map_evidencelog.map");
+	if (isTechSpec) {
+		var eLogDocmap = new Mapper("POC_MVP/map_evidencelogdoc_techspec.map");
+	} else {
+		var eLogDocmap = new Mapper("POC_MVP/map_evidencelogdoc.map");
+	}
+
+	var ELList = db.query("evidence_log", entryForQuery);
+	
+	// Set up the Template Policy name for mapping below
+	templatePolicy.template_name = templatePolicy.name;
+
+	excel = null;
+	var eLog = null;
+	for (eLog in ELList) {
+		log("Migrating Evidence Log: " + eLog.toJSON());
+
+		// Map ELog Entry for Excel spread sheet
+		var elEntry = eLogmap.map([eLog, 
+									evidence,
+									parentEntry, 
+									ePolicyAccount, 
+									templatePolicy, 
+									CSD, 
+									opAccount, 
+									newPolicy]);
+
+		log("Mapped Evidence Log to: " + elEntry.toJSON());
+
+		// generate Excel sheet
+		if (excel == null) {
+			excel = new ExcelObj({
+				sheetFileName: elEntry.getString("File name"),
+				sheetname:"Evidence Log",
+				columnsFileName: "POC_MVP/fields_evidencelog.txt"
+			});
+		}
+		excel.addRow(elEntry);
+	}
+
+	if (eLog != null) {
+		// Map ELog attachement
+		var elDoc = eLogDocmap.map([eLog,
+									evidence,
+									parentEntry,
+									techspec,
+									CSD,
+									ePolicyAccount, 
+									newPolicy, 
+									opAccount, 
+									newPolicy]);
+
+		// Now set the content and name of the attachment
+		elDoc.content = excel.getBytes();
+		elDoc.extension = "xlsx";
+
+		// Create Policy attachment
+		var opELDoc = op.add(elDoc, {
+			objectType: "SOXDocument",
+			parentType: parentType,
+			primaryParentId: parentId,
+			debug: debug || !doMigration
+		});
+		
+		if (doMigration) {
+			log("Created evidence log file : " + opELDoc.getString("Resource ID"));
+		}
+	
+		// Add to the creation metric info
+		saveCreationDetails(accountNameWithCode, "SOXDocument", opELDoc, policyChildren);
+	}
+
+
+	// Now to find History logs for this CSD
+	var hLogmap = new Mapper("POC_MVP/map_historylog.map");
+	if (isTechSpec) {
+		var hLogDocmap = new Mapper("POC_MVP/map_historylogdoc_techspec.map");
+	} else {
+		var hLogDocmap = new Mapper("POC_MVP/map_historylogdoc.map");
+	}
+
+	var HLList = db.query("history_log", entryForQuery);
+
+	excel = null;
+	var hLog = null;
+	for (hLog in HLList) {
+		log("Migrating History Log: " + hLog.toJSON());
+		
+		// Map hLog Entry for Excel spread sheet
+		var hlEntry = hLogmap.map([hLog, 
+									parentEntry, 
+									ePolicyAccount, 
+									templatePolicy, 
+									CSD, 
+									opAccount, 
+									newPolicy]);
+
+		log("Mapped History Log to: " + hlEntry.toJSON());
+		
+		// generate Excel sheet
+		if (excel == null) {
+			excel = new ExcelObj({
+				sheetFileName: hlEntry.getString("File name"),
+				sheetname:"History Log",
+				columnsFileName: "POC_MVP/fields_historylog.txt"
+			});
+		}
+		excel.addRow(hlEntry);
+	}
+
+	if (hLog != null) {
+		// Map VLog attachement
+		var hlDoc = hLogDocmap.map([hLog, 
+									parentEntry,
+									techspec,
+									ePolicyAccount, 
+									CSD, 
+									newPolicy, 
+									opAccount, 
+									newPolicy]);
+
+		// Now set the content and name of the attachment
+		hlDoc.content = excel.getBytes();
+		hlDoc.extension = "xlsx";
+
+		// write to openpages
+		var opHLDoc = op.add(hlDoc, {
+			objectType: "SOXDocument",
+			parentType: parentType,
+			primaryParentId: parentId,
+			debug: debug || !doMigration
+		});
+		
+		if (doMigration) {
+			log("Created History log file : " + opHLDoc.getString("Resource ID"));
+		}
+
+		// Add to the creation metric info
+		saveCreationDetails(accountNameWithCode, "SOXDocument", opHLDoc, policyChildren);
+	}
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

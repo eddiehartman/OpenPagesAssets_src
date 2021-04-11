@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="1" UUID="c8cd13da-9ed6-46db-86da-cae8a382192a" created="Wed May 27 15:48:59 CEST 2020" createdBy="eddie" main="OP_SOXRisk" modified="Wed May 27 15:48:59 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <ALMap name="OP_SOXRisk">
+        <ModTime>1589283724440</ModTime>
+        <AttributeMap name="Input">
+            <InheritFrom>[parent]</InheritFrom>
+            <AttributeMapItem>
+                <Name>Account ID</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Shared:AccountID"]</Script>
+                <Simple>Account ID</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Applicable Global Process</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Process"]</Script>
+                <Simple>Applicable Global Process</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Applicable Policies</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Policies:AppPolicies"]</Script>
+                <Simple>Applicable Policies</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Applicable Regulations</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Regulations:AppRegs"]</Script>
+                <Simple>Applicable Regulations</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by Chief IT Risk Officer</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppCITRO"]</Script>
+                <Simple>Approved by Chief IT Risk Officer</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by DPE</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppDPE"]</Script>
+                <Simple>Approved by DPE</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by Geography GM</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppGeoGM"]</Script>
+                <Simple>Approved by Geography GM</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by Market GM</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppMarketGM"]</Script>
+                <Simple>Approved by Market GM</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by PE</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppPE"]</Script>
+                <Simple>Approved by PE</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Approved by Sr. Legal Counsel</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AppSrLegalCounsel"]</Script>
+                <Simple>Approved by Sr. Legal Counsel</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Assess Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_Assess"]</Script>
+                <Simple>Assess Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Assess Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Assess"]</Script>
+                <Simple>Assess Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Assess Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Assess"]</Script>
+                <Simple>Assess Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Assess Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Assess"]</Script>
+                <Simple>Assess Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Assessment Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:AssDate"]</Script>
+                <Simple>Assessment Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>CM Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CMAppDate"]</Script>
+                <Simple>CM Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>CM Letter Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CMLetterRejectDate"]</Script>
+                <Simple>CM Letter Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>CM Risk Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CMRiskRejectDate"]</Script>
+                <Simple>CM Risk Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>CRF Validation Date Performed</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CRFValidationDate"]</Script>
+                <Simple>CRF Validation Date Performed</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>CRF Validation Result</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CRF Validation Result"]</Script>
+                <Simple>CRF Validation Result</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Chief IT Risk Officer Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CitroAppDate"] || conn["GTS-Risk:CITRODate"]</Script>
+                <Simple>Chief IT Risk Officer Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Chief IT Risk Officer Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CITRORiskRejectDate"]</Script>
+                <Simple>Chief IT Risk Officer Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Claim Code</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:ClaimCode"]</Script>
+                <Simple>Claim Code</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Client Communication Complete</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CltCommunicationComplete"]</Script>
+                <Simple>Client Communication Complete</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Client Communication Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CltCommunicationDate"]</Script>
+                <Simple>Client Communication Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Client Dependency on Reducing Risk</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:ClientDepRedRsk"]</Script>
+                <Simple>Client Dependency on Reducing Risk</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Client Response</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CltResponse"]</Script>
+                <Simple>Client Response</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Client Response Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CltResponseDate"]</Script>
+                <Simple>Client Response Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Closed Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Closed"]</Script>
+                <Simple>Closed Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Communicate Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_Communicate"]</Script>
+                <Simple>Communicate Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Communicate Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Communicate"]</Script>
+                <Simple>Communicate Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Communicate Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Communicate"]</Script>
+                <Simple>Communicate Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Communicate Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Communicate"]</Script>
+                <Simple>Communicate Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Creation Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["Creation Date"]</Script>
+                <Simple>Creation Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Current Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Current Phase"]</Script>
+                <Simple>Current Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Current Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Current Phase"]</Script>
+                <Simple>Current Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Current Stage Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-Std:LCCustStageDueDate"]</Script>
+                <Simple>Current Stage Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Current Status Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CurrentStatusDate"]</Script>
+                <Simple>Current Status Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>DPE Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:DPEAppDate"]</Script>
+                <Simple>DPE Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Date Closed</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Date Closed"]</Script>
+                <Simple>Date Closed</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Date Letter Sent</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:DateLetterSent"]</Script>
+                <Simple>Date Letter Sent</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Document Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_Document"]</Script>
+                <Simple>Document Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Document Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Document"]</Script>
+                <Simple>Document Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Document Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Document"]</Script>
+                <Simple>Document Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Document Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Document"]</Script>
+                <Simple>Document Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Early Notification</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:EarlyNotification"]</Script>
+                <Simple>Early Notification</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Estimated Impact of the threat resulting in adverse effect(s)</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:EstImpactLevel"]</Script>
+                <Simple>Estimated Impact of the threat resulting in adverse effect(s)</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Estimated Overall Probability</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:EstOverallProb"]</Script>
+                <Simple>Estimated Overall Probability</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Estimated Probability of Threat Event Occurrence</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:EstProbTEOccurance"]</Script>
+                <Simple>Estimated Probability of Threat Event Occurance</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Estimated Probability of Threat Event Resulting in Adverse Impacts</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:EstProbTEAdvImpacts"]</Script>
+                <Simple>GTS-RiskRating:EstProbTEAdvImpacts</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Estimated Risk Rating</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:EstRiskRating"]</Script>
+                <Simple>Estimated Risk Rating</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Impact of the threat resulting in adverse effect(s)</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:FinImpactLevel"]</Script>
+                <Simple>Final Impact of the threat resulting in adverse effect(s)</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Overall Probability</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:FinOverallProb"]</Script>
+                <Simple>Final Overall Probability</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Probability of Threat Event Occurrence</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:FintProbTEOccurance"]</Script>
+                <Simple>Final Probability of Threat Event Occurrence</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Probability of Threat Event Resulting in Adverse Impacts</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:FinProbTEAdvImpacts"]</Script>
+                <Simple>Final Probability of Threat Event Resulting in Adverse Impacts</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Risk Assessment</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Final Risk Assessment"]</Script>
+                <Simple>Final Risk Assessment</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Final Risk Rating</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:FinRiskRating"]</Script>
+                <Simple>Final Risk Rating</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>GRA Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:GRAAppDate"]</Script>
+                <Simple>GRA Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>GRA Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:GRARejectDate"]</Script>
+                <Simple>GRA Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Geo Legal Review Complete</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LegalReview"]</Script>
+                <Simple>Geo Legal Review Complete</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Geo Legal Review Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LegalReviewDate"]</Script>
+                <Simple>Geo Legal Review Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Geography GM Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:GeoGMDate"]</Script>
+                <Simple>Geography GM Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>IBM Corporate Risk and Issue Tracking System</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RskIssueTrackingSystem"]</Script>
+                <Simple>IBM Corporate Risk and Issue Tracking System</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Implement Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_Completed_Late_Implement"]</Script>
+                <Simple>Implement Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Implement Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Implement"]</Script>
+                <Simple>Implement Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Implement Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Implement"]</Script>
+                <Simple>Implement Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Implement Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Implement"]</Script>
+                <Simple>Implement Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Impact of the threat resulting in adverse effect(s)</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:InImpactLevel"]</Script>
+                <Simple>Initial Impact of the threat resulting in adverse effect(s)</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Overall Probability</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:InOverallProb"]</Script>
+                <Simple>Initial Overall Probability</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Probability of Threat Event Occurrence</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:InProbTEOccurance"]</Script>
+                <Simple>Initial Probability of Threat Even Occurance</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Probability of Threat Event Resulting in Adverse Impacts</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:InProbTEAdvImpacts"]</Script>
+                <Simple>Initial Probability of Threat Event Resulting in Adverse Impacts</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Risk Rating</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:InRiskRating"]</Script>
+                <Simple>Initial Risk Rating</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Initial Risk Response</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:Initial Risk Response"]</Script>
+                <Simple>Initial Risk Response</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>LC Transition</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:LCTransition"]</Script>
+                <Simple>LC Transition</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>LCName</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:LCName"]</Script>
+                <Simple>LCName</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Last Modification Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["Last Modification Date"]</Script>
+                <Simple>Last Modification Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Legacy_Status</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPSS-Risk:Status"]</Script>
+                <Simple>Legacy_Status</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Legal Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LegalRiskRejectDate"]</Script>
+                <Simple>Legal Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Legal Validation Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LegalAppDate"]</Script>
+                <Simple>Legal Validation Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Letter Documented Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LetterDocumentedDate"]</Script>
+                <Simple>Letter Documented Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Letter Sent</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LetterSent"]</Script>
+                <Simple>Letter Sent</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Level of Process or Differentiation Evaluated</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LoProcessDiffEval"]</Script>
+                <Simple>Level of Process or Differentiation Evaluated</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Market GM Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:MrktGMAppDate"]</Script>
+                <Simple>Market GM Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Migrated</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Shared:Migrated"]</Script>
+                <Simple>Migrated</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Monitor Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_Monitor"]</Script>
+                <Simple>Monitor Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Monitor Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Monitor"]</Script>
+                <Simple>Monitor Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Monitor Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Monitor"]</Script>
+                <Simple>Monitor Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Monitor Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Monitor"]</Script>
+                <Simple>Monitor Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:NegativeConfirmation"]</Script>
+                <Simple>Negative Confirmation</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_NegativeConfirmation"]</Script>
+                <Simple>Negative Confirmation Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_NegativeConfirmation"]</Script>
+                <Simple>Negative Confirmation Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_NegativeConfirmation"]</Script>
+                <Simple>Negative Confirmation Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_NegativeConfirmation"]</Script>
+                <Simple>Negative Confirmation Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Sent</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:NegativeConfirmationSent"]</Script>
+                <Simple>Negative Confirmation Sent</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Negative Confirmation Sent Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:NegativeConfirmationSentDate"]</Script>
+                <Simple>Negative Confirmation Sent Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>New Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_New"]</Script>
+                <Simple>New Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>New Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_New"]</Script>
+                <Simple>New Phase Start Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Non Compliance Issue Number</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Non Compliance Issue Number"]</Script>
+                <Simple>Non Compliance Issue Number</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Other Applicable Global Process</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:OtherProcess"]</Script>
+                <Simple>Other Applicable Global Process</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Other Level of Process or Differentiation Evaluated</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:LoProcessDiffEvalOther"]</Script>
+                <Simple>Other Level of Process or Differentiation Evaluated</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Other Platforms</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Other Platforms"]</Script>
+                <Simple>Other Platforms</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Other Regulations</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Regulations:Other Regulations"]</Script>
+                <Simple>Other Regulations</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Overall Impact of the threat resulting in adverse effect(s)</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:OveralImpact"]</Script>
+                <Simple>Overall Impact of the threat resulting in adverse effect(s)</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Overall Probability</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:OverallProb"]</Script>
+                <Simple>Overall Probability</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Overall Risk Rating</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:ORiskRating"]</Script>
+                <Simple>Overall Risk Rating</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>PE Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:PEAppDate"]</Script>
+                <Simple>PE Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Perform CRF Validation</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Perform CRF Validation"]</Script>
+                <Simple>Perform CRF Validation</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Phase</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:LCPhase"]</Script>
+                <Simple>Phase</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Platform</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Platform"]</Script>
+                <Simple>Platform</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Potential Risk Caused By</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:PotRiskCausedBy"]</Script>
+                <Simple>Potential Risk Caused By</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Potential Risk to IBM</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:PotRiskToIBM"]</Script>
+                <Simple>Potential Risk to IBM</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Proceed To Monitoring</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:ProceedToMonitoring"]</Script>
+                <Simple>Proceed To Monitoring</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Process Sub-Domain</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:ProcessSubDomain"]</Script>
+                <Simple>Process Sub Domain</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Reference System ID</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:CIRATSSIMID"]</Script>
+                <Simple>Reference System ID</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Regulation Impacted</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RegImpacted"]</Script>
+                <Simple>Regulation Impacted</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Regulation Impacted Country</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RegImpactedCountry"]</Script>
+                <Simple>Regulation Impacted Country</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Reset Risk Response</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:Reset Risk Response"]</Script>
+                <Simple>Reset Risk Response</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Resource ID</Name>
+                <Type>advanced</Type>
+                <Script>conn["Resource ID"]</Script>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RiskAppDate"]</Script>
+                <Simple>Risk Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Captured In External Risk Management System</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:ExtRMCaptured"]</Script>
+                <Simple>Risk Captured In External Risk Management System</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Expiration Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Risk Expiration Date"]</Script>
+                <Simple>Risk Expiration Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk ID</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["Name"]</Script>
+                <Simple>Resource ID</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Identified Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:Risk Identified"]</Script>
+                <Simple>Risk Identified Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Mitigating Actions Completion Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-Std:LCDueDate"]</Script>
+                <Simple>Risk Mitigating Actions Completion Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Rejection Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RiskRejectDate"]</Script>
+                <Simple>Risk Rejection Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Response</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-RiskRating:RskResponse"]</Script>
+                <Simple>Risk Response</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Status</Name>
+                <Type>advanced</Type>
+                <Script>conn["OPLC-SOXRisk:LCStatus"]</Script>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Type</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RiskType"]</Script>
+                <Simple>Risk Type</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Risk Validation Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:RiskValidationDate"]</Script>
+                <Simple>Risk Validation Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Sr. Legal Counsel Approval Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["GTS-Risk:SrLegalCounselAppDate"]</Script>
+                <Simple>Sr. Legal Counsel Approval Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Stage</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:LCStage"]</Script>
+                <Simple>Stage</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Validate Phase Completed Late</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_CompletedLate_Validate"]</Script>
+                <Simple>Validate Phase Completed Late</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Validate Phase Completion Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_EndDate_Validate"]</Script>
+                <Simple>Validate Phase Completion Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Validate Phase Due Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_DueDate_Validate"]</Script>
+                <Simple>Validate Phase Due Date</Simple>
+            </AttributeMapItem>
+            <AttributeMapItem>
+                <Name>Validate Phase Start Date</Name>
+                <Type>advanced</Type>
+                <Enabled>true</Enabled>
+                <Add>true</Add>
+                <Modify>true</Modify>
+                <Script>conn["OPLC-SOXRisk:Phase_StartDate_Validate"]</Script>
+                <Simple>Validate Phase Start Date</Simple>
+            </AttributeMapItem>
+        </AttributeMap>
+        <State>Enabled</State>
+    </ALMap>
+</MetamergeConfig>

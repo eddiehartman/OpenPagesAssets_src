@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="203" UUID="50467704-2267-4bb5-ae60-735543ccea0f" created="Thu Oct 15 11:26:12 CEST 2020" createdBy="eddie" main="ccUpdateObj" modified="Tue Feb 16 17:40:49 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ccUpdateObj">
+        <ModTime>1613493649075</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Object used to multi-thread updates to Clause Controls
+//
+var ccUpdateObj = function() {
+	this.vrs = "20201015 1533"; // Initial version
+	this.vrs = "20201211 1427"; // Upped maxALs to 30
+	
+	// Array of ALs
+	this.maxALs = system.getTDIProperty("max.concurrent.cc.updates") || 5;
+	this.als = java.util.concurrent.ConcurrentHashMap();
+	this.opCtrObjs = [];
+	this.updateCount = {success: 0, failed: 0};
+	
+	// Local log function
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[ccUpdateObj] " + msg);
+		
+		if (throwit) throw "[ccUpdateObj] " + msg;
+	}
+	
+	// Register a new request to start an update thread
+	this.update = function(entry) {
+		while (this.runningALs() >= this.maxALs) {
+			task.sleep(50);
+		}	
+		
+		var ref = entry.getString("GTS-ClauseCtl:Col1");
+		
+		var iwe = system.newEntry();
+		iwe.entry = entry;
+		iwe.opCtrObj = this.nextFreeOpCtrObj();
+
+		var alName = task.getShortName() + " - " + ref;
+		
+		tcb = system.newTCB()
+		tcb.setInitialWorkEntry(iwe);
+		tcb.setTaskName(alName);
+		
+		vect = new java.util.Vector();
+		vect.add(tcb);
+		vect.add(task.getLog());
+		
+		this.log("Starting AL for " + ref + " with " + entry.getString("GTS-ClauseCtl:Col1"));
+		var al = main.startAL("Migrate_ePolicy_CC_Update", vect);
+		al.setParam("alName", alName);
+		
+		this.als.put(ref, al);
+
+		do {
+			var step = al.getCurrentStep();
+		} while (step < 5);	
+	}
+	
+	// Return the first available OpenPages Connector obj
+	this.nextFreeOpCtrObj = function() {
+		do {
+			for (var i in this.opCtrObjs) {
+				var thisObj = this.opCtrObjs[i];
+				if (!thisObj.inUse) {
+					thisObj.inUse = true;
+					return thisObj;
+				}
+			}
+			task.sleep(50);
+		} while (true);
+	}
+	
+	// Check all ALs in flight, removing those that have completed
+	this.runningALs = function() {
+		var running = 0;
+		var refs = this.als.keySet();
+		var deleteALs = [];
+		for (var ref in refs) {
+			var al = this.als.get(ref);
+			
+			step = al.getCurrentStep();
+			
+			if (step == 16) { // If completed, the mark as available
+				// Remove from the HashMap of ALs
+				//this.als.remove(ref);
+
+				// Get result and any errors
+				var result = al.getResult();
+				var error = al.getStats().getError();
+				if (error) {
+					_errors.push(error.toString());
+					this.updateCount.failed++;
+					throw "**** STOPPING EVERYTHING WITH: " + error.toString();
+				} else {
+					this.updateCount.success++;
+				}
+				
+				deleteALs.push(ref);
+			} else {
+				running++;
+			}
+		}
+		
+		for (var i in deleteALs) {
+			var alref = deleteALs[i];
+			this.als.remove(alref);
+		}
+		
+		return running;
+	}
+	
+	// Waits for all ALs to complete, collecting details from them
+	this.getResults = function() {
+		while (this.runningALs() > 0) {
+			task.sleep(100);
+		}
+		return this.updateCount;
+	}
+
+	// Initialization method
+	this.initialize = function() {
+		this.log("v" + this.vrs);
+		
+		for (var i = 0; i < this.maxALs; i++) {
+			var ctr = system.getConnector("OpenPages Connector");
+			ctr.initialize(null);
+			this.opCtrObjs.push({
+				ctr: ctr,
+				inUse: false
+			});
+		}
+	} 
+			
+	// Initialization code below this point
+	
+	this.initialize();	
+
+	return this; // Always return *this*
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

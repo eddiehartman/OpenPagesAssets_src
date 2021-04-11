@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="6" UUID="f3bec69f-d509-47c8-a18d-ece137cbb457" created="Wed Apr 01 16:35:44 IST 2020" createdBy="DishaSingh" main="Hook_On_Error" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="Hook_On_Error">
+        <ModTime>1613493655601</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[log("FATAL","error connecting to OpenPages: "+ error.message);
+task.shutdown();]]></parameter>
+    </Script>
+</MetamergeConfig>

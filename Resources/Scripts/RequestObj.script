@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="264" UUID="8dc5787b-8dd9-4557-be27-f06ed4314951" created="Fri Aug 07 11:50:23 CEST 2020" createdBy="eddie" main="RequestObj" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="RequestObj">
+        <ModTime>1613493655634</ModTime>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[var RequestObj = function(requestEntryOrID) {
+	//this.vrs = "20200806 1755"; // initial version
+	//this.vrs = "20200820 1915"; // getting ePolicy connection details
+	//this.vrs = "20200823 1357"; // added toString()
+	//this.vrs = "20201010 1355"; // fixed handling of mappingTable
+	//this.vrs = "20201029 1726"; // storing http.method in requestDetails
+	//this.vrs = "20201119 1615"; // added requestDB functionality. This is a folder path from the POC_MVP
+	this.vrs = "20201124 1047"; // added requestDB functionality. This is a folder path from the POC_MVP
+    
+    this.arg = requestEntryOrID;
+    this.requestEntry = null;
+    
+    this.requestDetails = {};
+    // These properties are now in 'props'
+	//    this.auth; // Authorization header
+	//    this.base; // Full HTTP base, f.ex. /validate
+	//    this.operation; // Just the path without forward-slash, f.ex. validate
+	//    this.body; // HTTP body passed in the request
+	
+	this.requestDBFolders = {
+		validate: {
+			newFolder: "new",
+			successFolder: "success",
+			failedFolder: "failed"
+		},
+		migrate: {
+			newFolder: "new",
+			successFolder: "success",
+			failedFolder: "failed"
+		}
+	}
+    
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[RequestObj] " + msg);
+		if (throwit) throw "[RequestObj] " + msg;
+	}
+
+	this.operation = function() {
+		if (typeof this.requestDetails == "undefined" || !this.requestDetails.operation) {
+			return "Invalid Request - processing failed";
+		}
+		return this.requestDetails.operation;
+	}
+	
+	this.accounts = function() {
+		return this.requestDetails.accounts;
+	}
+	
+	this.ePolicy = function() {
+		return this.requestDetails.ePolicy;
+	}
+	
+	this.opUserEmail = function() {
+		return this.requestDetails.opUserEmail;
+	}
+	
+	this.mappingTable = function() {
+		return this.requestDetails.mappingTable;
+	}
+
+	this.debug = function() {
+		return this.requestDetails.debug;
+	}	
+	
+	this.skippingClauseControls = function() {
+		return this.requestDetails.skippingClauseControls;
+	}	
+	
+	this.parseRequest = function() {
+		var entry = this.requestEntry;
+		
+		this.requestDetails = {};
+		this.requestDetails.auth = entry.getString("http.Authorization");
+		this.requestDetails.base = entry.getString("http.base");
+		var path = this.requestDetails.base.trim().toLowerCase();
+		if (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		this.requestDetails.operation = path;
+		this.requestDetails.body = entry.getString("http.bodyAsString") || "";
+		this.requestDetails.method = entry.getString("http.method");
+ 
+ 		if (this.requestDetails.method != "POST") {
+ 			return;
+ 		}
+/*
+ 		if (this.requestID == null) {
+			this.requestID = this.newRequestID();
+ 		}
+*/		
+		this.log("===> Processing " + this.requestDetails.operation + " for Request ID: " + this.requestID);
+			
+		// Now parse the HTTP body and assign to local settings
+		try {
+			var obj = fromJson(this.requestDetails.body);
+			for (var pname in obj) {
+				this.requestDetails[pname] = obj[pname];
+			}
+			this.requestDetails.accounts = obj.accounts;
+			this.requestDetails.mappingTable = obj.mappingTable || obj.mappingtable;
+			this.requestDetails.opUserEmail = obj.opUserEmail || obj.opuseremail;
+			this.requestDetails.ePolicy = obj.epolicy || obj.ePolicy || obj.Epolicy || {};
+			this.requestDetails.debug = obj.debug || false;
+			this.requestDetails.skippingClauseControls = obj.skippingClauseControls
+													|| obj.skippingclausecontrols
+													|| obj.skipClauseControls
+													|| obj.skipclausecontrols
+													|| false;
+		
+			this.saveRequest(this.requestDetails.body);
+		} catch (ex) {
+			var errmsg = "Error processing Request " + this.requestID + " - " + ex;
+			this.log("ERROR", errmsg);
+			throw errmsg;
+		}
+	}
+	
+	// Returns the Request DB path for the passed operation and status
+	this.requestDBPath = function(operation, status) {
+		var path = "POC_MVP/requestDB/" + operation + "/" + status.toLowerCase() + "/" + this.requestID + ".json";
+		return path;
+	}
+	
+	// Save the request. If this is a migrate and request already exists under requestDB/validate/success then OK, otherwise error
+	this.saveRequest = function(requestJson) {
+		if (this.operation() == "migrate") {
+			// In case of Migration, the request must already be under requestDB/validate/success
+			var vPath = this.requestDBPath("validate", "success");
+			var file = new java.io.File(vPath);
+		
+			if (!file.exists()) {
+				// If it's not found there, this is an error
+				this.log("ERROR", "saveRequest() - Cannot Migrate unknown Request ID " + this.requestID);
+				system.exitFlow();
+			}
+			
+			this.log("Moving Request("+ this.requestID + ") from " + vPath + " to prepare to Migrate");
+
+			this.moveRequest("validate", "success", "migrate", "new");
+		} else {
+			var vPath = this.requestDBPath(this.operation(), "new");
+			
+			this.log("tng Request("+ this.requestID + ") to " + vPath);
+			
+			var file = system.openFileForOutput(vPath);;
+			file.write(requestJson);
+			file.close();
+		}
+	}
+	
+	// Saves the Request as successful
+	this.saveSuccess = function() {
+		var operation = this.operation();
+		this.moveRequest(operation, "new", operation, "success");
+	}
+	
+	// Saves the Request as failed
+	this.saveFailure = function() {
+		var operation = this.operation();
+		this.moveRequest(operation, "new", operation, "failed");
+	}
+	
+	// Load a previously successfully validated request
+	this.loadRequest = function(fromOperation, fromStatus) {
+		var filePath = this.requestDBPath(fromOperation, fromStatus);
+		var file = new java.io.File(filePath);
+		
+		if (!file.exists()) {
+			this.log("ERROR", "Cannot find Validated Request " + this.requestID);
+		}
+		
+		var buf = new java.lang.StringBuilder();
+		file = system.openFileForInput(filePath);
+		var line;
+		while ((line = file.readLine()) != null) {
+			buf.append(line + "\n");
+		}
+		file.close();
+		
+		this.requestEntry = system.newEntry();
+		this.requestEntry["http.bodyAsString"] = buf.toString();
+		this.requestEntry["http.Authorization"] = "arf";
+		this.requestEntry["http.method"] = "POST";
+		this.requestEntry["http.base"] = "/migrate";
+	}
+	
+	// Moves a request JSON between requestDB folders
+	this.moveRequest = function(fromOperation, fromStatus, toOperation, toStatus) {
+		var requestID = this.requestID;
+		var fromPath = this.requestDBPath(fromOperation, fromStatus);	
+		var toPath = this.requestDBPath(toOperation, toStatus);;	
+		
+		var fromFile = new java.io.File(fromPath);
+		if (!fromFile.exists()) {
+			this.log("ERROR", "moveRequest(" + requestID + ") - Cannot find Request to move: " + fromFile);
+			system.exitFlow();
+		}
+		
+		var toFile = new java.io.File(toPath);
+		if (toFile.exists()) {
+			this.log("WARN", "Request already exists: " + toFile);
+		} else 
+		if (!fromFile.renameTo(toFile)) {
+			this.log("ERROR", "Unable to move Request from " + fromPath + " to " + toPath);
+			system.exitFlow();
+		}
+	}
+	
+	// Generate the random part of a Request ID
+	this.randomPart = function(len) {
+		len = len || 5;
+		var charStr = "ABCDEFGHIJKLMNOP0123456789";
+		var chars = charStr.split();
+		var buf = new java.lang.StringBuilder();
+		
+		while (buf.length() < len) {
+			var ndx = Math.floor(Math.random() * chars.length);
+			buf.append(chars[ndx]);
+		}
+		
+		return buf.toString();
+	}
+	
+	// Creates requestDB folders if not already present
+	this.setupRequestDB = function() {
+		var path = ["POC_MVP", "requestDB"];
+		for (var propName in this.requestDBFolders) {
+			var subPath = path.slice(0);
+			subPath.push(propName);
+			for (var subPropName in this.requestDBFolders[propName]) {
+				var finalPath = subPath.slice(0);
+				finalPath.push(this.requestDBFolders[propName][subPropName]);
+				
+				var file = new java.io.File(finalPath.join("/"));
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+			}
+		}
+	}
+	
+	// Return a new Request ID
+	this.newRequestID = function() {
+		var id = system.formatDate(new Date, "yyMMdd") + this.randomPart(10);
+		return id;
+	}
+
+	this.processRequest = function() {
+		if (!"POST".equalsIgnoreCase(this.requestDetails.method)) {
+			throw "Bad Request - unsupported HTTP verb: " + String(this.requestDetails.method).toUpperCase();
+		}
+				
+		switch (this.operation()) {
+			case "validate":
+				this.validate();
+				break;
+			case "migrate":
+				this.migrate();
+				break;
+			default: 
+				throw "Bad Requst - Invalid Path: " + path;
+		}
+	}
+	
+	this.authenticated = function(auth) {
+		auth = auth || "";
+		if (auth == "" || auth == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	this.setResult = function(args){
+		var code 					= args.resultCode || args.resultcode || "200";
+		work["http.resultCode"] = code;
+		work["http.resultMsg"] 		= args.resultMsg || args.resultmsg || "Ok";
+		work["http.Content-Type"] 	= args.contentType || args.contenttype || "application/json";
+		work["http.body"] 			= args.body || '{"message" : "No results"}';
+		
+		switch (code){
+			case "200": 
+				log("Request completed successfully");
+				break;
+			default:
+				log("ERROR",
+					work.getString("http.resultMsg")
+					+ " (" + work.getString("http.resultCode") + ")"
+					+ " return body: " + work.getString("http.body"));
+		}
+		 
+	}
+	
+	this.validate = function() {
+		this.setResult({
+			resultCode: "200",
+			resultMsg: "Ok - Migration completed successfully",
+			body: loadFileToString("POC_MVP/mockup/validate.json")
+		});
+	}
+	
+	this.migrate = function() {
+		this.setResult({
+			resultCode: "200",
+			resultMsg: "Ok - Migration completed successfully",
+			body: loadFileToString("POC_MVP/mockup/migrate.json")
+		});
+	}
+	
+	// Turn the request to the a string
+	this.stringify = function() {
+		var msg = [];
+		for (var p in this) {
+			if (p == "requestDBFolders") continue;
+			
+			var i = this[p];
+			if (i.toString().contains("Function")) {
+				continue;
+			} else 
+			if (typeof i == "object" && i.join && typeof i.length == "number"){	
+				msg.push(p + ": [0.." + i.length-1 + "] " + i.toString());
+			} else
+			if (typeof i == "object") {
+				try {
+					msg.push(p + ": " + toJson(i));
+				} catch(ex) {
+					msg.push(p + ": " + makeJson(i));
+				}	
+			} else {
+				msg.push(p + ": " + i);
+			}
+		}
+		return "Contents:\n|     " + msg.join("\n|     ");
+	}
+	
+	this.initialize = function() {
+		this.log("v" + this.vrs);
+
+		if (this.arg instanceof com.ibm.di.entry.Entry) {
+			this.requestEntry = this.arg;
+			this.requestID = this.requestEntry.getString("RequestID") || this.newRequestID();
+		} else {
+			// Otherwise it is a Request ID
+			this.requestID = this.arg;
+			this.loadRequest("validate", "success");
+			//this.moveRequest("validate", "success", "migrate", "new");
+		} 
+
+		this.setupRequestDB();
+		this.parseRequest();
+	}
+	
+	
+	// ------ initialization code below
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+    </Script>
+</MetamergeConfig>

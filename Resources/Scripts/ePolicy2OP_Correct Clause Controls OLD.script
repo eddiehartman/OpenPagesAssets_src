@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="37" UUID="895a380c-cf8d-46b1-9f96-b568566fb3c3" created="Mon Oct 05 13:47:39 CEST 2020" createdBy="eddie" main="ePolicy2OP_Correct Clause Controls OLD" modified="Tue Feb 16 17:40:54 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_Correct Clause Controls OLD">
+        <ModTime>1613493654842</ModTime>
+        <parameter name="enabled">true</parameter>
+        <parameter name="includeFiles"/>
+        <parameter name="script"><![CDATA[// Now to process clause controls and update OpenPages as needed
+
+// If validating or in debug mode, skip this script
+if (debug || !doMigration || skipToEnd) {
+	return; // do nothing
+}
+
+timer.start("Clause Control Correction");
+
+// Get the keys to the Control Clause updates HashMap and sort them
+var keys = updates.cc.keySet().toArray();
+java.util.Arrays.sort(keys);
+
+// Prepare an Entry for use with the op.update() method
+var entry = system.newEntry();
+
+var updateCount = {success: 0, failed: 0};
+
+// Loop through the REFs
+for (var ref in keys) {
+	log("Looking at " + ref);
+	
+	// Grab the deviation (change) object from the map
+	var changeObj = updates.cc[ref];
+ 
+	// Set up the Entry with the values of Attributes requiring updating
+	entry.removeAllAttributes();
+	var fields = [];
+
+	for (var field in changeObj) {
+		if (field != "id" && !field.contains("_TEMPLATE")) {
+			fields.push(field);
+			entry[field] = (changeObj[field] || "").trim();
+		}
+	}
+	
+	// Set up the id and name - always required for an update to OpenPages
+	entry["Resource ID"] = changeObj.id;
+	entry.name = changeObj.name;
+
+	// Get the updated OpenPages object - it could be in either for the maps (one for RV and one for RR)
+	var ccType = devMapObj.getCCType(ref);
+	var opObj = devMapObj.devMap.RR.get(ref) || devMapObj.devMap.RV.get(ref);
+	
+	// Update Col 1 with the REF - as with name for most other objects, this must be included for an update
+	entry["GTS-ClauseCtl:Col1"] = ref;
+
+	op.log("Updating " + ref + " to " + entry.toJSON());
+	try {
+		var updatedCC = op.update(entry, {objectType: "GTSClauseCtl", id: changeObj.id});
+
+		log("Updated " + ref + " to " + updatedCC.toJSON());
+		updateCount.success++;
+	} catch (ex) {
+		updateCount.failed++;
+		log("ERROR", "Error updating " 
+						+ ccType
+						+ " Clause Control ("
+						+ ref
+						+ ") - "
+						+ ex);
+	}	
+}
+
+timer.stop("Clause Control Correction");
+log("Update result - success: " + updateCount.success + "   failed: " + updateCount.failed);]]></parameter>
+    </Script>
+</MetamergeConfig>

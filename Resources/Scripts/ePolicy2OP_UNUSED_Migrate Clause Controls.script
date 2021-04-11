@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="2" UUID="8206fde7-41b2-487e-bf95-ec9f506d1922" created="Wed Sep 23 14:26:27 CEST 2020" createdBy="eddie" main="ePolicy2OP_UNUSED_Migrate Clause Controls" modified="Tue Feb 16 17:40:55 CET 2021" modifiedBy="edbir" project="POC_MVP" version="7.1.1">
+    <Script name="ePolicy2OP_UNUSED_Migrate Clause Controls">
+        <ModTime>1613493655130</ModTime>
+        <parameter name="enabled">false</parameter>
+        <parameter name="script"><![CDATA[// Load mapping files for Procedure and ClauseControls
+procedureMap = new Mapper("POC_MVP/map_procedure.map");
+ccMap = new Mapper("POC_MVP/map_controlclause.map");
+
+// Begine migrating both Clauses (Procedures) and ClauseControls
+procedureCreated = {};
+controlClauseIndex = {};
+procedureCnt = 99;
+emptyEntry = system.newEntry();
+
+{
+	// For each ref found in ePolicy Clause Controls...
+	for (ref in refArray) {
+		// Find the ClauseControl entry (with templateClause etc)
+		opcc = cc.findClauseControl(ref);
+		if (opcc != null) {
+			// If found, then migrate this Clause Control
+			templateClause = opcc.getObject("templateClause");
+			description = templateClause.getString("description") || "*no_template_clause_description_found*";
+
+			// Parse out the clause number from the description, or use the procedureCnt
+			// and then remove it from the description, which is lowercased
+			procedureIndex = -1;
+			p = description.indexOf(" ");
+			if (p > 0 && p < 4) {
+				indexStr = description.substring(0, p).trim();
+				if (system.isValidInt(indexStr)) {
+					procedureIndex = system.toInt(indexStr);
+					description = description.substring(p + 1).trim().toLowerCase();
+				}
+			}
+			if (procedureIndex == -1) {
+				if (description.substring(1, 2) == ".") {
+					procedureIndex = description.substring(0, 1);
+					description = description.substring(2).trim().toLowerCase();
+				} else {
+					procedureIndex = ++procedureCnt;
+					description = description.trim().toLowerCase();
+				}
+			}
+
+
+			if (!procedureCreated[description]) {
+				// Map to create new Procedure
+				procEntry = procedureMap.map([templateClause, ePolicyAccount, newPolicy, opAccount]);
+
+				// Add Procedure to OpenPages
+				procEntry["GTS-Clause:Display Order"] = getDisplayOrder(description);
+				//log("Adding procedure: " + procEntry.name + " - " + procEntry.description);
+				newProc = procedureCreated[description] = op.add(procEntry, {
+					objectType: "Procedure",
+					parentType: "Policy",
+					parentId: newPolicyId,
+					debug: debug || !doMigration // ******************************************************
+				});
+
+				// Add to the creation metric info
+				if (doMigration) {
+					log("Created Procedure: " + procEntry.name + " - " + procEntry.description);
+				}
+	
+				procedureChildren = saveCreationDetails(accountNameWithCode, "Procedure", procedureCreated[description], policyChildren);
+				procedureCreated[description]._children = procedureChildren;
+
+				controlClauseIndex[description] = 0;
+			}
+
+			newProcedure = procedureCreated[description];
+			procedureChildren = newProcedure.getObject("_children");
+			
+			procName = newProcedure.getString("name");
+			if (procName.endsWith(".txt")) {
+				procName = procName.substring(0, procName.length - 4);
+			}
+			newProcedure.procedure_name = procName;
+
+			// Get the RR and RV entries if they exist for this ref
+			rrEntry = rrMap.get(ref) || emptyEntry;
+			rvEntry = rvMap.get(ref) || emptyEntry;
+
+			var column3 = mapColumn(rrEntry.getString("IBM"), templateClause.getString("GTS-ClauseCtl:Col3"));
+			var column4 = mapColumn(rrEntry.getString("CUST_XYZ"), rvEntry.getString("CUST_XYZ"), templateClause.getString("GTS-ClauseCtl:Col4"));
+			var tableType = rrEntry == null ? "RV" : "RR";
+
+			// Map to create clause control
+			var ccIndex = ++controlClauseIndex[description];
+			var cclause = rrEntry.getString("REF") != null ? rrEntry : rvEntry;
+			ccEntry = ccMap.map([cclause, newProcedure, ePolicyAccount, templateClause, CSD, newPolicy, opAccount]);
+
+			//log("Migrating Clause Control: " + cclause.getString("Ref") + " - " + description);
+			log("Migrating Clause Control: " + cclause.toJSON());
+
+			// Add clause control to OpenPages
+
+			//log("Writing Clause Control: " + ccEntry.toJSON() + "\nUnder procedure: " + newProcedure.getString("Resource ID"));
+			newCC = op.add(ccEntry, {
+				objectType: "GTSClauseCtl",
+				parentType: "Procedure",
+				parentId: newProcedure.getString("Resource ID"),
+				debug: debug || !doMigration  // ****************************************
+			});
+
+			// Add to the creation metric info
+			if (doMigration) {
+				log("Created Clause Control: " + ccEntry.toJSON() + "\nUnder procedure: " + newProcedure.getString("Resource ID"));
+				saveCreationDetails(accountNameWithCode, "GTSClauseCtl", newCC, procedureChildren);
+			}
+
+			saveCreationDetails(accountNameWithCode, "GTSClauseCtl", newCC, procedureChildren);
+		}
+	}
+
+	// Now add any Procedures for mandatory Clauses not already written
+	for (clauseIndex in cc.mandatoryClauses) {
+		mandatoryClause = cc.mandatoryClauses[clauseIndex];
+
+		if (!procedureCreated[mandatoryClause.toLowerCase()]) {
+			templateClause = cc.getTemplateClause(mandatoryClause);
+			description = templateClause.getString("description") || "*no_template_clause_description_found*";
+
+			// Parse out the clause number from the description, or use the procedureCnt
+			// and then remove it from the description, which is lowercased
+			procedureIndex = -1;
+			p = description.indexOf(" ");
+			if (p > 0 && p < 4) {
+				indexStr = description.substring(0, p).trim();
+				if (system.isValidInt(indexStr)) {
+					procedureIndex = system.toInt(indexStr);
+					description = description.substring(p + 1).trim().toLowerCase();
+				}
+			}
+			if (procedureIndex == -1) {
+				if (description.substring(1, 2) == ".") {
+					procedureIndex = description.substring(0, 1);
+					description = description.substring(2).trim().toLowerCase();
+				} else {
+					procedureIndex = ++procedureCnt;
+					description = description.trim().toLowerCase();
+				}
+			}
+
+			// Map to create new Procedure
+			procEntry = procedureMap.map([templateClause, ePolicyAccount, newPolicy, opAccount]);
+
+			// Add Procedure to OpenPages
+			procEntry["GTS-Clause:Display Order"] = getDisplayOrder(description);
+			log("Adding Procedure/Clause: " + procEntry.name + " - " + procEntry.description);
+			procedureCreated[description] = op.add(procEntry, {
+				objectType: "Procedure",
+				parentType: "Policy",
+				parentId: newPolicyId,
+				debug: debug || !doMigration  // *********************************************
+			});
+
+			// Add to the creation metric info
+			saveCreationDetails(accountNameWithCode, "Procedure", procedureCreated[description], policyChildren);
+		}
+	}
+}]]></parameter>
+    </Script>
+</MetamergeConfig>
