@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="950" UUID="5e0f536f-7033-4b65-b1b4-7815c5472387" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPages Connector" modified="Fri Dec 11 16:32:57 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="951" UUID="5e0f536f-7033-4b65-b1b4-7815c5472387" created="Mon Mar 30 14:14:42 IST 2020" createdBy="DishaSingh" main="OpenPages Connector" modified="Wed Apr 14 13:21:10 CEST 2021" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
     <Container name="References"/>
     
 
@@ -128,15 +128,16 @@
 
 
 
+
 <Connector name="OpenPages Connector">
         <InheritFrom>system:/Connectors/ibmdi.ScriptConnector</InheritFrom>
-        <ModTime>1607700776752</ModTime>
+        <ModTime>1618399270508</ModTime>
         <ConnectorMode>Lookup</ConnectorMode>
         <ConnectorState>Enabled</ConnectorState>
         <Configuration>
             <UserComment>fixing</UserComment>
             <InheritFrom>[parent]</InheritFrom>
-            <ModTime>1607700776752</ModTime>
+            <ModTime>1618399270508</ModTime>
             <parameter name="$form$"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="261" UUID="a8ad3eb7-a05b-4a69-b5c2-397f536ac120" created="Sun Jun 01 21:17:26 CEST 2014" createdBy="Administrator" main="Form" modified="Sat Nov 14 16:43:20 CET 2020" modifiedBy="eddie" version="7.1.1">
     <Form name="Form">
         <ModTime>1605368530174</ModTime>
@@ -654,9 +655,9 @@ http.initialize(null);
             <parameter name="object">SOXRisk</parameter>
             <parameter name="parentLoc"/>
             <parameter name="parentType"/>
-            <parameter name="password">@SUBSTITUTE{property.POC_MVP:op.password}</parameter>
+            <parameter name="password">@SUBSTITUTE{property.OpenPagesAssets:op.password}</parameter>
             <parameter name="query"/>
-            <parameter name="root">@SUBSTITUTE{property.POC_MVP:op.uri.root}</parameter>
+            <parameter name="root">@SUBSTITUTE{property.OpenPagesAssets:op.uri.root}</parameter>
             <parameter name="script"><![CDATA[//////////////////////////////////////////////////////////////////////////////
 //
 //  Licensed Materials - Property of IBM
@@ -3882,9 +3883,9 @@ function sendEmailNotification(error) {
 //var version = "20200625 1346"; // fixed double incrementing of this.index in resultSet.next function]]></parameter>
             <parameter name="shareSchema">true</parameter>
             <parameter name="smtpPort">25</parameter>
-            <parameter name="url">@SUBSTITUTE{property.POC_MVP:op.url}</parameter>
+            <parameter name="url">@SUBSTITUTE{property.OpenPagesAssets:op.url}</parameter>
             <parameter name="user"/>
-            <parameter name="username">@SUBSTITUTE{property.POC_MVP:op.username}</parameter>
+            <parameter name="username">@SUBSTITUTE{property.OpenPagesAssets:op.username}</parameter>
             <parameter name="view"/>
         </Configuration>
         <ComputeChanges>false</ComputeChanges>

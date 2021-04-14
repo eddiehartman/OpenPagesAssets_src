@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="271" UUID="328d9cf3-1f8d-4ae1-8b4b-240ded52929b" created="Mon Mar 30 14:14:39 IST 2020" createdBy="DishaSingh" main="POC_MVP" modified="Wed Dec 23 15:09:01 CET 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
-    <Container name="POC_MVP">
-        <ModTime>1608732541561</ModTime>
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="272" UUID="328d9cf3-1f8d-4ae1-8b4b-240ded52929b" created="Mon Mar 30 14:14:39 IST 2020" createdBy="DishaSingh" main="OpenPagesAssets" modified="Wed Apr 14 13:21:40 CEST 2021" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <Container name="OpenPagesAssets">
+        <ModTime>1618399293676</ModTime>
         <Container name="Data">
-            <ModTime>1608732541561</ModTime>
+            <ModTime>1618399280045</ModTime>
             <ParameterList name="geo">
                 <parameter name="Property">true</parameter>
                 <parameter name="serverName">geo</parameter>
@@ -97,7 +97,7 @@
                 <parameter name="serverName">schedule</parameter>
                 <parameter name="serverProtect">false</parameter>
                 <parameter name="serverValue">* * * 0 0 0</parameter>
-                <parameter name="value">* * * 0 0 0</parameter>
+                <parameter name="value">* * * 21 0 0</parameter>
             </ParameterList>
             <ParameterList name="service.port">
                 <parameter name="Property">true</parameter>
@@ -141,14 +141,16 @@
             </ParameterList>
         </Container>
         <Properties name="Config">
+            <ModTime>1618399293676</ModTime>
             <Stores>
                 <PropertyStore name="POC_MVP">
-                    <ModTime>1587974096746</ModTime>
+                    <ModTime>1618399293676</ModTime>
                     <Parser/>
                     <RawConnector>
                         <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                        <ModTime>1618399293676</ModTime>
                         <parameter name="autorewrite">true</parameter>
-                        <parameter name="collection">POC_MVP/POC_MVP.properties</parameter>
+                        <parameter name="collection">OpenPagesAssets/OpenPagesAssets.properties</parameter>
                         <parameter name="collectionType">POC_MVP</parameter>
                         <parameter name="keyAlias"/>
                     </RawConnector>

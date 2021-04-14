@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="12" UUID="3625d6be-f142-49a3-b648-53da6d4cba5d" created="Sat Jun 20 22:00:32 CEST 2020" createdBy="eddie" main="inventory_feed" modified="Wed Jun 24 16:45:47 CEST 2020" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
-    <AssemblyLine name="inventory_feed">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig Cycle="13" UUID="3625d6be-f142-49a3-b648-53da6d4cba5d" created="Sat Jun 20 22:00:32 CEST 2020" createdBy="eddie" main=".inventory_feed.assemblyline" modified="Wed Apr 14 13:17:19 CEST 2021" modifiedBy="eddie" project="POC_MVP" version="7.1.1">
+    <AssemblyLine name=".inventory_feed.assemblyline">
         <ModTime>1593009945001</ModTime>
         <Settings>
             <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
@@ -21,7 +21,6 @@
         </SimulationConfig>
         <LogConfig/>
         <ContainerEF name="EntryFeedContainer">
-            <ModTime>1592684734995</ModTime>
             <Connector name="Read CSV">
                 <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
                 <ModTime>1592684734995</ModTime>
@@ -29,17 +28,14 @@
                 <ConnectorState>Enabled</ConnectorState>
                 <Configuration>
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683296327</ModTime>
                     <parameter name="filePath">POC_MVP/inventory_test.csv</parameter>
                 </Configuration>
                 <Parser>
                     <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
-                    <ModTime>1592683310766</ModTime>
                     <parameter name="csvColumnSeparator">,</parameter>
                 </Parser>
                 <AttributeMap name="Input">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592684734995</ModTime>
                     <AttributeMapItem>
                         <Name>$grcObjecType</Name>
                         <Type>simple</Type>
@@ -138,17 +134,14 @@
                 </AttributeMap>
                 <AttributeMap name="Output">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683238299</ModTime>
                 </AttributeMap>
                 <DeltaSettings>
-                    <ModTime>1592683247505</ModTime>
                     <WhenToCommit>After every database operation</WhenToCommit>
                     <RowLocking>SERIALIZABLE</RowLocking>
                     <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
                 </DeltaSettings>
                 <Schema name="Input">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683318739</ModTime>
                     <SchemaItem>
                         <Name>$grcObject</Name>
                         <Syntax>java.lang.String</Syntax>
@@ -260,7 +253,6 @@
                 </Schema>
                 <Schema name="Output">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683318750</ModTime>
                     <SchemaItem>
                         <Name>$grcObject</Name>
                         <Syntax>java.lang.String</Syntax>
@@ -376,11 +368,9 @@
                 </Schema>
                 <LinkCriteria>
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683238299</ModTime>
                 </LinkCriteria>
                 <Hooks>
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592683238299</ModTime>
                 </Hooks>
                 <CheckpointConfig/>
                 <SandboxConfig/>
@@ -397,7 +387,6 @@
             </Connector>
         </ContainerEF>
         <ContainerDF name="DataFlowContainer">
-            <ModTime>1593009906904</ModTime>
             <Connector name="OpenPages Connector">
                 <InheritFrom>/Connectors/OpenPages Connector</InheritFrom>
                 <ModTime>1593009906904</ModTime>
@@ -405,9 +394,8 @@
                 <ConnectorState>Enabled</ConnectorState>
                 <Configuration>
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592684038620</ModTime>
                     <parameter name="object">Assertion</parameter>
-                    <parameter encrypted="true" name="password">gKD9eEF5MpOQCga81x7RLuUIfr0HIWbpNshQw+j3nXqM3k9NO5aZuv1Dl8P6f//IQPyQFMem+HdoEKc5RPOGqIJfmFtcUxa5ZWhBg2+h7jbHQpoNYDe8opVOk3F1beykNRisImWhTxIywjVuBWUhPdIv+seixhDqnjnvZT0Pi+MgYuFLy8ISgOU7ZTbQsPjW7Y0IjRojlWLYTrX/1K160MPiMPKinnRzfjuSN2ysDkfJEu5i457IywK48PHlzePz7bIuCVPUm8+bHLH1NcgwJanw4mURpujwbvkc2Y2fdzyIPhBXUVSoLlmud5BpLMRvDQ7UlHAvUWOjqnrlDPKKSg==</parameter>
+                    <parameter encrypted="true" name="password"/>
                     <parameter name="url">http://gts11.fyre.ibm.com:10108</parameter>
                 </Configuration>
                 <Parser>
@@ -418,7 +406,6 @@
                 </AttributeMap>
                 <AttributeMap name="Output">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1593009906904</ModTime>
                     <AttributeMapItem>
                         <Name>*</Name>
                         <Type>simple</Type>
@@ -441,7 +428,6 @@
                     </AttributeMapItem>
                 </AttributeMap>
                 <DeltaSettings>
-                    <ModTime>1592683374799</ModTime>
                     <WhenToCommit>After every database operation</WhenToCommit>
                     <RowLocking>SERIALIZABLE</RowLocking>
                     <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
@@ -451,7 +437,6 @@
                 </Schema>
                 <Schema name="Output">
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592684392665</ModTime>
                     <SchemaItem>
                         <Name>$grcObject</Name>
                         <NativeSyntax>JavaScript Object</NativeSyntax>
@@ -639,7 +624,6 @@
                 </Schema>
                 <LinkCriteria>
                     <InheritFrom>[parent]</InheritFrom>
-                    <ModTime>1592684490735</ModTime>
                     <LinkCriteriaItem>
                         <Key>172d3638ca6</Key>
                         <Attribute>GTS-Inventory:Hostname</Attribute>
